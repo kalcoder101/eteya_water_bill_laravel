@@ -177,9 +177,15 @@
     </div>
 </div>
 
-<!-- Registration Modal -->
+<!-- Floating Quick Action Bar (FAB) -->
+<div class="fab-quick-bar">
+    <button class="fab-btn fab-sm" onclick="openExcelImportModal()">{!! icon('upload', 14) !!} {{ t('Import Excel') }}</button>
+    <button class="fab-btn" onclick="openRegisterModal()">{!! icon('plus', 18) !!} {{ t('Register Customer') }}</button>
+</div>
+
+<!-- Multi-Step Registration Modal -->
 <div class="modal-backdrop v2" id="registerModal">
-    <div class="modal v2" style="max-width: 760px;">
+    <div class="modal v2" style="max-width: 780px;">
         <div class="modal-header">
             <div class="modal-icon">{!! icon('plus', 20) !!}</div>
             <div class="modal-title">
@@ -189,124 +195,146 @@
             <button class="close" onclick="closeModal('registerModal')">&times;</button>
         </div>
         <div class="modal-body">
+            <!-- Step Wizard Nav Tabs -->
+            <div class="step-wizard-nav">
+                <div class="step-wizard-item active" id="tab-step-1" onclick="switchRegStep(1)">
+                    <span class="step-num">1</span> <span>Identity & Personal</span>
+                </div>
+                <div class="step-wizard-item" id="tab-step-2" onclick="switchRegStep(2)">
+                    <span class="step-num">2</span> <span>Meter & Reading</span>
+                </div>
+                <div class="step-wizard-item" id="tab-step-3" onclick="switchRegStep(3)">
+                    <span class="step-num">3</span> <span>Tariff & Branch</span>
+                </div>
+            </div>
+
             <form id="registerForm">
-                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">1. {{ t('Identity & Personal Specs') }}</div>
-                <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:14px; margin-bottom:16px;">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('Customer Code') }} <span class="required">*</span></label>
-                            <div style="display:flex; gap:6px;">
-                                <input type="text" name="meterSerial" required class="form-control" placeholder="ETY-0001">
-                                <button type="button" class="btn btn-sm" onclick="generateCode()">{!! icon('refresh', 12) !!} {{ t('Auto') }}</button>
+                <!-- STEP 1: IDENTITY -->
+                <div id="reg-step-1-content" class="reg-step-pane">
+                    <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:16px;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('Customer Code') }} <span class="required">*</span></label>
+                                <div style="display:flex; gap:6px;">
+                                    <input type="text" name="meterSerial" required class="form-control" placeholder="ETY-0001">
+                                    <button type="button" class="btn btn-sm" onclick="generateCode()">{!! icon('refresh', 12) !!} {{ t('Auto') }}</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Kebele') }} <span class="required">*</span></label>
+                                <input type="text" name="kebele" required class="form-control" placeholder="e.g. 01">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('First Name') }} <span class="required">*</span></label>
+                                <input type="text" name="firstName" required class="form-control" placeholder="e.g. Abebe">
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Middle Name') }}</label>
+                                <input type="text" name="middleName" class="form-control" placeholder="e.g. Kebede">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('Last Name') }}</label>
+                                <input type="text" name="lastName" class="form-control" placeholder="e.g. Tadesse">
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Phone Number') }}</label>
+                                <input type="text" name="phoneNumber" class="form-control" placeholder="+251911223344">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: METER SPECS -->
+                <div id="reg-step-2-content" class="reg-step-pane" style="display:none;">
+                    <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:16px;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('Meter Size') }}</label>
+                                <select name="meterSize" class="fancy">
+                                    @foreach ($meterSizes as $v)
+                                        <option value="{{ $v }}">{{ $v }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Meter Number') }}</label>
+                                <input type="number" name="meterNum" value="0" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('Serial Number (Bill #)') }}</label>
+                                <input type="text" name="billNum" placeholder="SN-0001" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Start Reading') }} (m³)</label>
+                                <input type="number" step="0.01" name="startValue" value="0" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>{{ t('Kebele') }} <span class="required">*</span></label>
-                            <input type="text" name="kebele" required class="form-control" placeholder="e.g. 01">
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('First Name') }} <span class="required">*</span></label>
-                            <input type="text" name="firstName" required class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>{{ t('Middle Name') }}</label>
-                            <input type="text" name="middleName" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('Last Name') }}</label>
-                            <input type="text" name="lastName" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>{{ t('Phone Number') }}</label>
-                            <input type="text" name="phoneNumber" class="form-control" placeholder="+2519...">
+                            <label>{{ t('Sold Date') }}</label>
+                            <input type="date" name="soldDate" value="{{ date('Y-m-d') }}" class="form-control">
                         </div>
                     </div>
                 </div>
 
-                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">2. {{ t('Meter Specifications') }}</div>
-                <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:14px; margin-bottom:16px;">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('Meter Size') }}</label>
-                            <select name="meterSize" class="fancy">
-                                @foreach ($meterSizes as $v)
-                                    <option value="{{ $v }}">{{ $v }}</option>
-                                @endforeach
-                            </select>
+                <!-- STEP 3: CLASSIFICATION -->
+                <div id="reg-step-3-content" class="reg-step-pane" style="display:none;">
+                    <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:16px;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('Customer Type') }}</label>
+                                <select name="customerType" class="fancy">
+                                    @foreach ($customerTypes as $v)
+                                        <option value="{{ $v }}">{{ $v }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Payment Way') }}</label>
+                                <select name="paymentWay" class="fancy">
+                                    @foreach ($paymentWays as $v)
+                                        <option value="{{ $v }}">{{ $v }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>{{ t('Customer Branch') }}</label>
+                                <select name="customerBranch" class="fancy">
+                                    @foreach ($branches as $v)
+                                        <option value="{{ $v }}">{{ $v }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('Status') }}</label>
+                                <select name="customerStatus" class="fancy">
+                                    @foreach ($customerStatuses as $v)
+                                        <option value="{{ $v }}" @if($v==='Active') selected @endif>{{ $v }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label>{{ t('Meter Number') }}</label>
-                            <input type="number" name="meterNum" value="0" class="form-control">
+                            <label>{{ t('Reader Block') }}</label>
+                            <input type="text" name="readerBlock" placeholder="Block-A" class="form-control">
                         </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('Serial Number (Bill #)') }}</label>
-                            <input type="text" name="billNum" placeholder="SN-0001" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>{{ t('Start Reading') }} (m³)</label>
-                            <input type="number" step="0.01" name="startValue" value="0" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ t('Sold Date') }}</label>
-                        <input type="date" name="soldDate" value="{{ date('Y-m-d') }}" class="form-control">
-                    </div>
-                </div>
-
-                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">3. {{ t('Classification & Location') }}</div>
-                <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:14px;">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('Customer Type') }}</label>
-                            <select name="customerType" class="fancy">
-                                @foreach ($customerTypes as $v)
-                                    <option value="{{ $v }}">{{ $v }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>{{ t('Payment Way') }}</label>
-                            <select name="paymentWay" class="fancy">
-                                @foreach ($paymentWays as $v)
-                                    <option value="{{ $v }}">{{ $v }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>{{ t('Customer Branch') }}</label>
-                            <select name="customerBranch" class="fancy">
-                                @foreach ($branches as $v)
-                                    <option value="{{ $v }}">{{ $v }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>{{ t('Status') }}</label>
-                            <select name="customerStatus" class="fancy">
-                                @foreach ($customerStatuses as $v)
-                                    <option value="{{ $v }}" @if($v==='Active') selected @endif>{{ $v }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>{{ t('Reader Block') }}</label>
-                        <input type="text" name="readerBlock" placeholder="Block-A" class="form-control">
                     </div>
                 </div>
             </form>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" style="justify-content: space-between;">
+            <button class="btn" id="regPrevBtn" onclick="prevRegStep()" style="display:none;">&larr; {{ t('Previous') }}</button>
+            <span style="flex:1;"></span>
             <button class="btn" onclick="closeModal('registerModal')">{{ t('Cancel') }}</button>
-            <button class="btn btn-primary" onclick="submitRegister()">{!! icon('check', 16) !!} {{ t('Register Customer') }}</button>
+            <button class="btn btn-primary" id="regNextBtn" onclick="nextRegStep()">{{ t('Next Step') }} &rarr;</button>
+            <button class="btn btn-success" id="regSubmitBtn" onclick="submitRegister()" style="display:none;">{!! icon('check', 16) !!} {{ t('Complete Registration') }}</button>
         </div>
     </div>
 </div>
@@ -418,13 +446,41 @@
 let currentEditCode = null;
 let promptEndpoint = null;
 let promptFields = null;
+let currentRegStep = 1;
 
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
+function switchRegStep(step) {
+    currentRegStep = step;
+    [1, 2, 3].forEach(s => {
+        const pane = document.getElementById(`reg-step-${s}-content`);
+        const tab = document.getElementById(`tab-step-${s}`);
+        if (pane) pane.style.display = (s === step) ? 'block' : 'none';
+        if (tab) tab.classList.toggle('active', s === step);
+    });
+
+    const prevBtn = document.getElementById('regPrevBtn');
+    const nextBtn = document.getElementById('regNextBtn');
+    const submitBtn = document.getElementById('regSubmitBtn');
+
+    if (prevBtn) prevBtn.style.display = (step > 1) ? 'inline-flex' : 'none';
+    if (nextBtn) nextBtn.style.display = (step < 3) ? 'inline-flex' : 'none';
+    if (submitBtn) submitBtn.style.display = (step === 3) ? 'inline-flex' : 'none';
+}
+
+function nextRegStep() {
+    if (currentRegStep < 3) switchRegStep(currentRegStep + 1);
+}
+
+function prevRegStep() {
+    if (currentRegStep > 1) switchRegStep(currentRegStep - 1);
+}
+
 function openRegisterModal() {
     document.getElementById('registerForm').reset();
     document.querySelector('[name=soldDate]').value = new Date().toISOString().slice(0,10);
+    switchRegStep(1);
     openModal('registerModal');
 }
 

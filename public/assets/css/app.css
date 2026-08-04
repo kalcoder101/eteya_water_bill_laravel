@@ -1549,11 +1549,100 @@ input[type=checkbox], input[type=radio] {
 
 /* Print styles */
 @media print {
-    .sidebar, .topbar, .toolbar, .page-actions, .no-print { display: none !important; }
+    .sidebar, .topbar, .toolbar, .page-actions, .fab-quick-bar, .no-print { display: none !important; }
     .app-shell { display: block; }
     .content { padding: 0; max-width: none; }
     body { background: #fff; }
     .panel, .stat-card, .kpi-mini { box-shadow: none; border: 1px solid #ddd; }
+}
+
+/* ---------- Floating Quick Action Bar ---------- */
+.fab-quick-bar {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 999;
+}
+.fab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: var(--r-pill);
+    background: var(--primary-container);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13.5px;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.40);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background 0.15s ease;
+}
+.fab-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.55);
+    background: var(--primary);
+    color: #fff;
+}
+.fab-btn.fab-sm {
+    padding: 9px 14px;
+    font-size: 12px;
+    background: #111C2D;
+    color: #fff;
+    box-shadow: var(--shadow-md);
+}
+.fab-btn.fab-sm:hover {
+    background: #1e2d42;
+}
+
+/* Step wizard nav */
+.step-wizard-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--surface-container-low);
+    padding: 4px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--outline-variant);
+}
+.step-wizard-item {
+    flex: 1;
+    text-align: center;
+    padding: 9px 12px;
+    border-radius: var(--r-md);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.step-wizard-item.active {
+    background: var(--surface-container-lowest);
+    color: var(--primary);
+    box-shadow: var(--shadow-xs);
+}
+.step-wizard-item .step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--outline-variant);
+    color: var(--text-muted);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.step-wizard-item.active .step-num {
+    background: var(--primary-container);
+    color: #fff;
 }
 
 /* Responsive */
