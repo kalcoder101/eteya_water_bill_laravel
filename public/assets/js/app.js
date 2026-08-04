@@ -349,6 +349,18 @@
 
                     main.innerHTML = newMain.innerHTML;
 
+                    // Sync floating chrome (topbar + sidebar) so titles/actions/
+                    // active nav states stay correct after SPA navigation.
+                    var docLang = doc.documentElement ? doc.documentElement.lang : '';
+                    if (docLang) document.documentElement.lang = docLang;
+
+                    var topbar = document.querySelector('.topbar');
+                    var newTopbar = doc.querySelector('.topbar');
+                    if (topbar && newTopbar) topbar.innerHTML = newTopbar.innerHTML;
+                    var sidebar = document.getElementById('mainSidebar');
+                    var newSidebar = doc.getElementById('mainSidebar');
+                    if (sidebar && newSidebar) sidebar.innerHTML = newSidebar.innerHTML;
+
                     scripts = newMain.querySelectorAll('script');
                     scripts.forEach(function(s) {
                         var ns = document.createElement('script');
@@ -389,10 +401,26 @@
         if (e.state && e.state.url) ajaxNavigateTo(e.state.url);
     });
 
+    // Floating chrome entrance (topbar + sidebar) — runs once on first paint
+    var chromeAnimated = false;
+    function initFloatingChrome() {
+        if (chromeAnimated || !hasGSAP()) return;
+        chromeAnimated = true;
+        var topbar = document.querySelector('.topbar');
+        var sidebar = document.getElementById('mainSidebar');
+        if (topbar) {
+            gsap.from(topbar, { opacity: 0, y: -14, duration: 0.5, ease: 'power2.out', delay: 0.35, clearProps: 'all' });
+        }
+        if (sidebar) {
+            gsap.from(sidebar, { opacity: 0, x: -16, duration: 0.5, ease: 'power2.out', delay: 0.35, clearProps: 'all' });
+        }
+    }
+
     // ============================================================
     // Bootstrap
     // ============================================================
     function bootstrap() {
+        initFloatingChrome();
         initGlobalGSAPAnimations();
         initHoverCards();
     }

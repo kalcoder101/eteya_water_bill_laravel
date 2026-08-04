@@ -147,6 +147,17 @@
     $languages = available_languages();
     $currentLang = current_lang();
     $pageAction = $pageAction ?? null;
+
+    // Active nav item (for the topbar page-identity cluster)
+    $activeNavItem = null;
+    foreach ($navGroups as $group) {
+        foreach ($group['items'] as $it) {
+            if ($it['page'] === $currentPage) {
+                $activeNavItem = $it;
+                break 2;
+            }
+        }
+    }
 @endphp
 
 <!-- ============================================================
@@ -250,30 +261,39 @@
      ============================================================ -->
 <div class="main-area flex flex-col min-w-0">
 
-    <!-- Topbar -->
-    <header class="topbar sticky top-0 z-[40] flex items-center gap-4 px-6 py-4 bg-white/85 backdrop-blur border-b border-slate-200 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-        <div>
-            <div class="page-title text-lg font-bold tracking-tight text-slate-900">{{ $pageTitle ?? t('Dashboard') }}</div>
-            <div class="page-subtitle text-xs text-slate-500 mt-0.5">{{ $enterpriseEN }}</div>
+    <!-- Topbar — floating card (EOS Modern Steward) -->
+    <header class="topbar sticky top-3 z-[40] flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 mx-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-slate-200/90 shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
+        <!-- Page identity cluster -->
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center">
+                {!! icon($activeNavItem['icon'] ?? 'dashboard', 20) !!}
+            </div>
+            <div class="min-w-0">
+                <div class="page-title text-[17px] leading-tight font-extrabold tracking-tight text-slate-900 truncate">{{ t($pageTitle ?? 'Dashboard') }}</div>
+                <div class="page-subtitle mt-0.5 text-xs text-slate-500 truncate">{{ $enterpriseEN }}</div>
+            </div>
         </div>
-        <div class="spacer flex-1"></div>
 
-        <div class="relative w-56">
-            <input type="text" class="w-full pl-8 pr-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" placeholder="Search (Ctrl + K)" onclick="openModal('quickCmdModal')" readonly>
+        <div class="spacer flex-1 min-w-0"></div>
+
+        <!-- Quick search -->
+        <div class="relative w-44 lg:w-64 shrink-0">
+            <input type="text" class="w-full pl-8 pr-10 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" placeholder="Search (Ctrl + K)" onclick="openModal('quickCmdModal')" readonly>
             <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400">{!! icon('search', 13) !!}</span>
+            <kbd class="absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-400">Ctrl K</kbd>
         </div>
 
         @if (! empty($pageAction))
         <a href="{{ $pageAction['href'] ?? '#' }}"
-           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm"
+           class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-[0_4px_14px_rgba(5,150,105,0.35)] active:scale-[0.98] shrink-0"
            onclick="{{ $pageAction['onclick'] ?? '' }}">
             {!! icon($pageAction['icon'] ?? 'plus', 15) !!}
-            <span>{{ $pageAction['label'] ?? 'Action' }}</span>
+            <span class="hidden sm:inline">{{ $pageAction['label'] ?? 'Action' }}</span>
         </a>
         @endif
 
         <!-- Language switcher (segmented) -->
-        <div class="inline-flex items-center bg-slate-100 border border-slate-200 rounded-lg p-1 gap-0.5">
+        <div class="hidden md:inline-flex items-center bg-slate-100 border border-slate-200 rounded-lg p-1 gap-0.5 shrink-0">
             @foreach ($languages as $code => $info)
                 @php $isActive = $code === $currentLang; @endphp
                 <a href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
@@ -283,12 +303,12 @@
         </div>
 
         <!-- User chip -->
-        <div class="flex items-center gap-2.5 pl-2.5 pr-3 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm">
+        <div class="flex items-center gap-2.5 pl-2.5 pr-3 py-1.5 rounded-full bg-slate-50/80 border border-slate-200/80 shrink-0">
             <div class="relative flex items-center">
                 <img src="{{ $photoUrl }}" alt="User photo" class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm">
                 <span class="absolute right-0 bottom-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
             </div>
-            <div>
+            <div class="hidden sm:block">
                 <div class="text-[13px] font-bold text-slate-900 leading-tight max-w-[140px] truncate">{{ $fullName }}</div>
                 <div class="mt-0.5"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
             </div>

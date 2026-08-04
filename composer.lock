@@ -4,8 +4,74 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5375d6aa48244758d9015f5d3f4abc53",
+    "content-hash": "4864b8916c649c06b9ed4df5fe2ba5c2",
     "packages": [
+        {
+            "name": "0xkal/tech-mezgeb-qalat",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kalcoder101/mezgeb-qalat-monorepo.git",
+                "reference": "17e2f40f188e02df5b25ea0694c9c2ab840bc60b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kalcoder101/mezgeb-qalat-monorepo/zipball/17e2f40f188e02df5b25ea0694c9c2ab840bc60b",
+                "reference": "17e2f40f188e02df5b25ea0694c9c2ab840bc60b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "MezgebQalat": "MezgebQalat\\Facades\\MezgebQalat"
+                    },
+                    "providers": [
+                        "MezgebQalat\\MezgebQalatServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "packages/php/src/Helpers/helpers.php"
+                ],
+                "psr-4": {
+                    "MezgebQalat\\": "packages/php/src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "0xKal",
+                    "homepage": "https://github.com/0xkal"
+                }
+            ],
+            "description": "Ethiopian tech terminology dictionary (English <-> Amharic, Afaan Oromo, Tigrigna) built from the ELRC ICT Terms Dictionary. Works standalone in plain PHP or as a Laravel package.",
+            "keywords": [
+                "Amharic",
+                "Ethiopia",
+                "ICT",
+                "afaan oromo",
+                "i18n",
+                "laravel",
+                "localization",
+                "mezgeb qalat",
+                "oromo",
+                "tigrigna",
+                "translation"
+            ],
+            "support": {
+                "issues": "https://github.com/kalcoder101/mezgeb-qalat-monorepo/issues",
+                "source": "https://github.com/kalcoder101/mezgeb-qalat-monorepo/tree/v1.0.0"
+            },
+            "time": "2026-08-04T06:16:46+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.14.8",

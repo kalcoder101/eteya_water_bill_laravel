@@ -13,11 +13,6 @@
         </h2>
         <p class="mt-1 text-[13px] text-slate-500">{{ t('Register, search, update and manage all water meter customers across Kebeles') }}</p>
     </div>
-    <div class="flex items-center gap-2.5">
-        <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-[0_4px_14px_rgba(5,150,105,0.35)]" onclick="openRegisterModal()">
-            {!! icon('plus', 16) !!} {{ t('Register New Customer') }}
-        </button>
-    </div>
 </div>
 
 <!-- KPI Stat Cards Bar -->

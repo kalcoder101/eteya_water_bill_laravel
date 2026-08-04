@@ -3,14 +3,20 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Session;
+use MezgebQalat\Dictionary;
 
 class I18nService
 {
     /** English string → [lang_code => translation] */
     protected array $translations = [];
 
+    /** ELRC Ethiopian ICT terminology dictionary (amharic / oromo / tigrigna). */
+    protected Dictionary $dictionary;
+
     public function __construct()
     {
+        $this->dictionary = new Dictionary();
+
         // Compact subset of the original translations table (most-used keys).
         // For brevity only the navigation/login/common strings are listed here.
         $this->translations = [
@@ -243,6 +249,65 @@ class I18nService
                 'am'  => 'ሁሉም ደንበኞች',
             ],
         ];
+
+        // Tigrigna overrides for app-specific phrases (nav, titles, common UI).
+        // General ICT terms fall back to the ELRC Mezgeb Qalat dictionary.
+        $this->translations = array_replace_recursive($this->translations, [
+            'Operations'            => ['am' => 'ስራዎች', 'orm' => 'Hojiilee', 'ti' => 'ስራሓት'],
+            'Reports & Ledger'      => ['am' => 'ሪፖርቶች እና ደብተር', 'orm' => 'Ragaa fi Kitaaba', 'ti' => 'ጸብጻባትን መዝገብን'],
+            'Administration'        => ['am' => 'አስተዳደር', 'orm' => 'Maamala', 'ti' => 'ኣስተዳደር'],
+            'Dashboard Overview'    => ['am' => 'ዳሽቦርድ አጠቃላይ እይታ', 'orm' => 'Daashboordii Gudunfaa', 'ti' => 'ሓፈሻ ዳሽቦርድ'],
+            'Dashboard'             => ['ti' => 'ዳሽቦርድ'],
+            'Customer Service'      => ['ti' => 'ኣገልግሎት ደንበኛ'],
+            'Customers Ledger'      => ['ti' => 'መዝገብ ደንበኛ'],
+            'Detail Statistics'     => ['ti' => 'ዝርዝር ስታቲስቲክስ'],
+            'Reading Correction'    => ['ti' => 'ምንባብ ምስተኻኸል'],
+            'Bills & Printing'      => ['ti' => 'ሂሳባትን ሕትመትን'],
+            'Account Register'      => ['ti' => 'መዝገብ ኣካውንት'],
+            'Register New Customer' => ['ti' => 'ሓድሽ ደንበኛ ምዝገባ'],
+            'Calculate Bills'       => ['ti' => 'ሂሳባት ምትሕስብ'],
+            'Print Report'          => ['ti' => 'ጸብጻብ ሕተም'],
+            'Export Ledger CSV'     => ['ti' => 'CSV ወጻኢ'],
+            'New Complain'          => ['ti' => 'ሓድሽ ቅሬታ'],
+            'Register'              => ['ti' => 'ምዝገባ'],
+            'Login'                 => ['ti' => 'እቶ'],
+            'Sign In'               => ['ti' => 'እቶ'],
+            'SIGN IN'               => ['ti' => 'እቶ'],
+            'Username'              => ['ti' => 'ስም ተጠቃሚ'],
+            'Password'              => ['ti' => 'መሕለፍቃል'],
+            'Logout'                => ['ti' => 'ውጻኢ'],
+            'Search'                => ['ti' => 'ድለይ'],
+            'Print'                 => ['ti' => 'ሕተም'],
+            'Approve'               => ['ti' => 'ኣጽድቕ'],
+            'Reject'                => ['ti' => 'ነጸግ'],
+            'Pending'               => ['ti' => 'ኣብ ምጽባይ'],
+            'Approved'              => ['ti' => 'ኣጽዲቑ'],
+            'Rejected'              => ['ti' => 'ነጺጉ'],
+            'Paid'                  => ['ti' => 'ተኸፊሉ'],
+            'Unpaid'                => ['ti' => 'ዘይተኸፈለ'],
+            'Total'                 => ['ti' => 'ጠቕላላ'],
+            'Bills'                 => ['ti' => 'ሂሳባት'],
+            'Complaints'            => ['ti' => 'ቅሬታታት'],
+            'Customer'              => ['ti' => 'ደንበኛ'],
+            'Active'                => ['ti' => 'ንጡፍ'],
+            'Disconnected (DC)'     => ['ti' => 'ተቖሪጹ (DC)'],
+            'Year'                  => ['ti' => 'ዓመት'],
+            'Month'                 => ['ti' => 'ወርሒ'],
+            'Submit'                => ['ti' => 'ስደድ'],
+            'Cancel'                => ['ti' => 'ግደፍ'],
+            'Save'                  => ['ti' => 'ኣቐምጥ'],
+            'Update'                => ['ti' => 'ምሕዳስ'],
+            'Edit'                  => ['ti' => 'ኣርትዕ'],
+            'Delete'                => ['ti' => 'ደምስስ'],
+            'Actions'               => ['ti' => 'ተግባራት'],
+            'Code'                  => ['ti' => 'ኮድ'],
+            'Full Name'             => ['ti' => 'ምሉእ ስም'],
+            'Kebele'                => ['ti' => 'ቀበሌ'],
+            'Type'                  => ['ti' => 'ዓይነት'],
+            'Phone'                 => ['ti' => 'ተለፎን'],
+            'Status'                => ['ti' => 'ኩነት'],
+            'Incorrect username and password.' => ['ti' => 'ስም ተጠቃሚ ወይ መሕለፍቃል ጌጋ እዩ።'],
+        ]);
     }
 
     public function currentLang(): string
@@ -263,7 +328,10 @@ class I18nService
         if ($lang === 'en') {
             $text = $key;
         } else {
-            $text = $this->translations[$key][$lang] ?? $key;
+            // 1. App-specific override wins (proper names, domain terms).
+            // 2. Otherwise fall back to the ELRC Mezgeb Qalat ICT dictionary.
+            $text = $this->translations[$key][$lang]
+                ?? $this->dictionary->translate($key, $this->dictionaryLocale($lang));
         }
 
         foreach ($params as $name => $value) {
@@ -271,5 +339,16 @@ class I18nService
         }
 
         return $text;
+    }
+
+    /** Map the app's session lang code to the dictionary's locale names. */
+    protected function dictionaryLocale(string $lang): string
+    {
+        return match ($lang) {
+            'am'  => 'amharic',
+            'orm' => 'oromo',
+            'ti'  => 'tigrigna',
+            default => 'english',
+        };
     }
 }

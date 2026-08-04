@@ -114,29 +114,27 @@ input[type=checkbox], input[type=radio] {
 }
 
 /* ============================================================
-   App shell + sidebar collapse contract (do not move to views)
+   App shell + floating chrome contract (EOS Modern Steward)
+   Sidebar = fixed floating card (12px gutters all around)
+   Topbar  = sticky floating card (12px gutters, rounded, blurred)
+   Both float on the #F8FAF8 canvas; content sits in the gutter.
    ============================================================ */
 .app-shell {
-    display: grid;
-    grid-template-columns: 296px 1fr;
-    column-gap: 16px;
+    display: block;
     min-height: 100vh;
-    transition: grid-template-columns 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.app-shell.sidebar-collapsed { grid-template-columns: 104px 1fr; }
 
-/* ---------- Sidebar (floating card) ---------- */
+/* ---------- Sidebar: floating fixed card ---------- */
 #mainSidebar {
-    grid-column: 1;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    bottom: 12px;
     width: 264px;
     min-width: 0;
-    margin: 16px 0 16px 16px;
-    align-self: start;
-    position: sticky;
-    top: 16px;
     z-index: 50;
-    height: calc(100vh - 32px);
-    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), margin 0.25s ease;
+    border-radius: 18px;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app-shell.sidebar-collapsed #mainSidebar {
@@ -144,12 +142,20 @@ input[type=checkbox], input[type=radio] {
     overflow: visible;
 }
 
-.app-shell.sidebar-collapsed .sidebar-categories-container { overflow: visible; }
+/* ---------- Main area: offset for the fixed sidebar ---------- */
+.main-area {
+    min-height: 100vh;
+    margin-left: 288px;
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.app-shell.sidebar-collapsed .main-area { margin-left: 96px; }
 
 /* Category accordion body visibility */
 .sidebar-category-body { display: none; }
 .sidebar-category-group.open .sidebar-category-body { display: block; }
 .sidebar-category-group.open .sidebar-category-header .chevron { transform: rotate(180deg); }
+
+.app-shell.sidebar-collapsed .sidebar-categories-container { overflow: visible; }
 
 /* ---------- Collapsed sidebar ---------- */
 .app-shell.sidebar-collapsed .sidebar-category-group { display: flex; justify-content: center; margin-bottom: 10px; }
@@ -182,20 +188,22 @@ input[type=checkbox], input[type=radio] {
 .app-shell.sidebar-collapsed .sidebar-user .user-meta,
 .app-shell.sidebar-collapsed .sidebar-footer .footer-meta { display: none; }
 
-/* ---------- Mobile: sidebar becomes a top card ---------- */
+/* ---------- Mobile: sidebar becomes a top card, topbar stays floating ---------- */
 @media (max-width: 767px) {
-    .app-shell { grid-template-columns: 1fr; }
-    .app-shell.sidebar-collapsed { grid-template-columns: 1fr; }
+    .main-area,
+    .app-shell.sidebar-collapsed .main-area { margin-left: 0; }
     #mainSidebar, .app-shell.sidebar-collapsed #mainSidebar {
-        grid-column: auto;
+        position: relative;
+        top: auto;
+        left: auto;
+        bottom: auto;
         width: auto;
         margin: 12px 12px 0;
         height: auto;
         max-height: none;
-        position: relative;
-        top: auto;
         border-radius: 16px;
         overflow: visible;
+        z-index: 50;
     }
     .sidebar-categories-container { overflow: visible; }
     .app-shell.sidebar-collapsed .sidebar-brand { flex-direction: row; }

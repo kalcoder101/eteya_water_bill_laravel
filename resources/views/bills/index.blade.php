@@ -35,9 +35,6 @@
                 </select>
             </div>
         </form>
-        <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-[0_4px_14px_rgba(16,185,129,0.35)]" onclick="calculateBills()">
-            {!! icon('zap', 16) !!} {{ t('Calculate Bills') }}
-        </button>
     </div>
 </div>
 

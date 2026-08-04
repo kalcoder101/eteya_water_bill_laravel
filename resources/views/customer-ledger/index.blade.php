@@ -21,7 +21,6 @@
     <div class="flex items-center gap-2.5">
         @if (! empty($customer))
             <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">{!! icon('print', 14) !!} {{ t('Print Statement') }}</button>
-            <button type="button" onclick="exportLedger()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('download', 14) !!} {{ t('Export Ledger CSV') }}</button>
         @endif
     </div>
 </div>

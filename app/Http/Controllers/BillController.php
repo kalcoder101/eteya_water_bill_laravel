@@ -52,6 +52,12 @@ class BillController extends Controller
             'paidAmount'   => $paidAmount,
             'unpaidAmount' => $unpaidAmount,
             'pageTitle'    => 'Bills & Printing',
+            'pageAction'   => [
+                'label'   => t('Calculate Bills'),
+                'href'    => '#',
+                'icon'    => 'zap',
+                'onclick' => "calculateBills(); return false;",
+            ],
         ]);
     }
 

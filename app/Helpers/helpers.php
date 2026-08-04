@@ -274,6 +274,7 @@ if (! function_exists('available_languages')) {
             'en'  => ['English',      'English',      'EN'],
             'orm' => ['Afaan Oromoo', 'Afaan Oromoo', 'OR'],
             'am'  => ['Amharic',     'አማርኛ',          'AM'],
+            'ti'  => ['Tigrigna',     'ትግርኛ',          'TI'],
         ];
     }
 }

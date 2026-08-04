@@ -98,6 +98,12 @@ class CustomerLedgerController extends Controller
             'paidBills'        => $paidBills,
             'unpaidBills'      => $unpaidBills,
             'pageTitle'        => 'Customers Ledger',
+            'pageAction'       => ! empty($customer) ? [
+                'label'   => t('Export Ledger CSV'),
+                'href'    => '#',
+                'icon'    => 'download',
+                'onclick' => "exportLedger(); return false;",
+            ] : null,
         ]);
     }
 }

@@ -103,6 +103,12 @@ class CustomerStatisticsController extends Controller
             'totalCustomers'  => $totalCustomers,
             'totalKebeles'    => $totalKebeles,
             'pageTitle'       => 'Detail Statistics',
+            'pageAction'      => [
+                'label'   => t('Print Report'),
+                'href'    => '#',
+                'icon'    => 'print',
+                'onclick' => "window.print(); return false;",
+            ],
         ]);
     }
 }
