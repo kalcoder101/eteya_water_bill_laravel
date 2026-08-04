@@ -2,275 +2,353 @@
 
 @section('content')
 
+<!-- Page Header & Banner -->
 <div class="page-header-block">
     <div class="page-info">
-        <h2 style="margin: 0;">{{ t('Customer Service') }}</h2>
-        <p>{{ t('Register, search, update and manage all water meter customers') }}</p>
+        <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">
+            {{ t('Operations') }} &bull; {{ t('Customer Registry') }}
+        </div>
+        <h2 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+            {!! icon('users', 24) !!} {{ t('Customer Service Management') }}
+        </h2>
+        <p style="margin-top: 4px; color: var(--text-muted);">{{ t('Register, search, update and manage all water meter customers across Kebeles') }}</p>
     </div>
     <div class="page-actions">
-        <button class="btn btn-primary" onclick="openRegisterModal()">
+        <button class="btn btn-primary" onclick="openRegisterModal()" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
             {!! icon('plus', 16) !!} {{ t('Register New Customer') }}
         </button>
     </div>
 </div>
 
-<div class="toolbar">
+<!-- KPI Stat Cards Bar -->
+<div class="card-grid cols-4" style="margin-bottom: 20px;">
+    <div class="stat-card accent">
+        <div class="stat-label">{{ t('Total Registered') }}</div>
+        <div class="stat-value">{{ number_format($totalCount) }}</div>
+        <div class="stat-meta">{{ t('Water Meter Accounts') }}</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-label">{{ t('Active Accounts') }}</div>
+        <div class="stat-value" style="color: var(--success);">{{ number_format($activeCount) }}</div>
+        <div class="stat-meta">{{ number_format(($totalCount > 0 ? ($activeCount/$totalCount)*100 : 0), 1) }}% {{ t('connected') }}</div>
+    </div>
+    <div class="stat-card danger">
+        <div class="stat-label">{{ t('Disconnected (DC)') }}</div>
+        <div class="stat-value" style="color: var(--danger);">{{ number_format($dcCount) }}</div>
+        <div class="stat-meta">{{ t('Cut off accounts') }}</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="stat-label">{{ t('Updated / Pending') }}</div>
+        <div class="stat-value" style="color: var(--warning);">{{ number_format(max(0, $totalCount - $activeCount - $dcCount)) }}</div>
+        <div class="stat-meta">{{ t('Requires verification') }}</div>
+    </div>
+</div>
+
+<!-- Toolbar & Segmented Filter Bar -->
+<div class="toolbar" style="background: var(--surface-container-lowest); padding: 12px 16px; border-radius: var(--r-lg); border: 1px solid var(--outline-variant); margin-bottom: 20px; gap: 12px;">
     <div class="segmented">
-        <a class="{{ $filter==='all' ? 'active' : '' }}" href="?filter=all">{{ t('All Customers') }}</a>
-        <a class="status-active {{ ($filter==='status' && $status==='Active') ? 'active status-active' : '' }}" href="?filter=status&status=Active">{!! icon('check', 12) !!} {{ t('Active') }}</a>
-        <a class="status-dc {{ ($filter==='status' && $status==='DC') ? 'active status-dc' : '' }}" href="?filter=status&status=DC">{!! icon('x', 12) !!} DC</a>
+        <a class="{{ $filter==='all' ? 'active' : '' }}" href="?filter=all">{{ t('All Customers') }} <span class="badge badge-secondary">{{ $totalCount }}</span></a>
+        <a class="status-active {{ ($filter==='status' && $status==='Active') ? 'active status-active' : '' }}" href="?filter=status&status=Active">{!! icon('check', 12) !!} {{ t('Active') }} <span class="badge badge-success">{{ $activeCount }}</span></a>
+        <a class="status-dc {{ ($filter==='status' && $status==='DC') ? 'active status-dc' : '' }}" href="?filter=status&status=DC">{!! icon('x', 12) !!} DC <span class="badge badge-danger">{{ $dcCount }}</span></a>
         <a class="status-updated {{ ($filter==='status' && $status==='Updated') ? 'active status-updated' : '' }}" href="?filter=status&status=Updated">{!! icon('refresh', 12) !!} {{ t('Updated') }}</a>
         <a class="status-deleted {{ ($filter==='status' && $status==='Deleted') ? 'active status-deleted' : '' }}" href="?filter=status&status=Deleted">{!! icon('trash', 12) !!} {{ t('Deleted') }}</a>
     </div>
-    <form method="get" action="" style="display:flex; gap:6px; align-items:center;">
+
+    <form method="get" action="" style="display:flex; gap:6px; align-items:center; flex: 1; max-width: 360px;">
         <input type="hidden" name="filter" value="search">
-        <input type="text" name="search" placeholder="{{ t('Search by code / name / phone') }}" value="{{ $search }}" style="min-width: 200px;">
-        <button type="submit" class="btn btn-sm btn-primary">{!! icon('search', 14) !!} {{ t('Search') }}</button>
+        <div style="position: relative; width: 100%;">
+            <input type="text" name="search" class="form-control" placeholder="{{ t('Search code, name, phone...') }}" value="{{ $search }}" style="padding-left: 32px;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.6;">{!! icon('search', 14) !!}</span>
+        </div>
+        <button type="submit" class="btn btn-primary">{!! icon('search', 14) !!}</button>
     </form>
-    <span style="flex:1"></span>
-    <button class="btn btn-sm" onclick="openExcelImportModal()">{!! icon('upload', 14) !!} {{ t('Load From Excel') }}</button>
+
+    <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+        <button class="btn btn-sm" onclick="openExcelImportModal()">{!! icon('upload', 14) !!} {{ t('Import Excel') }}</button>
+        <button class="btn btn-sm" onclick="exportCustomersCSV()">{!! icon('download', 14) !!} {{ t('Export CSV') }}</button>
+    </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
-    <div class="panel">
-        <div class="panel-header">{!! icon('search', 16) !!} {{ t('Quick Customer Lookup') }}</div>
-        <div class="panel-body">
+<!-- Two Column Panel (Quick Lookup & Bulk Actions) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden;">
+        <div class="panel-header" style="background: var(--surface-container-low); padding: 12px 18px; border-bottom: 1px solid var(--outline-variant); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; color: var(--on-surface);">
+            {!! icon('search', 16) !!} {{ t('Quick Customer Lookup') }}
+        </div>
+        <div class="panel-body" style="padding: 16px;">
             <div style="display:flex; gap:8px; align-items:flex-end;">
-                <div class="form-group" style="flex:1;">
-                    <label>{{ t('Customer Code') }}</label>
-                    <input type="text" id="lookupCode" placeholder="e.g. ETY-0001" onkeydown="if(event.key==='Enter') lookupCustomer()">
+                <div class="form-group" style="flex:1; margin:0;">
+                    <label style="font-size: 12px; font-weight: 600;">{{ t('Customer Meter Code') }}</label>
+                    <input type="text" id="lookupCode" class="form-control" placeholder="e.g. ETY-0001" onkeydown="if(event.key==='Enter') lookupCustomer()">
                 </div>
-                <button class="btn btn-primary" onclick="lookupCustomer()">{!! icon('search', 16) !!} {{ t('Single Search') }}</button>
+                <button class="btn btn-primary" onclick="lookupCustomer()">{!! icon('search', 16) !!} {{ t('Lookup') }}</button>
             </div>
             <div id="lookupResult" style="margin-top:12px;"></div>
         </div>
     </div>
 
-    <div class="panel">
-        <div class="panel-header">{!! icon('database', 16) !!} {{ t('Bulk Operations') }}</div>
-        <div class="panel-body">
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-                <button type="button" class="btn" onclick="newCodeFetch()">{!! icon('plus', 14) !!} {{ t('New Code Fetch') }}</button>
-                <button type="button" class="btn" onclick="syncCustomerList()">{!! icon('sync', 14) !!} {{ t('Sync Customer List') }}</button>
-                <button type="button" class="btn" onclick="exportCustomersCSV()">{!! icon('download', 14) !!} {{ t('Export to CSV') }}</button>
+    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden;">
+        <div class="panel-header" style="background: var(--surface-container-low); padding: 12px 18px; border-bottom: 1px solid var(--outline-variant); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; color: var(--on-surface);">
+            {!! icon('database', 16) !!} {{ t('Bulk Tools & Utility Fetch') }}
+        </div>
+        <div class="panel-body" style="padding: 16px;">
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                <button type="button" class="btn" onclick="newCodeFetch()">{!! icon('plus', 14) !!} {{ t('Next Code') }}</button>
+                <button type="button" class="btn" onclick="syncCustomerList()">{!! icon('sync', 14) !!} {{ t('Sync Database') }}</button>
+                <button type="button" class="btn" onclick="exportCustomersCSV()">{!! icon('download', 14) !!} {{ t('CSV Export') }}</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="panel">
-    <div class="panel-header">
-        <span>{{ t('Registered Customers') }} ({{ count($customers) }} {{ t('shown') }} / {{ $totalCount }} {{ t('total') }} — {{ t('Active') }}: {{ $activeCount }} / DC: {{ $dcCount }})</span>
+<!-- Main Registered Customers Data Table -->
+<div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); position: relative;">
+    <div style="height: 4px; background: var(--primary-container);"></div>
+    <div class="panel-header" style="padding: 14px 20px; background: var(--surface-container-lowest); border-bottom: 1px solid var(--outline-variant); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 700; font-size: 14px; color: var(--on-surface);">
+            {{ t('Registered Customers Registry') }}
+            <span class="badge badge-secondary" style="margin-left: 8px;">{{ count($customers) }} {{ t('shown') }} / {{ $totalCount }} {{ t('total') }}</span>
+        </span>
+        <span style="font-size: 12px; color: var(--text-muted);">
+            Active: <strong style="color: var(--success);">{{ $activeCount }}</strong> &bull; DC: <strong style="color: var(--danger);">{{ $dcCount }}</strong>
+        </span>
     </div>
     <div class="scrollable-table">
         <div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
         <div class="table-scroll-view">
             <table class="data-table compact" id="customersTable">
                 <thead>
-                <tr>
-                    <th>{{ t('Code') }}</th>
-                    <th>{{ t('Full Name') }}</th>
-                    <th>{{ t('Kebele') }}</th>
-                    <th>{{ t('Phone') }}</th>
-                    <th>{{ t('Meter Size') }}</th>
-                    <th>{{ t('Customer Type') }}</th>
-                    <th>{{ t('Payment') }}</th>
-                    <th>{{ t('Branch') }}</th>
-                    <th>{{ t('Status') }}</th>
-                    <th>{{ t('Actions') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach ($customers as $c)
-                <tr>
-                    <td><strong>{{ $c->meter_serial }}</strong></td>
-                    <td>{{ trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? '')) }}</td>
-                    <td>{{ $c->kebele }}</td>
-                    <td>{{ $c->phone_number }}</td>
-                    <td>{{ $c->meter_size }}</td>
-                    <td>{{ $c->customer_type }}</td>
-                    <td>{{ $c->payment_way }}</td>
-                    <td>{{ $c->customer_branch }}</td>
-                    <td>
-                        @if ($c->customer_status === 'Active')
-                            <span class="badge badge-success">{{ t('Active') }}</span>
-                        @elseif ($c->customer_status === 'DC')
-                            <span class="badge badge-danger">DC</span>
-                        @else
-                            <span class="badge badge-default">{{ $c->customer_status }}</span>
-                        @endif
-                    </td>
-                    <td style="display:flex; gap:6px; flex-wrap:wrap;">
-                        <button type="button" class="btn btn-sm" onclick='editCustomer({{ json_encode($c->meter_serial) }})'>{!! icon('edit', 14) !!} {{ t('Edit') }}</button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick='deleteCustomer({{ json_encode($c->meter_serial) }}, {{ json_encode(trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? ''))) }})'>{!! icon('trash', 14) !!} {{ t('Delete') }}</button>
-                    </td>
-                </tr>
-            @endforeach
-            @if ($customers->isEmpty())
-                <tr><td colspan="10" style="text-align:center; padding: 30px; color:#6b7280;">{{ t('No customers found') }}</td></tr>
-            @endif
-            </tbody>
-        </table>
+                    <tr>
+                        <th>{{ t('Code') }}</th>
+                        <th>{{ t('Customer Details') }}</th>
+                        <th>{{ t('Kebele / Phone') }}</th>
+                        <th>{{ t('Meter Specs') }}</th>
+                        <th>{{ t('Type & Payment') }}</th>
+                        <th>{{ t('Branch') }}</th>
+                        <th>{{ t('Status') }}</th>
+                        <th style="text-align: right;">{{ t('Actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach ($customers as $c)
+                    <tr>
+                        <td><span style="font-family: monospace; font-weight: 700; font-size: 13px; color: var(--primary); background: var(--surface-container-low); padding: 4px 8px; border-radius: var(--r-sm); border: 1px solid var(--outline-variant);">{{ $c->meter_serial }}</span></td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--on-surface); font-size: 13.5px;">{{ trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? '')) }}</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Bill #: {{ $c->bill_num ?? '—' }} &bull; Block: {{ $c->reader_block ?? '—' }}</div>
+                        </td>
+                        <td>
+                            <div>{{ $c->kebele ? 'Kebele '.$c->kebele : '—' }}</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">{{ $c->phone_number ?? '—' }}</div>
+                        </td>
+                        <td>
+                            <div><strong>{{ $c->meter_size ?? '1/2"' }}</strong></div>
+                            <div style="font-size: 11.5px; color: var(--text-muted);">Start: {{ number_format($c->start_value ?? 0, 1) }} m³</div>
+                        </td>
+                        <td>
+                            <div>{{ $c->customer_type ?? 'Domestic' }}</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted);">{{ $c->payment_way ?? 'Postpaid' }}</div>
+                        </td>
+                        <td>{{ $c->customer_branch ?? 'Main' }}</td>
+                        <td>
+                            @if ($c->customer_status === 'Active')
+                                <span class="badge badge-success">{!! icon('check', 12) !!} {{ t('Active') }}</span>
+                            @elseif ($c->customer_status === 'DC')
+                                <span class="badge badge-danger">{!! icon('x', 12) !!} DC</span>
+                            @else
+                                <span class="badge badge-warning">{!! icon('refresh', 12) !!} {{ $c->customer_status }}</span>
+                            @endif
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display:inline-flex; gap:6px;">
+                                <a href="{{ route('customer-ledger.index') }}?meterSerial={{ urlencode($c->meter_serial) }}" class="btn btn-sm" title="View Financial Ledger">{!! icon('book-open', 14) !!}</a>
+                                <button type="button" class="btn btn-sm" onclick='editCustomer({{ json_encode($c->meter_serial) }})'>{!! icon('edit', 14) !!} {{ t('Edit') }}</button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick='deleteCustomer({{ json_encode($c->meter_serial) }}, {{ json_encode(trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? ''))) }})'>{!! icon('trash', 14) !!}</button>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                @if ($customers->isEmpty())
+                    <tr><td colspan="8" style="text-align:center; padding: 40px; color:var(--text-muted);">{{ t('No customer records found in the database') }}</td></tr>
+                @endif
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<div class="modal-backdrop" id="registerModal">
-    <div class="modal" style="max-width: 760px;">
+<!-- Registration Modal -->
+<div class="modal-backdrop v2" id="registerModal">
+    <div class="modal v2" style="max-width: 760px;">
         <div class="modal-header">
             <div class="modal-icon">{!! icon('plus', 20) !!}</div>
             <div class="modal-title">
                 <h3>{{ t('Customer Registration Form') }}</h3>
-                <div class="modal-subtitle">{{ t('Register a new water meter customer') }}</div>
+                <div class="modal-subtitle">{{ t('Register a new water meter customer in the system') }}</div>
             </div>
-            <button class="close" onclick="closeModal('registerModal')">{!! icon('x', 18) !!}</button>
+            <button class="close" onclick="closeModal('registerModal')">&times;</button>
         </div>
         <div class="modal-body">
             <form id="registerForm">
-                <div style="font-size:11px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">{{ t('Identity') }}</div>
-                <div style="background:#fff; border:1px solid var(--cream-200); border-radius:8px; padding:6px 14px; margin-bottom:14px;">
-                    <div class="field-row">
-                        <label>{{ t('Customer Code') }} <span class="required">*</span></label>
-                        <div style="display:flex; gap:6px;">
-                            <input type="text" name="meterSerial" required style="flex:1;">
-                            <button type="button" class="btn btn-sm" onclick="generateCode()">{!! icon('refresh', 12) !!} {{ t('Auto') }}</button>
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">1. {{ t('Identity & Personal Specs') }}</div>
+                <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:14px; margin-bottom:16px;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('Customer Code') }} <span class="required">*</span></label>
+                            <div style="display:flex; gap:6px;">
+                                <input type="text" name="meterSerial" required class="form-control" placeholder="ETY-0001">
+                                <button type="button" class="btn btn-sm" onclick="generateCode()">{!! icon('refresh', 12) !!} {{ t('Auto') }}</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Kebele') }} <span class="required">*</span></label>
+                            <input type="text" name="kebele" required class="form-control" placeholder="e.g. 01">
                         </div>
                     </div>
-                    <div class="field-row">
-                        <label>{{ t('Kebele') }} <span class="required">*</span></label>
-                        <input type="text" name="kebele" required placeholder="e.g. 01">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('First Name') }} <span class="required">*</span></label>
+                            <input type="text" name="firstName" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Middle Name') }}</label>
+                            <input type="text" name="middleName" class="form-control">
+                        </div>
                     </div>
-                    <div class="field-row">
-                        <label>{{ t('First Name') }} <span class="required">*</span></label>
-                        <input type="text" name="firstName" required>
-                    </div>
-                    <div class="field-row">
-                        <label>{{ t('Middle Name') }}</label>
-                        <input type="text" name="middleName">
-                    </div>
-                    <div class="field-row">
-                        <label>{{ t('Last Name') }}</label>
-                        <input type="text" name="lastName">
-                    </div>
-                    <div class="field-row">
-                        <label>{{ t('Phone Number') }}</label>
-                        <input type="text" name="phoneNumber" placeholder="+2519...">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('Last Name') }}</label>
+                            <input type="text" name="lastName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Phone Number') }}</label>
+                            <input type="text" name="phoneNumber" class="form-control" placeholder="+2519...">
+                        </div>
                     </div>
                 </div>
 
-                <div style="font-size:11px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; margin-top:14px;">{{ t('Meter Information') }}</div>
-                <div style="background:#fff; border:1px solid var(--cream-200); border-radius:8px; padding:6px 14px; margin-bottom:14px;">
-                    <div class="field-row">
-                        <label>{{ t('Meter Size') }}</label>
-                        <select name="meterSize" class="fancy">
-                            @foreach ($meterSizes as $v)
-                                <option value="{{ $v }}">{{ $v }}</option>
-                            @endforeach
-                        </select>
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">2. {{ t('Meter Specifications') }}</div>
+                <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:14px; margin-bottom:16px;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('Meter Size') }}</label>
+                            <select name="meterSize" class="fancy">
+                                @foreach ($meterSizes as $v)
+                                    <option value="{{ $v }}">{{ $v }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Meter Number') }}</label>
+                            <input type="number" name="meterNum" value="0" class="form-control">
+                        </div>
                     </div>
-                    <div class="field-row">
-                        <label>{{ t('Meter Number') }}</label>
-                        <input type="number" name="meterNum" value="0">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('Serial Number (Bill #)') }}</label>
+                            <input type="text" name="billNum" placeholder="SN-0001" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Start Reading') }} (m³)</label>
+                            <input type="number" step="0.01" name="startValue" value="0" class="form-control">
+                        </div>
                     </div>
-                    <div class="field-row">
-                        <label>{{ t('Serial Number (Bill #)') }}</label>
-                        <input type="text" name="billNum" placeholder="SN-0001">
-                    </div>
-                    <div class="field-row">
-                        <label>{{ t('Start Reading') }}</label>
-                        <input type="number" step="0.01" name="startValue" value="0">
-                    </div>
-                    <div class="field-row">
+                    <div class="form-group">
                         <label>{{ t('Sold Date') }}</label>
-                        <input type="date" name="soldDate" value="{{ date('Y-m-d') }}">
+                        <input type="date" name="soldDate" value="{{ date('Y-m-d') }}" class="form-control">
                     </div>
                 </div>
 
-                <div style="font-size:11px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; margin-top:14px;">{{ t('Classification') }}</div>
-                <div style="background:#fff; border:1px solid var(--cream-200); border-radius:8px; padding:6px 14px;">
-                    <div class="field-row">
-                        <label>{{ t('Customer Type') }}</label>
-                        <select name="customerType" class="fancy">
-                            @foreach ($customerTypes as $v)
-                                <option value="{{ $v }}">{{ $v }}</option>
-                            @endforeach
-                        </select>
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">3. {{ t('Classification & Location') }}</div>
+                <div style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-lg); padding:14px;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('Customer Type') }}</label>
+                            <select name="customerType" class="fancy">
+                                @foreach ($customerTypes as $v)
+                                    <option value="{{ $v }}">{{ $v }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Payment Way') }}</label>
+                            <select name="paymentWay" class="fancy">
+                                @foreach ($paymentWays as $v)
+                                    <option value="{{ $v }}">{{ $v }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div class="field-row">
-                        <label>{{ t('Payment Way') }}</label>
-                        <select name="paymentWay" class="fancy">
-                            @foreach ($paymentWays as $v)
-                                <option value="{{ $v }}">{{ $v }}</option>
-                            @endforeach
-                        </select>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>{{ t('Customer Branch') }}</label>
+                            <select name="customerBranch" class="fancy">
+                                @foreach ($branches as $v)
+                                    <option value="{{ $v }}">{{ $v }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ t('Status') }}</label>
+                            <select name="customerStatus" class="fancy">
+                                @foreach ($customerStatuses as $v)
+                                    <option value="{{ $v }}" @if($v==='Active') selected @endif>{{ $v }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div class="field-row">
-                        <label>{{ t('Customer Branch') }}</label>
-                        <select name="customerBranch" class="fancy">
-                            @foreach ($branches as $v)
-                                <option value="{{ $v }}">{{ $v }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="field-row">
-                        <label>{{ t('Status') }}</label>
-                        <select name="customerStatus" class="fancy">
-                            @foreach ($customerStatuses as $v)
-                                <option value="{{ $v }}" @if($v==='Active') selected @endif>{{ $v }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="field-row">
+                    <div class="form-group">
                         <label>{{ t('Reader Block') }}</label>
-                        <input type="text" name="readerBlock" placeholder="Block-A">
+                        <input type="text" name="readerBlock" placeholder="Block-A" class="form-control">
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="btn" onclick="closeModal('registerModal')">{{ t('Cancel') }}</button>
-            <button class="btn btn-success" onclick="submitRegister()">{!! icon('check', 16) !!} {{ t('Register Customer') }}</button>
+            <button class="btn btn-primary" onclick="submitRegister()">{!! icon('check', 16) !!} {{ t('Register Customer') }}</button>
         </div>
     </div>
 </div>
 
-<div class="modal-backdrop" id="editModal">
-    <div class="modal" style="max-width: 900px;">
+<!-- Edit Customer Modal -->
+<div class="modal-backdrop v2" id="editModal">
+    <div class="modal v2" style="max-width: 860px;">
         <div class="modal-header">
             <div class="modal-icon">{!! icon('edit', 20) !!}</div>
             <div class="modal-title">
-                <h3>{{ t('Edit Customer') }} — <span id="editCode"></span></h3>
-                <div class="modal-subtitle">{{ t('Update customer information') }}</div>
+                <h3>{{ t('Edit Customer Record') }} — <span id="editCode" style="color: var(--primary);"></span></h3>
+                <div class="modal-subtitle">{{ t('Update customer profile & operational settings') }}</div>
             </div>
-            <button class="close" onclick="closeModal('editModal')">{!! icon('x', 18) !!}</button>
+            <button class="close" onclick="closeModal('editModal')">&times;</button>
         </div>
         <div class="modal-body">
-            <div id="editInfo" style="margin-bottom: 14px; padding: 12px 16px; background: var(--cream-100); border-radius: 8px; border-left: 4px solid var(--lime-500);"></div>
+            <div id="editInfo" style="margin-bottom: 16px; padding: 12px 16px; background: var(--surface-container-low); border-radius: var(--r-md); border-left: 4px solid var(--primary-container);"></div>
 
-            <div style="font-size:11px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">{{ t('Update Operations') }}</div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:8px;">
-                <button class="btn btn-sm" onclick="promptUpdate('update-customer-info', ['meterSerial','firstName','middleName','lastName','phoneNumber'], 'Update Customer Info')">{!! icon('file-text', 14) !!} Update Customer Info</button>
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;">{{ t('Select Field Operation to Update') }}</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+                <button class="btn btn-sm" onclick="promptUpdate('update-customer-info', ['meterSerial','firstName','middleName','lastName','phoneNumber'], 'Update Customer Info')">{!! icon('file-text', 14) !!} Update Personal Info</button>
                 <button class="btn btn-sm" onclick="promptUpdate('update-first-name', ['meterSerial','firstName'], 'Update First Name')">{!! icon('edit', 14) !!} Update First Name</button>
                 <button class="btn btn-sm" onclick="promptUpdate('update-middle-name', ['meterSerial','middleName'], 'Update Middle Name')">{!! icon('edit', 14) !!} Update Middle Name</button>
                 <button class="btn btn-sm" onclick="promptUpdate('update-last-name', ['meterSerial','lastName'], 'Update Last Name')">{!! icon('edit', 14) !!} Update Last Name</button>
-                <button class="btn btn-sm" onclick="promptUpdate('update-phone-number', ['meterSerial','phoneNumber'], 'Update Phone Number')">{!! icon('phone', 14) !!} Update Phone Number</button>
+                <button class="btn btn-sm" onclick="promptUpdate('update-phone-number', ['meterSerial','phoneNumber'], 'Update Phone Number')">{!! icon('phone', 14) !!} Update Phone</button>
                 <button class="btn btn-sm" onclick="promptUpdate('update-kebele', ['meterSerial','kebele'], 'Update Kebele')">{!! icon('map-pin', 14) !!} Update Kebele</button>
-                <button class="btn btn-sm" onclick="promptUpdate('update-customer-type', ['meterSerial','customerType'], 'Update Customer Type', {customerType: {{ json_encode($customerTypes) }} })">{!! icon('tag', 14) !!} Change Customer Type</button>
-                <button class="btn btn-sm" onclick="promptUpdate('update-meter-size', ['meterSerial','meterSize','meterNum'], 'Update Meter Size', {meterSize: {{ json_encode($meterSizes) }} })">{!! icon('edit', 14) !!} Update Meter Size</button>
-                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-payment-way', ['meterSerial','paymentWay'], 'Update Payment Way', {paymentWay: {{ json_encode($paymentWays) }} })">{!! icon('credit-card', 14) !!} Update Payment Way</button>
-                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-customer-branch', ['meterSerial','customerBranch'], 'Update Branch', {customerBranch: {{ json_encode($branches) }} })">{!! icon('building', 14) !!} Update Customer Branch</button>
-                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-bill-num', ['meterSerial','billNum'], 'Update Bill Number')">{!! icon('receipt', 14) !!} Update Bill Number</button>
-                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-reader-block', ['meterSerial','readerBlock'], 'Update Reader Block')">{!! icon('alert', 14) !!} Update Reader Block</button>
-                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-start-reading', ['meterSerial','startValue'], 'Update Start Reading')">{!! icon('clock', 14) !!} Update Start Reading</button>
+                <button class="btn btn-sm" onclick="promptUpdate('update-customer-type', ['meterSerial','customerType'], 'Update Customer Type', {customerType: {{ json_encode($customerTypes) }} })">{!! icon('tag', 14) !!} Customer Type</button>
+                <button class="btn btn-sm" onclick="promptUpdate('update-meter-size', ['meterSerial','meterSize','meterNum'], 'Update Meter Size', {meterSize: {{ json_encode($meterSizes) }} })">{!! icon('edit', 14) !!} Meter Size</button>
+                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-payment-way', ['meterSerial','paymentWay'], 'Update Payment Way', {paymentWay: {{ json_encode($paymentWays) }} })">{!! icon('credit-card', 14) !!} Payment Way</button>
+                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-customer-branch', ['meterSerial','customerBranch'], 'Update Branch', {customerBranch: {{ json_encode($branches) }} })">{!! icon('building', 14) !!} Branch</button>
+                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-bill-num', ['meterSerial','billNum'], 'Update Bill Number')">{!! icon('receipt', 14) !!} Bill Number</button>
+                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-reader-block', ['meterSerial','readerBlock'], 'Update Reader Block')">{!! icon('alert', 14) !!} Reader Block</button>
+                <button type="button" class="btn btn-sm" onclick="promptUpdate('update-start-reading', ['meterSerial','startValue'], 'Update Start Reading')">{!! icon('clock', 14) !!} Start Reading</button>
 
-                <button type="button" class="btn btn-sm btn-warning" onclick="updateStatus('Updated')">{!! icon('tag', 14) !!} Mark as Updated</button>
+                <button type="button" class="btn btn-sm btn-warning" onclick="updateStatus('Updated')">{!! icon('tag', 14) !!} Mark Updated</button>
                 <button type="button" class="btn btn-sm btn-warning" onclick="updateStatus('DC')">{!! icon('zap', 14) !!} Disconnect (DC)</button>
                 <button type="button" class="btn btn-sm btn-success" onclick="updateStatus('Active')">{!! icon('check', 14) !!} Re-Activate</button>
                 <button type="button" class="btn btn-sm btn-danger" onclick="updateStatus('Deleted')">{!! icon('x', 14) !!} Mark Deleted</button>
-                <button type="button" class="btn btn-sm btn-success" onclick="syncOne()">{!! icon('sync', 14) !!} Sync This Customer</button>
-                <button type="button" class="btn btn-sm" onclick="submitLocation()">{!! icon('map-pin', 14) !!} Submit GPS Location</button>
-                <button type="button" class="btn btn-sm" onclick="meterOwnerTransfer()">{!! icon('sync', 14) !!} Meter Owner Transfer</button>
-                <button type="button" class="btn btn-sm" onclick="changeNewMeter()">{!! icon('wrench', 14) !!} Change New Meter</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="syncOne()">{!! icon('sync', 14) !!} Sync Customer</button>
+                <button type="button" class="btn btn-sm" onclick="submitLocation()">{!! icon('map-pin', 14) !!} GPS Location</button>
+                <button type="button" class="btn btn-sm" onclick="meterOwnerTransfer()">{!! icon('sync', 14) !!} Owner Transfer</button>
+                <button type="button" class="btn btn-sm" onclick="changeNewMeter()">{!! icon('wrench', 14) !!} Install New Meter</button>
             </div>
         </div>
         <div class="modal-footer">
@@ -279,57 +357,59 @@
     </div>
 </div>
 
-<div class="modal-backdrop" id="excelModal">
-    <div class="modal" style="max-width: 560px;">
+<!-- Excel Import Modal -->
+<div class="modal-backdrop v2" id="excelModal">
+    <div class="modal v2" style="max-width: 560px;">
         <div class="modal-header">
             <div class="modal-icon">{!! icon('upload', 20) !!}</div>
             <div class="modal-title">
                 <h3>{{ t('Import Customers from Excel/CSV') }}</h3>
                 <div class="modal-subtitle">{{ t('Bulk register customers from a spreadsheet') }}</div>
             </div>
-            <button class="close" onclick="closeModal('excelModal')">{!! icon('x', 18) !!}</button>
+            <button class="close" onclick="closeModal('excelModal')">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="alert alert-info">
-                <strong>{{ t('Required columns') }}:</strong>
-                <code style="display:block; margin-top:6px; font-size:11px; word-break:break-all;">meterSerial, firstName, middleName, lastName, kebele, phoneNumber, meterSize, customerType, billNum, startValue, paymentWay, customerBranch, readerBlock</code>
+            <div class="alert alert-info" style="background: var(--surface-container-low); border: 1px solid var(--outline-variant); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 14px;">
+                <strong style="color: var(--primary);">{{ t('Required columns in CSV') }}:</strong>
+                <code style="display:block; margin-top:6px; font-size:11px; word-break:break-all; background: var(--surface); padding: 6px 10px; border-radius: 4px; border: 1px solid var(--outline-variant);">meterSerial, firstName, middleName, lastName, kebele, phoneNumber, meterSize, customerType, billNum, startValue, paymentWay, customerBranch, readerBlock</code>
             </div>
             <form id="excelForm" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label>{{ t('CSV File') }}</label>
-                    <input type="file" name="excelFile" accept=".csv,.xlsx" required>
+                    <input type="file" name="excelFile" accept=".csv,.xlsx" required class="form-control">
                 </div>
             </form>
-            <div class="alert alert-warning" style="margin-top:12px;">
-                <a href="{{ $baseUrl }}/sample-customer-template.csv" download>{!! icon('download', 14) !!} {{ t('Download CSV template') }}</a>
+            <div style="margin-top:12px;">
+                <a href="{{ $baseUrl }}/sample-customer-template.csv" download class="btn btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">{!! icon('download', 14) !!} {{ t('Download CSV template') }}</a>
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn" onclick="closeModal('excelModal')">{{ t('Cancel') }}</button>
-            <button class="btn btn-success" onclick="submitExcel()">{!! icon('upload', 16) !!} {{ t('Register From Excel') }}</button>
+            <button class="btn btn-primary" onclick="submitExcel()">{!! icon('upload', 16) !!} {{ t('Register From Excel') }}</button>
         </div>
     </div>
 </div>
 
-<div class="modal-backdrop" id="promptModal">
-    <div class="modal" style="max-width: 500px;">
+<!-- Update Prompt Modal -->
+<div class="modal-backdrop v2" id="promptModal">
+    <div class="modal v2" style="max-width: 500px;">
         <div class="modal-header">
             <div class="modal-icon">{!! icon('edit', 20) !!}</div>
             <div class="modal-title">
                 <h3 id="promptTitle">{{ t('Update') }}</h3>
                 <div class="modal-subtitle">{{ t('Enter new value below') }}</div>
             </div>
-            <button class="close" onclick="closeModal('promptModal')">{!! icon('x', 18) !!}</button>
+            <button class="close" onclick="closeModal('promptModal')">&times;</button>
         </div>
         <div class="modal-body">
             <form id="promptForm">
-                <div id="promptFields" style="background:#fff; border:1px solid var(--cream-200); border-radius:8px; padding:6px 14px;"></div>
+                <div id="promptFields" style="background:var(--surface-container-low); border:1px solid var(--outline-variant); border-radius:var(--r-md); padding:14px;"></div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="btn" onclick="closeModal('promptModal')">{{ t('Cancel') }}</button>
-            <button class="btn btn-success" onclick="submitPromptUpdate()">{!! icon('check', 16) !!} {{ t('Submit Update') }}</button>
+            <button class="btn btn-primary" onclick="submitPromptUpdate()">{!! icon('check', 16) !!} {{ t('Submit Update') }}</button>
         </div>
     </div>
 </div>
@@ -366,7 +446,7 @@ function submitRegister() {
     body.startValue = parseFloat(body.startValue || 0);
     fetch(apiUrl('active_customers/add-active-customer'), {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type':'application/json'},
         body: JSON.stringify(body),
     }).then(r => {
         if (r.status === 201) {
@@ -385,23 +465,23 @@ function lookupCustomer() {
       .then(rows => {
           const div = document.getElementById('lookupResult');
           if (!rows || !rows.length) {
-              div.innerHTML = '<div class="alert alert-warning">No customer found.</div>';
+              div.innerHTML = '<div class="alert alert-warning" style="margin:0;">No customer found.</div>';
               return;
           }
           const c = rows[0];
           div.innerHTML = `
-            <table class="data-table">
-              <tr><th>Code</th><td>${c.meter_serial}</td></tr>
+            <table class="data-table" style="margin-bottom:8px;">
+              <tr><th>Code</th><td><strong style="color:var(--primary);">${c.meter_serial}</strong></td></tr>
               <tr><th>Name</th><td>${c.first_name} ${c.middle_name||''} ${c.last_name||''}</td></tr>
-              <tr><th>Kebele</th><td>${c.kebele||''}</td></tr>
-              <tr><th>Phone</th><td>${c.phone_number||''}</td></tr>
-              <tr><th>Meter</th><td>${c.meter_size||''} (#${c.meter_num||0})</td></tr>
-              <tr><th>Type</th><td>${c.customer_type||''}</td></tr>
-              <tr><th>Branch</th><td>${c.customer_branch||''}</td></tr>
-              <tr><th>Status</th><td>${c.customer_status}</td></tr>
-              <tr><th>Start Reading</th><td>${c.start_value}</td></tr>
+              <tr><th>Kebele</th><td>${c.kebele||'—'}</td></tr>
+              <tr><th>Phone</th><td>${c.phone_number||'—'}</td></tr>
+              <tr><th>Meter</th><td>${c.meter_size||'—'} (#${c.meter_num||0})</td></tr>
+              <tr><th>Type</th><td>${c.customer_type||'—'}</td></tr>
+              <tr><th>Branch</th><td>${c.customer_branch||'—'}</td></tr>
+              <tr><th>Status</th><td><span class="badge ${c.customer_status==='Active'?'badge-success':'badge-danger'}">${c.customer_status}</span></td></tr>
+              <tr><th>Start Reading</th><td>${c.start_value} m³</td></tr>
             </table>
-            <button class="btn btn-primary btn-sm" type="button" style="margin-top:8px;" onclick='editCustomer(${JSON.stringify(c.meter_serial)})'>Edit Customer</button>
+            <button class="btn btn-primary btn-sm" type="button" onclick='editCustomer(${JSON.stringify(c.meter_serial)})'>Edit Customer</button>
           `;
       });
 }
@@ -414,40 +494,51 @@ function editCustomer(code) {
       .then(c => {
           if (!c) return showToast('Customer not found', 'danger');
           document.getElementById('editInfo').innerHTML = `
-            <strong>${c.first_name} ${c.middle_name||''} ${c.last_name||''}</strong><br>
-            Kebele: ${c.kebele||'—'} | Phone: ${c.phone_number||'—'} | Type: ${c.customer_type||'—'} | Status: ${c.customer_status}
+            <div style="font-weight:700; font-size:14px; color:var(--on-surface);">${c.first_name} ${c.middle_name||''} ${c.last_name||''}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+              Kebele: ${c.kebele||'—'} &bull; Phone: ${c.phone_number||'—'} &bull; Type: ${c.customer_type||'—'} &bull; Status: <strong>${c.customer_status}</strong>
+            </div>
           `;
       });
     openModal('editModal');
 }
 
 function deleteCustomer(code, name) {
-    if (!confirm(`Delete customer ${code} (${name})?`)) return;
-    fetch(apiUrl(`active_customers/update-single-customer-status`) + `?meterSerial=${encodeURIComponent(code)}&customerStatus=Deleted`, {method:'PUT'})
-      .then(r => r.text())
-      .then(() => { showToast('Customer marked as Deleted', 'success'); setTimeout(()=>location.reload(), 800); });
+    confirmDialog(`Delete customer ${code}?`, `Are you sure you want to mark customer ${name} as deleted?`, 'danger')
+      .then(ok => {
+          if (!ok) return;
+          fetch(apiUrl(`active_customers/update-single-customer-status`) + `?meterSerial=${encodeURIComponent(code)}&customerStatus=Deleted`, {method:'PUT'})
+            .then(r => r.text())
+            .then(() => { showToast('Customer marked as Deleted', 'success'); setTimeout(()=>location.reload(), 800); });
+      });
 }
 
 function updateStatus(newStatus) {
     if (!currentEditCode) return;
-    if (!confirm(`Change status to "${newStatus}"?`)) return;
-    fetch(apiUrl(`active_customers/update-single-customer-status`) + `?meterSerial=${encodeURIComponent(currentEditCode)}&customerStatus=${encodeURIComponent(newStatus)}`, {method:'PUT'})
-      .then(r => r.text())
-      .then(() => { showToast(`Status updated to ${newStatus}`, 'success'); setTimeout(()=>location.reload(), 800); });
+    confirmDialog(`Change Status`, `Change status of ${currentEditCode} to "${newStatus}"?`, 'warning')
+      .then(ok => {
+          if (!ok) return;
+          fetch(apiUrl(`active_customers/update-single-customer-status`) + `?meterSerial=${encodeURIComponent(currentEditCode)}&customerStatus=${encodeURIComponent(newStatus)}`, {method:'PUT'})
+            .then(r => r.text())
+            .then(() => { showToast(`Status updated to ${newStatus}`, 'success'); setTimeout(()=>location.reload(), 800); });
+      });
 }
 
 function syncOne() {
     if (!currentEditCode) return;
     fetch(apiUrl(`active_customers/update-sync-status`) + `?meterSerial=${encodeURIComponent(currentEditCode)}`, {method:'PUT'})
       .then(r => r.text())
-      .then(() => showToast('Customer synced', 'success'));
+      .then(() => showToast('Customer synced successfully', 'success'));
 }
 
 function syncCustomerList() {
-    if (!confirm('Sync all customers to server?')) return;
-    fetch(apiUrl('active_customers/send-active-customers'), {method:'POST'})
-      .then(r => r.json())
-      .then(d => showToast(`Synced ${d.count} customers`, 'success'));
+    confirmDialog('Sync Customer Database', 'Sync all active customer records to cloud server?', 'info')
+      .then(ok => {
+          if (!ok) return;
+          fetch(apiUrl('active_customers/send-active-customers'), {method:'POST'})
+            .then(r => r.json())
+            .then(d => showToast(`Synced ${d.count} customer records`, 'success'));
+      });
 }
 
 function newCodeFetch() {
@@ -455,7 +546,7 @@ function newCodeFetch() {
     if (!kebele) return;
     fetch(apiUrl('active_customers/get-recent-code') + `?kebele=${encodeURIComponent(kebele)}`)
       .then(r => r.text())
-      .then(code => showToast(`Next code for kebele ${kebele}: ${code}`, 'info'));
+      .then(code => showToast(`Next available code for Kebele ${kebele}: ${code}`, 'info'));
 }
 
 function promptUpdate(endpoint, fields, title, dropdowns={}) {
@@ -469,13 +560,14 @@ function promptUpdate(endpoint, fields, title, dropdowns={}) {
         if (f === 'meterSerial') return;
         const group = document.createElement('div');
         group.className = 'form-group';
-        group.style.marginBottom = '8px';
+        group.style.marginBottom = '10px';
         const lbl = document.createElement('label');
         lbl.textContent = f.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
         group.appendChild(lbl);
         let input;
         if (dropdowns[f]) {
             input = document.createElement('select');
+            input.className = 'fancy';
             dropdowns[f].forEach(v => {
                 const o = document.createElement('option');
                 o.value = v; o.textContent = v;
@@ -483,11 +575,11 @@ function promptUpdate(endpoint, fields, title, dropdowns={}) {
             });
         } else {
             input = document.createElement('input');
+            input.className = 'form-control';
             input.type = (f.includes('Value') || f.includes('Num')) ? 'number' : 'text';
             input.step = '0.01';
         }
         input.name = f;
-        input.style.width = '100%';
         group.appendChild(input);
         div.appendChild(group);
     });
@@ -539,7 +631,7 @@ function meterOwnerTransfer() {
     });
     fetch(apiUrl(`active_customers/update-customer-info`) + `?${params.toString()}`, {method:'PUT'})
       .then(r => r.text())
-      .then(() => { showToast('Owner transferred', 'success'); setTimeout(()=>location.reload(), 800); });
+      .then(() => { showToast('Owner transferred successfully', 'success'); setTimeout(()=>location.reload(), 800); });
 }
 
 function changeNewMeter() {
@@ -554,7 +646,7 @@ function changeNewMeter() {
       .then(() => {
           const p2 = new URLSearchParams({meterSerial: currentEditCode, billNum: newSerial});
           fetch(apiUrl(`active_customers/update-bill-num`) + `?${p2.toString()}`, {method:'PUT'})
-            .then(() => { showToast('New meter installed', 'success'); setTimeout(()=>location.reload(), 800); });
+            .then(() => { showToast('New meter installed successfully', 'success'); setTimeout(()=>location.reload(), 800); });
       });
 }
 
