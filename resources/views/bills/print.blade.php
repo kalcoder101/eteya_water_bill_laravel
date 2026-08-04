@@ -2,140 +2,107 @@
 <html lang="or">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bill — {{ $bill->meter_serial }} — {{ $bill->bill_month }} {{ $bill->bill_year }}</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+@theme {
+    --color-primary: #059669;
+    --color-primary-600: #059669;
+    --color-primary-700: #047857;
+    --color-primary-800: #065F46;
+    --color-primary-50: #ECFDF5;
+    --color-primary-100: #D1FAE5;
+    --color-surface-base: #F8FAF8;
+    --color-surface-card: #FFFFFF;
+    --color-text-main: #0F172A;
+    --color-text-muted: #64748B;
+    --color-accent-warm: #E11D48;
+    --color-border-subtle: #E2E8F0;
+
+    --shadow-card: 0 4px 20px rgba(16, 185, 129, 0.05);
+    --shadow-hover: 0 10px 25px rgba(16, 185, 129, 0.12);
+
+    --font-sans: "Inter", "Noto Sans Ethiopic", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --font-serif: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; }
-body {
-    font-family: "Nyala", "Noto Sans Ethiopic", "Segoe UI", sans-serif;
-    background: var(--ghost-white, #F7F7FF);
-    margin: 0;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #1f2937;
-}
-.bill {
-    width: 240px;
-    background: #fff;
-    border: 1px solid #d1d5db;
-    padding: 16px;
-    font-size: 11px;
-    line-height: 1.45;
-    color: #1f2937;
-    box-shadow: 0 8px 24px rgba(39, 24, 126, 0.12);
-}
-.bill .header { text-align: center; font-weight: 700; font-size: 12px; color: #27187E; margin-bottom: 6px; }
-.bill .subtitle { font-size: 10px; color: #4b5563; }
-.bill hr { border: 0; border-top: 1px dashed #6b7280; margin: 8px 0; }
-.bill .row { display: flex; justify-content: space-between; margin: 3px 0; }
-.bill .row span:first-child { color: #4b5563; }
-.bill .section { font-weight: 700; margin-top: 10px; border-top: 1px dashed #6b7280; padding-top: 6px; color: #27187E; font-size: 11px; }
-.bill .total { font-weight: 700; border-top: 2px solid #27187E; padding-top: 8px; margin-top: 8px; font-size: 12px; color: #27187E; }
-.bill .slogan { text-align: center; font-weight: 700; margin-top: 12px; font-size: 10px; color: #27187E; }
-.bill .sign { margin-top: 14px; display: flex; justify-content: space-between; font-size: 9px; color: #4b5563; }
-.toolbar {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: #fff;
-    padding: 10px 14px;
-    border: 1px solid #ebe4d2;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-    display: flex;
-    gap: 8px;
-}
-.toolbar button {
-    padding: 7px 16px;
-    cursor: pointer;
-    border: 1px solid #27187E;
-    background: #27187E;
-    color: #fff;
-    border-radius: 6px;
-    font-weight: 600;
-    font-family: inherit;
-}
-.toolbar button:hover { background: #1A1054; }
-.toolbar a {
-    padding: 7px 16px;
-    border: 1px solid #E5E3F5;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #4b5563;
-    font-weight: 600;
-}
-.toolbar a:hover { background: #ECEBFA; color: #27187E; }
 @media print {
-    body { background: #fff; padding: 0; }
-    .no-print { display: none; }
+    body { background: #fff !important; padding: 0 !important; }
+    .no-print { display: none !important; }
     @page { size: 80mm auto; margin: 2mm; }
-    .bill { border: 1px solid #4b5563; }
+    .bill { border: 1px solid #4b5563 !important; }
 }
 </style>
 </head>
-<body>
+<body class="antialiased font-sans text-slate-700 bg-surface-base min-h-screen p-6">
 
-<div class="toolbar no-print">
-    <button onclick="window.print()">Print</button>
-    <a href="{{ route('bills.index') }}">← Back to Bills</a>
+<div class="toolbar no-print fixed top-4 right-4 z-10 bg-white px-3 py-2.5 border border-slate-200 rounded-lg shadow-md flex items-center gap-2">
+    <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('print', 14) !!} Print</button>
+    <a href="{{ route('bills.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">{!! icon('arrow-left', 14) !!} Back to Bills</a>
 </div>
 
-<div class="bill" id="bill">
-    <div class="header">
+<div class="bill mx-auto my-4 w-[240px] bg-white p-3 border border-slate-300 rounded font-mono text-[10px] leading-tight text-slate-800 shadow-[0_8px_24px_rgba(39,24,126,0.12)]" id="bill">
+    <div class="text-center font-bold text-[11px] text-emerald-800 mb-1.5">
         {{ $enterpriseOR }}<br>
         Magaalaa {{ $townName }}<br>
-        <small>Water Supply & Sewerage Service Enterprise</small>
+        <span class="text-[9px] text-slate-500 font-normal">Water Supply & Sewerage Service Enterprise</span>
     </div>
-    <hr>
+    <hr class="border-0 border-t border-dashed border-slate-500 my-2">
 
-    <div class="row"><strong>Lakk/Bill #:</strong> <span>{{ $billNumber }}</span></div>
-    <div class="row"><strong>Koddi Mamilaa:</strong> <span>{{ $bill->meter_serial }}</span></div>
-    <div class="row"><strong>Customer:</strong> <span>{{ $fullName }}</span></div>
-    <div class="row"><strong>Guyaa/Date:</strong> <span>{{ $printDate }}</span></div>
-    <div class="row"><strong>Sa'aa/Time:</strong> <span>{{ $printTime }}</span></div>
+    <div class="flex justify-between"><strong>Lakk/Bill #:</strong> <span>{{ $billNumber }}</span></div>
+    <div class="flex justify-between"><strong>Koddi Mamilaa:</strong> <span>{{ $bill->meter_serial }}</span></div>
+    <div class="flex justify-between"><strong>Customer:</strong> <span>{{ $fullName }}</span></div>
+    <div class="flex justify-between"><strong>Guyaa/Date:</strong> <span>{{ $printDate }}</span></div>
+    <div class="flex justify-between"><strong>Sa'aa/Time:</strong> <span>{{ $printTime }}</span></div>
 
-    <hr>
+    <hr class="border-0 border-t border-dashed border-slate-500 my-2">
 
-    <div class="section">1. Bill Cost — Ji'a: {{ $bill->bill_month }} {{ $bill->bill_year }}</div>
-    <div class="row"><span>Previous R:</span><span>{{ number_format($prevReading, 2) }}</span></div>
-    <div class="row"><span>Current R:</span><span>{{ number_format($curReading, 2) }}</span></div>
-    <div class="row"><span>Use (m³):</span><span>{{ number_format($consumption, 2) }}</span></div>
-    <div class="row"><span>Bill Cost:</span><span>{{ number_format($bill->consumption_cost, 2) }}</span></div>
-    <div class="row" style="font-weight:bold;"><span>Subtotal:</span><span>{{ number_format($bill->consumption_cost, 2) }}</span></div>
+    <div class="font-bold mt-2.5 border-t border-dashed border-slate-500 pt-1.5 text-emerald-800 text-[11px]">1. Bill Cost — Ji'a: {{ $bill->bill_month }} {{ $bill->bill_year }}</div>
+    <div class="flex justify-between"><span class="text-slate-500">Previous R:</span><span>{{ number_format($prevReading, 2) }}</span></div>
+    <div class="flex justify-between"><span class="text-slate-500">Current R:</span><span>{{ number_format($curReading, 2) }}</span></div>
+    <div class="flex justify-between"><span class="text-slate-500">Use (m³):</span><span>{{ number_format($consumption, 2) }}</span></div>
+    <div class="flex justify-between"><span class="text-slate-500">Bill Cost:</span><span>{{ number_format($bill->consumption_cost, 2) }}</span></div>
+    <div class="flex justify-between font-bold"><span>Subtotal:</span><span>{{ number_format($bill->consumption_cost, 2) }}</span></div>
 
-    <div class="section">3. M.Rent / Service</div>
-    <div class="row"><span>M. Rent:</span><span>{{ number_format($bill->meter_price, 2) }}</span></div>
-    <div class="row"><span>Service:</span><span>{{ number_format($bill->service_price, 2) }}</span></div>
-    <div class="row" style="font-weight:bold;"><span>Subtotal:</span><span>{{ number_format($bill->meter_price + $bill->service_price, 2) }}</span></div>
+    <div class="font-bold mt-2.5 border-t border-dashed border-slate-500 pt-1.5 text-emerald-800 text-[11px]">3. M.Rent / Service</div>
+    <div class="flex justify-between"><span class="text-slate-500">M. Rent:</span><span>{{ number_format($bill->meter_price, 2) }}</span></div>
+    <div class="flex justify-between"><span class="text-slate-500">Service:</span><span>{{ number_format($bill->service_price, 2) }}</span></div>
+    <div class="flex justify-between font-bold"><span>Subtotal:</span><span>{{ number_format($bill->meter_price + $bill->service_price, 2) }}</span></div>
 
-    <div class="section">5. Water Fund Cost</div>
-    <div class="row"><span>Meter Rent:</span><span>{{ number_format($bill->state_price * 0.4, 2) }}</span></div>
-    <div class="row"><span>Water Cost:</span><span>{{ number_format($bill->state_price * 0.6, 2) }}</span></div>
-    <div class="row" style="font-weight:bold;"><span>Subtotal:</span><span>{{ number_format($bill->state_price, 2) }}</span></div>
+    <div class="font-bold mt-2.5 border-t border-dashed border-slate-500 pt-1.5 text-emerald-800 text-[11px]">5. Water Fund Cost</div>
+    <div class="flex justify-between"><span class="text-slate-500">Meter Rent:</span><span>{{ number_format($bill->state_price * 0.4, 2) }}</span></div>
+    <div class="flex justify-between"><span class="text-slate-500">Water Cost:</span><span>{{ number_format($bill->state_price * 0.6, 2) }}</span></div>
+    <div class="flex justify-between font-bold"><span>Subtotal:</span><span>{{ number_format($bill->state_price, 2) }}</span></div>
 
-    <div class="section">6. Deposit (Dhala)</div>
-    <div class="row"><span>Deposit Cost:</span><span>{{ number_format($bill->deposited_cost, 2) }}</span></div>
+    <div class="font-bold mt-2.5 border-t border-dashed border-slate-500 pt-1.5 text-emerald-800 text-[11px]">6. Deposit (Dhala)</div>
+    <div class="flex justify-between"><span class="text-slate-500">Deposit Cost:</span><span>{{ number_format($bill->deposited_cost, 2) }}</span></div>
 
-    <div class="section">7. Penalty &amp; Community</div>
-    <div class="row"><span>Penalty:</span><span>{{ number_format($bill->penalty_cost, 2) }}</span></div>
-    <div class="row"><span>Community:</span><span>{{ number_format($bill->community_cost, 2) }}</span></div>
+    <div class="font-bold mt-2.5 border-t border-dashed border-slate-500 pt-1.5 text-emerald-800 text-[11px]">7. Penalty &amp; Community</div>
+    <div class="flex justify-between"><span class="text-slate-500">Penalty:</span><span>{{ number_format($bill->penalty_cost, 2) }}</span></div>
+    <div class="flex justify-between"><span class="text-slate-500">Community:</span><span>{{ number_format($bill->community_cost, 2) }}</span></div>
 
-    <div class="total">
-        <div class="row"><span>Waliigala / Total:</span><span>{{ number_format($bill->total_monthly_cost, 2) }} ETB</span></div>
+    <div class="font-bold border-t-2 border-slate-800 pt-2 mt-2 text-[11px] text-emerald-800">
+        <div class="flex justify-between"><span>Waliigala / Total:</span><span>{{ number_format($bill->total_monthly_cost, 2) }} ETB</span></div>
     </div>
 
-    <div class="row" style="margin-top: 6px;">
+    <div class="flex justify-between mt-1.5">
         <span><strong>Qab. Maallaqaa:</strong></span>
         <span><strong>Mallatto:</strong></span>
     </div>
-    <div class="row" style="margin-top: 10px;">
+    <div class="flex justify-between mt-2.5">
         <span>{{ $collector }}</span>
         <span>______________</span>
     </div>
 
-    <hr>
-    <div class="slogan">{{ $slogan }} (Water is Life!!!)</div>
+    <hr class="border-0 border-t border-dashed border-slate-500 my-2">
+    <div class="text-center font-bold text-emerald-800 text-[10px]">{{ $slogan }} (Water is Life!!!)</div>
 </div>
 
 </body>

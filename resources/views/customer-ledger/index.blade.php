@@ -3,35 +3,36 @@
 @section('content')
 
 <!-- Page Header & Banner -->
-<div class="page-header-block gsap-hero">
-    <div class="page-info">
-        <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">
+<div class="gsap-hero flex flex-wrap items-end justify-between gap-4 mb-6">
+    <div>
+        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500 mb-1">
             {{ t('Financial Operations') }} &bull; {{ t('Customer Ledger') }}
         </div>
-        <h2 style="margin: 0; display: flex; align-items: center; gap: 10px;">
-            {!! icon('book-open', 24) !!} {{ t('Customers Ledger Statement') }}
+        <h2 class="m-0 text-[22px] font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <span class="text-emerald-600">{!! icon('book-open', 24) !!}</span> {{ t('Customers Ledger Statement') }}
         </h2>
-        <p style="margin-top: 4px; color: var(--text-muted);">
+        <p class="mt-1 text-[13px] text-slate-500">
             {{ t('View comprehensive water consumption and billing history by customer and year') }}
             @if ($customer)
-                &bull; <span class="badge badge-primary" style="font-weight: 700;">{{ $customer->meter_serial }} — {{ trim(($customer->first_name ?? '').' '.($customer->middle_name ?? '').' '.($customer->last_name ?? '')) }}</span>
+                &bull; <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $customer->meter_serial }} — {{ trim(($customer->first_name ?? '').' '.($customer->middle_name ?? '').' '.($customer->last_name ?? '')) }}</span>
             @endif
         </p>
     </div>
-    <div class="page-actions">
+    <div class="flex items-center gap-2.5">
         @if (! empty($customer))
-            <button class="btn" onclick="window.print()">{!! icon('print', 14) !!} {{ t('Print Statement') }}</button>
-            <button class="btn btn-primary" onclick="exportLedger()">{!! icon('download', 14) !!} {{ t('Export Ledger CSV') }}</button>
+            <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">{!! icon('print', 14) !!} {{ t('Print Statement') }}</button>
+            <button type="button" onclick="exportLedger()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('download', 14) !!} {{ t('Export Ledger CSV') }}</button>
         @endif
     </div>
 </div>
 
 <!-- Customer Selection & Search Toolbar -->
-<div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px; margin-bottom: 20px;">
-    <form method="get" action="{{ route('customer-ledger.index') }}" style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap;">
-        <div style="flex: 2; min-width: 280px;">
-            <label style="font-size: 12px; font-weight: 700; color: var(--on-surface); margin-bottom: 4px; display: block;">{{ t('Select Customer') }}</label>
-            <input id="customerSearch" class="form-control" type="text" placeholder="{{ t('Type code, name, phone to filter...') }}" oninput="filterCustomerOptions()" style="margin-bottom: 6px;">
+<div class="bg-white border border-slate-200 rounded-xl shadow-card p-4 mb-5">
+    <form method="get" action="{{ route('customer-ledger.index') }}" class="flex flex-wrap gap-3.5 items-end">
+        <div class="flex-1 min-w-[280px]">
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Select Customer') }}</label>
+            <input id="customerSearch" type="text" placeholder="{{ t('Type code, name, phone to filter...') }}" oninput="filterCustomerOptions()"
+                   class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400 mb-1.5">
             <select id="customerSelect" name="meterSerial" class="fancy" onchange="this.form.submit()" style="width:100%;">
                 <option value="">— {{ t('Choose a customer account') }} —</option>
                 @foreach ($customers as $c)
@@ -42,8 +43,8 @@
             </select>
         </div>
 
-        <div style="flex: 1; min-width: 140px;">
-            <label style="font-size: 12px; font-weight: 700; color: var(--on-surface); margin-bottom: 4px; display: block;">{{ t('Billing Year') }}</label>
+        <div class="min-w-[140px]">
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Billing Year') }}</label>
             <select name="year" class="fancy" onchange="this.form.submit()" style="width:100%;">
                 @foreach ($availableYears as $y)
                     <option value="{{ $y }}" @if((string)$y === (string)$year) selected @endif>{{ $y }}</option>
@@ -51,106 +52,126 @@
             </select>
         </div>
 
-        <button class="btn btn-primary" type="submit">{!! icon('search', 16) !!} {{ t('Load Ledger') }}</button>
+        <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('search', 15) !!} {{ t('Load Ledger') }}</button>
     </form>
 </div>
 
 @if (empty($customer))
-<div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 50px 20px; text-align: center;">
-    <div style="opacity: 0.4; margin-bottom: 12px;">{!! icon('book-open', 54) !!}</div>
-    <h3 style="margin: 0; color: var(--on-surface);">{{ t('No Customer Account Selected') }}</h3>
-    <p style="color: var(--text-muted); margin-top: 6px;">{{ t('Search and select a customer account from the dropdown above to load their ledger history.') }}</p>
+<div class="bg-white border border-slate-200 rounded-xl shadow-card py-14 px-5 text-center">
+    <div class="text-slate-300 mb-3">{!! icon('book-open', 54) !!}</div>
+    <h3 class="m-0 text-[15px] font-semibold text-slate-700">{{ t('No Customer Account Selected') }}</h3>
+    <p class="text-xs text-slate-500 mt-1.5">{{ t('Search and select a customer account from the dropdown above to load their ledger history.') }}</p>
 </div>
 @else
 
-<!-- KPI Stat Cards Bar -->
-<div class="card-grid cols-4" style="margin-bottom: 20px;">
-    <div class="stat-card accent gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Total Billed') }}</div>
-        <div class="stat-value" data-gsap-counter data-target-val="{{ $grandTotal }}">{{ number_format($grandTotal, 0) }} <span style="font-size:13px;">ETB</span></div>
-        <div class="stat-meta">{{ count($ledger) }} {{ t('Bills in') }} {{ $year }}</div>
+<!-- KPI Stat Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">{{ t('Total Billed') }}</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <span class="[&>svg]:text-[16px]">{!! icon('receipt', 16) !!}</span>
+            </div>
+        </div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums" data-gsap-counter data-target-val="{{ $grandTotal }}">{{ number_format($grandTotal, 0) }} <span class="text-[13px] text-slate-500">ETB</span></div>
+        <div class="text-[11px] text-slate-500">{{ count($ledger) }} {{ t('Bills in') }} {{ $year }}</div>
     </div>
 
-    <div class="stat-card success gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Water Consumption') }}</div>
-        <div class="stat-value" style="color: var(--success);" data-gsap-counter data-target-val="{{ $totalConsumption }}">{{ number_format($totalConsumption, 1) }} <span style="font-size:13px;">m³</span></div>
-        <div class="stat-meta">{{ count($ledger) > 0 ? number_format($totalConsumption / count($ledger), 1) : 0 }} m³ {{ t('Avg / Month') }}</div>
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wider text-[11px] text-sky-800">{{ t('Water Consumption') }}</span>
+            <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center">
+                <span class="[&>svg]:text-[16px]">{!! icon('water', 16) !!}</span>
+            </div>
+        </div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $totalConsumption }}">{{ number_format($totalConsumption, 1) }} <span class="text-[13px] text-slate-500">m³</span></div>
+        <div class="text-[11px] text-slate-500">{{ count($ledger) > 0 ? number_format($totalConsumption / count($ledger), 1) : 0 }} m³ {{ t('Avg / Month') }}</div>
     </div>
 
-    <div class="stat-card success gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Paid Revenue') }}</div>
-        <div class="stat-value" style="color: var(--success);" data-gsap-counter data-target-val="{{ $paidTotal }}">{{ number_format($paidTotal, 0) }} <span style="font-size:13px;">ETB</span></div>
-        <div class="stat-meta">{{ $paidBills }} {{ t('Paid Bills') }}</div>
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">{{ t('Paid Revenue') }}</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <span class="[&>svg]:text-[16px]">{!! icon('check', 16) !!}</span>
+            </div>
+        </div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $paidTotal }}">{{ number_format($paidTotal, 0) }} <span class="text-[13px] text-slate-500">ETB</span></div>
+        <div class="text-[11px] text-slate-500">{{ $paidBills }} {{ t('Paid Bills') }}</div>
     </div>
 
-    <div class="stat-card danger gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Unpaid Balance') }}</div>
-        <div class="stat-value" style="color: var(--danger);" data-gsap-counter data-target-val="{{ $unpaidTotal }}">{{ number_format($unpaidTotal, 0) }} <span style="font-size:13px;">ETB</span></div>
-        <div class="stat-meta">{{ $unpaidBills }} {{ t('Unpaid Bills') }}</div>
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wider text-[11px] text-rose-800">{{ t('Unpaid Balance') }}</span>
+            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
+                <span class="[&>svg]:text-[16px]">{!! icon('x', 16) !!}</span>
+            </div>
+        </div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-rose-600" data-gsap-counter data-target-val="{{ $unpaidTotal }}">{{ number_format($unpaidTotal, 0) }} <span class="text-[13px] text-slate-500">ETB</span></div>
+        <div class="text-[11px] text-slate-500">{{ $unpaidBills }} {{ t('Unpaid Bills') }}</div>
     </div>
 </div>
 
-<!-- EOS Chart.js Consumption & Monthly Cost Trends Grid -->
-<div class="card-grid cols-2 gsap-chart-card" style="margin-bottom: 20px;">
-    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--on-surface); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 8px;">{!! icon('water', 16) !!} {{ t('Monthly Consumption Trend (m³)') }}</span>
-            <span class="badge badge-success">{{ number_format($totalConsumption, 1) }} m³ Total</span>
+<!-- Chart.js Consumption & Monthly Cost Trends -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
+                <span class="text-emerald-600">{!! icon('water', 16) !!}</span> {{ t('Monthly Consumption Trend (m³)') }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ number_format($totalConsumption, 1) }} m³ Total</span>
         </div>
-        <div style="height: 190px; position: relative;">
+        <div class="h-[190px] relative flex items-center justify-center">
             <canvas id="ledgerConsChart"></canvas>
         </div>
     </div>
 
-    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--on-surface); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 8px;">{!! icon('bar-chart', 16) !!} {{ t('Monthly Billed Cost Trend (ETB)') }}</span>
-            <span class="badge badge-secondary">{{ number_format($grandTotal, 0) }} ETB Total</span>
+    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
+                <span class="text-emerald-600">{!! icon('bar-chart', 16) !!}</span> {{ t('Monthly Billed Cost Trend (ETB)') }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ number_format($grandTotal, 0) }} ETB Total</span>
         </div>
-        <div style="height: 190px; position: relative;">
+        <div class="h-[190px] relative flex items-center justify-center">
             <canvas id="ledgerCostChart"></canvas>
         </div>
     </div>
 </div>
 
-<!-- Two Column Layout: Ledger History Table & Customer Profile Side Card -->
-<div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px; margin-bottom: 20px;">
+<!-- Two Column: Ledger History Table & Customer Profile Side Card -->
+<div class="grid grid-cols-1 lg:grid-cols-[2.2fr_1fr] gap-5 mb-5 items-start">
     <!-- Main Billing Ledger History Table -->
-    <div class="panel gsap-section-card" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); position: relative;">
-        <div style="height: 4px; background: var(--primary-container);"></div>
-        <div class="panel-header" style="padding: 14px 20px; background: var(--surface-container-lowest); border-bottom: 1px solid var(--outline-variant); display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; font-size: 14px; color: var(--on-surface);">
-                {{ t('Billing & Meter Reading History') }} — {{ $year }}
-            </span>
-            <span style="font-size: 12px; color: var(--text-muted);">
-                {{ count($ledger) }} {{ t('entries') }}
-            </span>
+    <div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+        <div class="h-1 bg-emerald-600"></div>
+        <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+            <span class="font-bold text-sm text-slate-900">{{ t('Billing & Meter Reading History') }} — {{ $year }}</span>
+            <span class="text-xs text-slate-500">{{ count($ledger) }} {{ t('entries') }}</span>
         </div>
 
         @if ($ledger->isEmpty())
-            <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+            <div class="py-10 text-center text-slate-500">
                 {!! icon('file-text', 40) !!}
-                <div style="margin-top: 8px; font-weight: 600;">{{ t('No billing history found for this customer in') }} {{ $year }}</div>
+                <div class="mt-2 text-sm font-semibold text-slate-700">{{ t('No billing history found for this customer in') }} {{ $year }}</div>
             </div>
         @else
-            <div class="scrollable-table">
+            <div class="scrollable-table border-0 rounded-none">
                 <div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
                 <div class="table-scroll-view">
-                    <table class="data-table compact" style="width:100%;">
+                    <table class="w-full text-[13px]">
                         <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>{{ t('Month') }}</th>
-                                <th>{{ t('Read Date') }}</th>
-                                <th>{{ t('Prev R') }}</th>
-                                <th>{{ t('Cur R') }}</th>
-                                <th>m³</th>
-                                <th>{{ t('Water Fee') }}</th>
-                                <th>{{ t('Meter') }}</th>
-                                <th>{{ t('Svc Fee') }}</th>
-                                <th>{{ t('Fund') }}</th>
-                                <th>{{ t('Total Cost') }}</th>
-                                <th>{{ t('Status') }}</th>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                                <th class="text-left px-4 py-3">#</th>
+                                <th class="text-left px-4 py-3">{{ t('Month') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Read Date') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Prev R') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Cur R') }}</th>
+                                <th class="text-left px-4 py-3">m³</th>
+                                <th class="text-left px-4 py-3">{{ t('Water Fee') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Meter') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Svc Fee') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Fund') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Total Cost') }}</th>
+                                <th class="text-left px-4 py-3">{{ t('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -164,23 +185,23 @@
                                 $cur = (float) ($row->current_reading ?? 0);
                                 $use = max(0, $cur - $prev);
                             @endphp
-                            <tr>
-                                <td>{{ $idx }}</td>
-                                <td><strong style="color: var(--on-surface);">{{ $row->bill_month }}</strong></td>
-                                <td>{{ $row->reading_date ?? '—' }}</td>
-                                <td>{{ number_format($prev, 1) }}</td>
-                                <td>{{ number_format($cur, 1) }}</td>
-                                <td><strong style="color: var(--primary);">{{ number_format($use, 1) }}</strong></td>
-                                <td>{{ number_format($row->consumption_cost, 0) }}</td>
-                                <td>{{ number_format($row->meter_price, 0) }}</td>
-                                <td>{{ number_format($row->service_price, 0) }}</td>
-                                <td>{{ number_format($row->state_price, 0) }}</td>
-                                <td><strong style="color: var(--on-surface);">{{ number_format($row->total_monthly_cost, 0) }} ETB</strong></td>
-                                <td>
+                            <tr class="border-b border-slate-100 odd:bg-white even:bg-slate-50/40 hover:bg-emerald-50/60 transition-colors">
+                                <td class="px-4 py-2.5 text-slate-500">{{ $idx }}</td>
+                                <td class="px-4 py-2.5"><strong class="text-slate-900">{{ $row->bill_month }}</strong></td>
+                                <td class="px-4 py-2.5 text-slate-600">{{ $row->reading_date ?? '—' }}</td>
+                                <td class="px-4 py-2.5 text-slate-600 font-mono tabular-nums">{{ number_format($prev, 1) }}</td>
+                                <td class="px-4 py-2.5 text-slate-600 font-mono tabular-nums">{{ number_format($cur, 1) }}</td>
+                                <td class="px-4 py-2.5"><strong class="text-emerald-700 font-mono tabular-nums">{{ number_format($use, 1) }}</strong></td>
+                                <td class="px-4 py-2.5 text-slate-600 font-mono tabular-nums">{{ number_format($row->consumption_cost, 0) }}</td>
+                                <td class="px-4 py-2.5 text-slate-600 font-mono tabular-nums">{{ number_format($row->meter_price, 0) }}</td>
+                                <td class="px-4 py-2.5 text-slate-600 font-mono tabular-nums">{{ number_format($row->service_price, 0) }}</td>
+                                <td class="px-4 py-2.5 text-slate-600 font-mono tabular-nums">{{ number_format($row->state_price, 0) }}</td>
+                                <td class="px-4 py-2.5"><strong class="text-slate-900 font-mono tabular-nums">{{ number_format($row->total_monthly_cost, 0) }} ETB</strong></td>
+                                <td class="px-4 py-2.5">
                                     @if ($row->payment_status === 'Paid')
-                                        <span class="badge badge-success">{!! icon('check', 12) !!} {{ t('Paid') }}</span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('check', 11) !!} {{ t('Paid') }}</span>
                                     @else
-                                        <span class="badge badge-danger">{!! icon('x', 12) !!} {{ t('Unpaid') }}</span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('x', 11) !!} {{ t('Unpaid') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -188,9 +209,9 @@
                         @endforeach
                         </tbody>
                         <tfoot>
-                            <tr style="background: var(--surface-container-low); font-weight: 700;">
-                                <td colspan="10" style="text-align:right; padding: 12px 14px;">{{ t('Annual Grand Total') }}:</td>
-                                <td style="color: var(--primary); font-size: 14px;">{{ number_format($grandTotal, 0) }} ETB</td>
+                            <tr class="bg-slate-50 font-bold">
+                                <td colspan="10" class="px-4 py-3 text-right text-slate-700">{{ t('Annual Grand Total') }}:</td>
+                                <td class="px-4 py-3 text-emerald-700 text-sm font-mono tabular-nums">{{ number_format($grandTotal, 0) }} ETB</td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -200,43 +221,43 @@
         @endif
     </div>
 
-    <!-- Customer Details & Quick Actions Panel -->
-    <div style="display: flex; flex-direction: column; gap: 16px;">
+    <!-- Customer Details & Quick Actions -->
+    <div class="flex flex-col gap-4">
         <!-- Customer Profile Card -->
-        <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden;">
-            <div class="panel-header" style="background: var(--surface-container-low); padding: 12px 16px; border-bottom: 1px solid var(--outline-variant); font-weight: 700; font-size: 13px; color: var(--on-surface); display: flex; align-items: center; gap: 8px;">
-                {!! icon('user', 16) !!} {{ t('Customer Profile') }}
+        <div class="bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2">
+                <span class="text-emerald-600">{!! icon('user', 15) !!}</span> {{ t('Customer Profile') }}
             </div>
-            <div class="panel-body" style="padding: 16px;">
-                <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="p-4">
+                <div class="flex flex-col gap-3">
                     <div>
-                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted);">{{ t('Meter Serial Code') }}</div>
-                        <div style="font-family: monospace; font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 2px;">{{ $customer->meter_serial }}</div>
+                        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500">{{ t('Meter Serial Code') }}</div>
+                        <div class="font-mono text-base font-extrabold text-emerald-700 mt-0.5">{{ $customer->meter_serial }}</div>
                     </div>
                     <div>
-                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted);">{{ t('Full Name') }}</div>
-                        <div style="font-size: 14px; font-weight: 700; color: var(--on-surface); margin-top: 2px;">{{ trim(($customer->first_name ?? '').' '.($customer->middle_name ?? '').' '.($customer->last_name ?? '')) }}</div>
+                        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500">{{ t('Full Name') }}</div>
+                        <div class="text-sm font-bold text-slate-900 mt-0.5">{{ trim(($customer->first_name ?? '').' '.($customer->middle_name ?? '').' '.($customer->last_name ?? '')) }}</div>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--outline-variant); padding-top: 10px;">
+                    <div class="grid grid-cols-2 gap-2.5 border-t border-slate-100 pt-2.5">
                         <div>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">{{ t('Kebele') }}</div>
-                            <div style="font-size: 13px; font-weight: 700;">{{ $customer->kebele ?? '—' }}</div>
+                            <div class="text-[11px] text-slate-500 font-semibold">{{ t('Kebele') }}</div>
+                            <div class="text-[13px] font-bold text-slate-900">{{ $customer->kebele ?? '—' }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">{{ t('Phone') }}</div>
-                            <div style="font-size: 13px; font-weight: 700;">{{ $customer->phone_number ?? '—' }}</div>
+                            <div class="text-[11px] text-slate-500 font-semibold">{{ t('Phone') }}</div>
+                            <div class="text-[13px] font-bold text-slate-900">{{ $customer->phone_number ?? '—' }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">{{ t('Meter Size') }}</div>
-                            <div style="font-size: 13px; font-weight: 700;">{{ $customer->meter_size ?? '1/2"' }}</div>
+                            <div class="text-[11px] text-slate-500 font-semibold">{{ t('Meter Size') }}</div>
+                            <div class="text-[13px] font-bold text-slate-900">{{ $customer->meter_size ?? '1/2"' }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">{{ t('Status') }}</div>
-                            <div>
+                            <div class="text-[11px] text-slate-500 font-semibold">{{ t('Status') }}</div>
+                            <div class="mt-0.5">
                                 @if ($customer->customer_status === 'Active')
-                                    <span class="badge badge-success">{!! icon('check', 12) !!} {{ t('Active') }}</span>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('check', 11) !!} {{ t('Active') }}</span>
                                 @else
-                                    <span class="badge badge-danger">{!! icon('x', 12) !!} {{ $customer->customer_status }}</span>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('x', 11) !!} {{ $customer->customer_status }}</span>
                                 @endif
                             </div>
                         </div>
@@ -245,20 +266,20 @@
             </div>
         </div>
 
-        <!-- Quick Meter Reading Adjustment Panel -->
-        <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden;">
-            <div class="panel-header" style="background: var(--surface-container-low); padding: 12px 16px; border-bottom: 1px solid var(--outline-variant); font-weight: 700; font-size: 13px; color: var(--on-surface); display: flex; align-items: center; gap: 8px;">
-                {!! icon('wrench', 16) !!} {{ t('Operational Quick Actions') }}
+        <!-- Operational Quick Actions -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2">
+                <span class="text-amber-600">{!! icon('wrench', 15) !!}</span> {{ t('Operational Quick Actions') }}
             </div>
-            <div class="panel-body" style="padding: 16px;">
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; font-weight: 600;">{{ t('Update Start Reading (m³)') }}</label>
-                    <div style="display:flex; gap:6px;">
-                        <input type="number" step="0.01" id="startReading" value="{{ $customer->start_value }}" class="form-control">
-                        <button class="btn btn-primary" onclick="updateStartReading()">{!! icon('check', 14) !!}</button>
+            <div class="p-4">
+                <div class="mb-2.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Update Start Reading (m³)') }}</label>
+                    <div class="flex gap-1.5">
+                        <input type="number" step="0.01" id="startReading" value="{{ $customer->start_value }}" class="flex-1 px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+                        <button type="button" onclick="updateStartReading()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('check', 14) !!}</button>
                     </div>
                 </div>
-                <button class="btn btn-warning btn-block" onclick="disconnectCustomer()" style="width: 100%; margin-top: 8px;">
+                <button type="button" onclick="disconnectCustomer()" class="w-full mt-2 inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition">
                     {!! icon('x', 14) !!} {{ t('Disconnect Customer (DC)') }}
                 </button>
             </div>
@@ -269,17 +290,15 @@
 <!-- Collapsible Floating Quick Action Menu (FAB) -->
 <div class="fab-wrapper">
     <div class="fab-menu" id="fabMenu">
-        <button type="button" class="fab-item" onclick="window.print(); toggleFabMenu();">
-            <span class="icon">{!! icon('print', 16) !!}</span>
-            <span class="label">{{ t('Print Statement') }}</span>
+        <button type="button" class="fab-item inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-slate-900 text-white text-[13px] font-semibold border border-white/15 shadow-lg hover:bg-emerald-700 transition" onclick="window.print(); toggleFabMenu();">
+            {!! icon('print', 16) !!} <span>{{ t('Print Statement') }}</span>
         </button>
-        <button type="button" class="fab-item" onclick="exportLedger(); toggleFabMenu();">
-            <span class="icon">{!! icon('download', 16) !!}</span>
-            <span class="label">{{ t('Export Ledger CSV') }}</span>
+        <button type="button" class="fab-item inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-slate-900 text-white text-[13px] font-semibold border border-white/15 shadow-lg hover:bg-emerald-700 transition" onclick="exportLedger(); toggleFabMenu();">
+            {!! icon('download', 16) !!} <span>{{ t('Export Ledger CSV') }}</span>
         </button>
     </div>
-    <button type="button" class="fab-trigger-btn" onclick="toggleFabMenu()" title="Quick Actions">
-        <span class="fab-icon-main">{!! icon('plus', 22) !!}</span>
+    <button type="button" class="fab-trigger-btn w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_8px_24px_rgba(5,150,105,0.45)] flex items-center justify-center transition" onclick="toggleFabMenu()" title="Quick Actions">
+        {!! icon('plus', 22) !!}
     </button>
 </div>
 
@@ -354,8 +373,8 @@ function filterCustomerOptions() {
                     datasets: [{
                         label: 'Consumption (m³)',
                         data: {!! json_encode($consData) !!},
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.15)',
                         fill: true,
                         tension: 0.35,
                         borderWidth: 3
@@ -366,7 +385,7 @@ function filterCustomerOptions() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10 } } },
                         x: { grid: { display: false }, ticks: { font: { size: 11 } } }
                     }
                 }
@@ -384,7 +403,7 @@ function filterCustomerOptions() {
                     datasets: [{
                         label: 'Billed Cost (ETB)',
                         data: {!! json_encode($costData) !!},
-                        backgroundColor: '#111C2D',
+                        backgroundColor: '#059669',
                         borderRadius: 6
                     }]
                 },
@@ -393,7 +412,7 @@ function filterCustomerOptions() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10 } } },
                         x: { grid: { display: false }, ticks: { font: { size: 11 } } }
                     }
                 }

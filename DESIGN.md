@@ -1,181 +1,136 @@
 ---
-name: Heritage Gold
-colors:
-  surface: '#fff8f1'
-  surface-dim: '#e2d9c9'
-  surface-bright: '#fff8f1'
-  surface-container-lowest: '#ffffff'
-  surface-container-low: '#fcf2e2'
-  surface-container: '#f7eddc'
-  surface-container-high: '#f1e7d7'
-  surface-container-highest: '#ebe1d1'
-  on-surface: '#1f1b11'
-  on-surface-variant: '#4e4633'
-  inverse-surface: '#353025'
-  inverse-on-surface: '#faf0df'
-  outline: '#807661'
-  outline-variant: '#d2c5ad'
-  surface-tint: '#755b00'
-  primary: '#755b00'
-  on-primary: '#ffffff'
-  primary-container: '#edbc1d'
-  on-primary-container: '#634d00'
-  inverse-primary: '#f2c023'
-  secondary: '#685d4a'
-  on-secondary: '#ffffff'
-  secondary-container: '#eeddc6'
-  on-secondary-container: '#6d614e'
-  tertiary: '#006687'
-  on-tertiary: '#ffffff'
-  tertiary-container: '#64ceff'
-  on-tertiary-container: '#005673'
-  error: '#ba1a1a'
-  on-error: '#ffffff'
-  error-container: '#ffdad6'
-  on-error-container: '#93000a'
-  primary-fixed: '#ffdf91'
-  primary-fixed-dim: '#f2c023'
-  on-primary-fixed: '#241a00'
-  on-primary-fixed-variant: '#594400'
-  secondary-fixed: '#f1e0c9'
-  secondary-fixed-dim: '#d4c4ae'
-  on-secondary-fixed: '#221a0c'
-  on-secondary-fixed-variant: '#504534'
-  tertiary-fixed: '#c1e8ff'
-  tertiary-fixed-dim: '#73d1ff'
-  on-tertiary-fixed: '#001e2b'
-  on-tertiary-fixed-variant: '#004d67'
-  background: '#fff8f1'
-  on-background: '#1f1b11'
-  surface-variant: '#ebe1d1'
-  surface-base: '#FDFBF7'
-  surface-card: '#FFFFFF'
-  text-main: '#2C241B'
-  accent-warm: '#8F250C'
-  border-subtle: '#E6DFD3'
-  nav-bg: '#fcfbf8'
+name: Modern Steward
+theme:
+  primary: '#059669'          # emerald 600
+  primary-deep: '#065F46'     # emerald 800
+  primary-soft: '#ECFDF5'     # emerald 50
+  primary-wash: '#D1FAE5'     # emerald 100
+  surface: '#ffffff'
+  canvas: '#F8FAF8'
+  surface-dim: '#F1F5F9'
+  outline: '#E2E8F0'
+  on-surface: '#0F172A'
+  on-surface-variant: '#64748B'
+  success: '#059669'
+  success-soft: '#D1FAE5'
+  warning: '#D97706'
+  warning-soft: '#FEF3C7'
+  danger: '#E11D48'
+  danger-soft: '#FFE4E6'
+  info: '#0284C7'
+  info-soft: '#E0F2FE'
+  shadow-card: '0 1px 3px rgba(15,23,42,0.06), 0 4px 14px rgba(15,23,42,0.05)'
+  shadow-hover: '0 6px 18px rgba(15,23,42,0.09), 0 10px 26px rgba(5,150,105,0.10)'
 typography:
-  display-lg:
-    fontFamily: Playfair Display
-    fontSize: 36px
-    fontWeight: '700'
-    lineHeight: '1.2'
-    letterSpacing: -0.02em
-  display-md:
-    fontFamily: Playfair Display
-    fontSize: 30px
-    fontWeight: '700'
-    lineHeight: '1.2'
-  headline-sm:
-    fontFamily: Playfair Display
-    fontSize: 20px
-    fontWeight: '700'
-    lineHeight: '1.4'
-  body-lg:
-    fontFamily: Lato
-    fontSize: 16px
-    fontWeight: '400'
-    lineHeight: '1.5'
-  body-md:
-    fontFamily: Lato
-    fontSize: 14px
-    fontWeight: '400'
-    lineHeight: '1.5'
-  label-sm:
-    fontFamily: Lato
-    fontSize: 12px
-    fontWeight: '700'
-    lineHeight: '1.2'
-    letterSpacing: 0.05em
-rounded:
-  sm: 0.125rem
-  DEFAULT: 0.25rem
-  md: 0.375rem
-  lg: 0.5rem
-  xl: 0.75rem
-  full: 9999px
+  ui: Inter
+  display: Outfit
+  ethiopic: Noto Sans Ethiopic
+  tabular: "'Inter', ui-monospace, monospace"
 spacing:
   unit: 4px
-  container-padding: 32px
-  gutter: 24px
-  card-padding: 24px
-  nav-width: 256px
+  container-padding: 24px
+  gutter: 16px
+  card-padding: 20px
+  nav-width: 296px
+  nav-width-collapsed: 104px
+radius:
+  DEFAULT: 12px
+  lg: 12px
+  md: 8px
+  full: 9999px
 ---
 
 ## Brand & Style
 
-Heritage Gold is a premium, sophisticated wedding and event management platform. The brand personality is **Elegant, Trustworthy, and Traditional**, designed to evoke the feeling of a high-end concierge service. It blends the warmth of personal celebration with the precision of professional planning.
+**Modern Steward** is the design language for the Eteya Water Bill administration suite. It pairs the trust and reliability of a municipal utility with a crisp, contemporary, high-utility interface. The personality is **Calm, Dependable, and Efficient** — a system an operator trusts for a decade of daily billing work.
 
-The design style is **Modern Corporate with an Editorial twist**. It utilizes high-contrast serif typography for headlines to create a luxury magazine feel, balanced against a clean, functional sans-serif for data-heavy dashboard elements. The interface prioritizes clarity and status, using a restricted but rich color palette to signal importance and heritage.
+The implementation is **utility-first Tailwind CSS 4** compiled at runtime via the official CDN script. No build step. Component conventions are codified as utility strings and reused verbatim across every Blade view. Where utility classes cannot express something (page base rules, sidebar flyouts, print layout, JS-injected HTML), the rule lives in `public/assets/css/app.css`.
 
 ## Colors
 
-The color palette is anchored in an **Earth-tone Gold and Charcoal** scheme. 
+Anchored in **Emerald & Slate**.
 
-- **Primary Gold (#edbc1d):** Used for primary actions, progress indicators, and brand markers. It represents luxury and celebration.
-- **Text Main (#2C241B):** A deep charcoal-brown used for primary text and headings, providing better legibility and warmth than pure black.
-- **Text Muted (#8B7E6A):** A taupe-grey for secondary information and labels.
-- **Accent Warm (#8F250C):** A deep terracotta-red reserved for high-priority alerts, overdue tasks, or critical status markers.
-- **Surfaces:** A layered approach using off-white (#FDFBF7) for the main background and pure white (#FFFFFF) for cards to create subtle depth.
+- **Primary Emerald (`#059669`)**: primary buttons, active states, focus rings, chart series, success. Deep `#065F46` for text on tinted pills; soft `#ECFDF5`/`#D1FAE5` for backgrounds.
+- **On-surface (`#0F172A`)**: near-black slate for headings and values.
+- **Muted (`#64748B`)**: metadata, eyebrows, table headers, captions.
+- **Surfaces**: white cards on a very light canvas (`#F8FAF8`); `#F1F5F9` for zebra rows and footer strips; `#E2E8F0` for all 1px borders.
+- **Semantic**: emerald (Active/Paid/Approved), rose (Unpaid/DC/Rejected), amber (Pending), sky (informational).
 
 ## Typography
 
-The system uses a **Dual-Typeface Strategy**:
+A **dual-typeface strategy with a native-feeling hierarchy**:
 
-- **Playfair Display (Serif):** Reserved for headlines, titles, and brand elements. It conveys elegance and the "editorial" nature of a wedding. 
-- **Lato (Sans-Serif):** Used for all functional UI, body copy, and navigation. It provides high legibility and a contemporary, clean feel.
+- **Inter**: all UI — body, labels, tables, nav.
+- **Outfit**: display headings in hero page headers and chart-card titles.
+- **Noto Sans Ethiopic**: guaranteed fallback for Amharic/Oromo string labels when the current locale renders localised text.
+- **Tabular figures** (`font-mono tabular-nums`) for every numeric value that represents money, meter readings, or counts, so columns align perfectly in ledgers.
 
-**Hierarchy Rules:**
-- Use `display-lg` for the primary page context (e.g., Couple's Names).
-- Use `label-sm` with heavy tracking for meta-information like "Until the Särg" or secondary headers.
-- Bold weights in Lato are used for emphasizing key data points (e.g., $ totals, guest counts).
+**Hierarchy rules:**
+- Page hero: 11px uppercase-tracking eyebrow + 22px bold heading with an emerald 24px icon + 13px muted subtitle.
+- KPI value: 24px bold tabular, label as 11px bold uppercase with generous tracking.
+- Table headers: 11px bold uppercase slate; cells 13px; strong values bold slate-900.
 
 ## Layout & Spacing
 
-The layout follows a **Fixed-Width Sidebar and Fluid Content** model.
+**Fixed floating sidebar, fluid content** in a CSS grid (`296px 1fr`), collapsing to `104px 1fr` with `.sidebar-collapsed` persisted in `localStorage`.
 
-- **Grid:** A standard 12-column grid is utilized for the main content area, though most dashboard views leverage a 3-column masonry-style grid for metric cards.
-- **Rhythm:** An 8px (base 4px) spacing system is used.
-- **Margins:** Large 32px (8 units) horizontal margins ensure the content doesn't feel cramped, maintaining an airy, premium aesthetic.
-- **Breakpoints:** 
-  - Mobile (<768px): Sidebar collapses into a hamburger menu; 3-column cards stack vertically.
-  - Desktop (>1024px): Maximum content width of 1152px (max-w-6xl).
+- **Rhythm**: 4px base unit; page sections breathe at 16–24px gaps; page blocks padded 20px.
+- **Cards** are `bg-white border border-slate-200 rounded-xl shadow-card` — depth comes from border + a whisper-soft shadow rather than heavy elevation.
+- **Hover**: interactive cards lift via `--shadow-hover` and a faint emerald wash on rows (`hover:bg-emerald-50/60`).
+- **Breakpoints**: `sm` stacks KPI grids to 2 columns; `lg` restores 4; content grids collapse to single column under `lg`.
 
 ## Elevation & Depth
 
-The system uses **Tonal Layering and Soft Ambient Shadows** to convey depth without the heaviness of standard Material design.
+Tonal layering is the primary depth signal.
 
-- **The Base Layer:** Background-light (#FDFBF7) provides a warm, paper-like foundation.
-- **The Surface Layer:** Cards and interactive containers use pure white (#FFFFFF) with a very light 1px border (#E6DFD3).
-- **Shadows:** A signature `card` shadow is used: `0 4px 20px rgba(44, 36, 27, 0.04)`. On hover, this elevates to `0 8px 30px rgba(44, 36, 27, 0.08)` to provide tactile feedback.
-- **Accents:** A 4px top-border on major hero sections (using Primary Gold) indicates "active" or "primary focus" areas.
+- Base layer: canvas `#F8FAF8`.
+- Surface layer: white cards with a 1px `#E2E8F0` border.
+- Hero accent: a 4px emerald strip (`h-1 bg-emerald-600`) on primary sections and report tables.
+- Signature shadows: `--shadow-card` at rest, `--shadow-hover` on lift.
+- Floating elements (FAB, flyouts, toasts): stronger elevation with an emerald glow (`0 8px 24px rgba(5,150,105,0.45)` for the FAB trigger).
 
 ## Shapes
 
-The shape language is **Conservative and Structured**. 
+**Friendly radii, few hard corners.**
 
-- **Corner Radius:** A base radius of 2px is used for most UI elements (buttons, inputs) to maintain a crisp, formal look. Cards use a slightly larger 4px radius (`lg`). 
-- **Circular Elements:** Reserved strictly for progress rings (e.g., budget charts) and user avatars to provide a soft contrast to the otherwise rectangular grid.
-- **Dividers:** Fine 1px horizontal and vertical lines in #E6DFD3 are used extensively to separate logical sections without creating heavy visual breaks.
+- Cards/panels: 12px.
+- Buttons/inputs: 8px.
+- Pills/badges/avatars: fully rounded.
+- Wide data tables: the scroll container is rounded; inner rows are square for legibility.
 
 ## Components
 
 ### Buttons
-- **Primary Ghost:** 1px border in Primary Gold, uppercase text, bold weight, high letter-spacing. Background is transparent, filling with 5% opacity on hover.
-- **Navigation:** Icon-led with 2.5rem height. Active state uses a 2px vertical left-border and a 10% opacity primary color background.
+- **Primary**: emerald 600 fill → 700 on hover, white bold 12px text, 8px radius, `shadow-sm`, 16px icons.
+- **Secondary**: slate-100 fill → 200 hover, slate-700 text.
+- **Danger**: rose 600 → 700. **Warning**: amber 500 → 600.
 
 ### Cards
-- Standard white background, subtle border, and signature `card` shadow. 
-- Must include a `display-md` or `headline-sm` title and an icon in the top right corner (Text Muted color).
+- White surface, 1px slate-200 border, 12px radius, `--shadow-card`.
+- KPI cards follow the label/value/meta pattern with tabular values and `data-gsap-counter` count-up.
+- Chart cards wrap a fixed-height canvas (190/220/240px) with an emerald-tinted series and muted gridlines.
 
 ### Forms & Inputs
-- **Checkboxes:** Small (2px) radius, Primary Gold color when checked. Associated text should use a strike-through and 50% opacity when the task is complete.
-- **Inputs:** 1px border in `border-subtle`, with a focus state highlighting the border in Primary Gold.
+- Inputs: 1px slate-200 border, 8px radius, `focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500`.
+- Selects use the `.fancy` class (global fallback in `app.css`) or the same input recipe.
+- Labels: 11px bold uppercase with wide tracking.
 
-### Progress Indicators
-- **Linear:** 8px height, rounded-full, using `border-subtle` for the track and `primary` for the fill.
-- **Radial:** Used for high-level financial data, with the percentage centered in bold Lato.
+### Tables
+- Sticky header conventions with zebra rows (`odd:bg-white even:bg-slate-50/40`) and emerald hover wash.
+- Wide tables wrapped in `.scrollable-table` with the green `.scroll-progress` bar.
 
-### Data Displays
-- Numbers should use `display-lg` for prominence.
-- Unit labels (e.g., "Days", "Total Invited") should use `label-sm` in `text-muted`.
+### Status Pills
+- Tinted 10px bold uppercase pills: `bg-{color}-100 text-{color}-800 border-{color}-300`, optionally with a leading icon.
+
+### Modals, Toasts, Dialogs
+- `.modal-backdrop` + `.modal.v2` white rounded-2xl with a soft gradient header; `openModal`/`closeModal` toggle `.show`.
+- `showToast` into `#toastContainer`; `confirmDialog` returns a promise; GSAP variants via `openGSAPModal`/`closeGSAPModal` and `showGSAPToast`.
+
+### Charts (Chart.js)
+- Destroy-before-init: `Chart.getChart(ctx)?.destroy()`.
+- Run once on `document.readyState`, ~50ms `setTimeout` after SPA content swaps.
+- Series use emerald `#059669`; doughnut palettes mix emerald/blue/indigo/amber/violet; gridlines `rgba(15,23,42,0.05)`.
+
+### Print
+- `@media print` hides sidebar/topbar/toolbar/FAB/no-print.
+- Thermal receipts (`bills/print`) render as a standalone 240px card with `!important` overrides.

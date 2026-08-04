@@ -3,121 +3,125 @@
 @section('content')
 
 <!-- Page Header & Banner -->
-<div class="page-header-block gsap-hero">
-    <div class="page-info">
-        <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">
+<div class="gsap-hero flex flex-wrap items-end justify-between gap-4 mb-6">
+    <div>
+        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500 mb-1">
             {{ t('Analytics & Reports') }} &bull; {{ t('Customer Demographics') }}
         </div>
-        <h2 style="margin: 0; display: flex; align-items: center; gap: 10px;">
-            {!! icon('line-chart', 24) !!} {{ t('Customer Detail Statistics') }}
+        <h2 class="m-0 text-[22px] font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <span class="text-emerald-600">{!! icon('line-chart', 24) !!}</span> {{ t('Customer Detail Statistics') }}
         </h2>
-        <p style="margin-top: 4px; color: var(--text-muted);">{{ $title }} &bull; {{ t('Comprehensive classification, status breakdown and Kebele distribution') }}</p>
+        <p class="mt-1 text-[13px] text-slate-500">{{ $title }} &bull; {{ t('Comprehensive classification, status breakdown and Kebele distribution') }}</p>
     </div>
-    <div class="page-actions">
-        <div class="segmented" style="background: var(--surface-container-low); padding: 3px;">
+    <div class="flex items-center gap-2.5 flex-wrap">
+        <div class="segmented bg-slate-100 p-1">
             <a class="{{ $reportType==='typeStatus'?'active':'' }}" href="?report=typeStatus">{{ t('Type × Status') }}</a>
             <a class="{{ $reportType==='type'?'active':'' }}" href="?report=type">{{ t('By Type') }}</a>
             <a class="{{ $reportType==='status'?'active':'' }}" href="?report=status">{{ t('By Status') }}</a>
         </div>
-        <button class="btn btn-primary" onclick="window.print()" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">{!! icon('print', 14) !!} {{ t('Print Report') }}</button>
+        <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('print', 14) !!} {{ t('Print Report') }}</button>
     </div>
 </div>
 
 <!-- KPI Stat Cards Bar -->
-<div class="card-grid cols-4" style="margin-bottom: 20px;">
-    <div class="stat-card accent gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Total Registered') }}</div>
-        <div class="stat-value" data-gsap-counter data-target-val="{{ $totalCustomers }}">{{ number_format($totalCustomers) }}</div>
-        <div class="stat-meta">{{ t('Customer accounts') }}</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">{{ t('Total Registered') }}</div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums" data-gsap-counter data-target-val="{{ $totalCustomers }}">{{ number_format($totalCustomers) }}</div>
+        <div class="text-[11px] text-slate-500">{{ t('Customer accounts') }}</div>
     </div>
-    <div class="stat-card success gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Active Accounts') }}</div>
-        <div class="stat-value" style="color: var(--success);" data-gsap-counter data-target-val="{{ $byStatus['Active'] ?? 0 }}">{{ number_format($byStatus['Active'] ?? 0) }}</div>
-        <div class="stat-meta">{{ $totalCustomers > 0 ? number_format((($byStatus['Active'] ?? 0)/$totalCustomers)*100, 1) : 0 }}% {{ t('connected') }}</div>
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-sky-800">{{ t('Active Accounts') }}</div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $byStatus['Active'] ?? 0 }}">{{ number_format($byStatus['Active'] ?? 0) }}</div>
+        <div class="text-[11px] text-slate-500">{{ $totalCustomers > 0 ? number_format((($byStatus['Active'] ?? 0)/$totalCustomers)*100, 1) : 0 }}% {{ t('connected') }}</div>
     </div>
-    <div class="stat-card danger gsap-stat-card gsap-hover-card">
-        <div class="stat-label">Disconnected (DC)</div>
-        <div class="stat-value" style="color: var(--danger);" data-gsap-counter data-target-val="{{ $byStatus['DC'] ?? 0 }}">{{ number_format($byStatus['DC'] ?? 0) }}</div>
-        <div class="stat-meta">{{ t('Cut off accounts') }}</div>
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-rose-800">Disconnected (DC)</div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-rose-600" data-gsap-counter data-target-val="{{ $byStatus['DC'] ?? 0 }}">{{ number_format($byStatus['DC'] ?? 0) }}</div>
+        <div class="text-[11px] text-slate-500">{{ t('Cut off accounts') }}</div>
     </div>
-    <div class="stat-card warning gsap-stat-card gsap-hover-card">
-        <div class="stat-label">{{ t('Total Kebeles') }}</div>
-        <div class="stat-value" style="color: var(--warning);" data-gsap-counter data-target-val="{{ $totalKebeles }}">{{ number_format($totalKebeles) }}</div>
-        <div class="stat-meta">{{ t('Municipal kebeles') }}</div>
+    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-amber-800">{{ t('Total Kebeles') }}</div>
+        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-amber-600" data-gsap-counter data-target-val="{{ $totalKebeles }}">{{ number_format($totalKebeles) }}</div>
+        <div class="text-[11px] text-slate-500">{{ t('Municipal kebeles') }}</div>
     </div>
 </div>
 
-<!-- Futuristic Chart.js Analytics Grid Section 1 -->
-<div class="card-grid cols-2 gsap-chart-card" style="margin-bottom: 20px;">
-    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--on-surface); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 8px;">{!! icon('pie-chart', 16) !!} {{ t('Customers by Category Type') }}</span>
-            <span class="badge badge-secondary">{{ count($byType) }} {{ t('Categories') }}</span>
+<!-- Chart.js Analytics Grid Section 1 -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
+                <span class="text-emerald-600">{!! icon('pie-chart', 16) !!}</span> {{ t('Customers by Category Type') }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ count($byType) }} {{ t('Categories') }}</span>
         </div>
-        <div style="height: 220px; position: relative;">
+        <div class="h-[220px] relative flex items-center justify-center">
             <canvas id="typeChart"></canvas>
         </div>
     </div>
 
-    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--on-surface); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 8px;">{!! icon('bar-chart', 16) !!} {{ t('Customers by Account Status') }}</span>
-            <span class="badge badge-success">{{ $totalCustomers }} {{ t('Total') }}</span>
+    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
+                <span class="text-emerald-600">{!! icon('bar-chart', 16) !!}</span> {{ t('Customers by Account Status') }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $totalCustomers }} {{ t('Total') }}</span>
         </div>
-        <div style="height: 220px; position: relative;">
+        <div class="h-[220px] relative flex items-center justify-center">
             <canvas id="statusChart"></canvas>
         </div>
     </div>
 </div>
 
-<!-- Futuristic Chart.js Analytics Grid Section 2 -->
-<div class="card-grid cols-2 gsap-chart-card" style="margin-bottom: 20px;">
-    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--on-surface); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 8px;">{!! icon('map-pin', 16) !!} {{ t('Kebele Customer Density Overview') }}</span>
-            <span class="badge badge-secondary">Top Kebeles</span>
+<!-- Chart.js Analytics Grid Section 2 -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
+                <span class="text-emerald-600">{!! icon('map-pin', 16) !!}</span> {{ t('Kebele Customer Density Overview') }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">Top Kebeles</span>
         </div>
-        <div style="height: 240px; position: relative;">
+        <div class="h-[240px] relative flex items-center justify-center">
             <canvas id="kebeleChart"></canvas>
         </div>
     </div>
 
-    <div class="panel" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); padding: 16px;">
-        <div style="font-weight: 700; font-size: 13.5px; color: var(--on-surface); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 8px;">{!! icon('line-chart', 16) !!} {{ t('Monthly Registration Trend (Last 12 Months)') }}</span>
-            <span class="badge badge-primary">Growth Trend</span>
+    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+        <div class="flex items-center justify-between gap-3 mb-4">
+            <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
+                <span class="text-emerald-600">{!! icon('line-chart', 16) !!}</span> {{ t('Monthly Registration Trend (Last 12 Months)') }}
+            </span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">Growth Trend</span>
         </div>
-        <div style="height: 240px; position: relative;">
+        <div class="h-[240px] relative flex items-center justify-center">
             <canvas id="trendChart"></canvas>
         </div>
     </div>
 </div>
 
 <!-- Detailed Data Breakdown Table -->
-<div class="panel gsap-section-card" style="background: var(--surface-container-lowest); border: 1px solid var(--outline-variant); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 20px;">
-    <div style="height: 4px; background: var(--primary-container);"></div>
-    <div class="panel-header" style="padding: 14px 20px; background: var(--surface-container-lowest); border-bottom: 1px solid var(--outline-variant); display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: 700; font-size: 14px; color: var(--on-surface);">
-            {{ $title }}
-        </span>
-        <span style="font-size: 12px; color: var(--text-muted);">
-            {{ count($rows) }} {{ t('Kebele rows') }}
-        </span>
+<div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden mb-5">
+    <div class="h-1 bg-emerald-600"></div>
+    <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+        <span class="font-bold text-sm text-slate-900">{{ $title }}</span>
+        <span class="text-xs text-slate-500">{{ count($rows) }} {{ t('Kebele rows') }}</span>
     </div>
 
-    <div class="scrollable-table">
+    <div class="scrollable-table border-0 rounded-none">
         <div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
         <div class="table-scroll-view">
             @if ($reportType === 'type')
-                <table class="data-table compact" id="statsTable" style="width: 100%;">
+                <table class="w-full text-[13px]" id="statsTable">
                     <thead>
-                        <tr>
-                            <th>{{ t('Kebele') }}</th>
-                            <th>{{ t('Dhunfaa (Private)') }}</th>
-                            <th>{{ t('Government') }}</th>
-                            <th>{{ t('NGO') }}</th>
-                            <th>{{ t('Commercial') }}</th>
-                            <th>{{ t('Total Accounts') }}</th>
+                        <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                            <th class="text-left px-4 py-3">{{ t('Kebele') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('Dhunfaa (Private)') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('Government') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('NGO') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('Commercial') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('Total Accounts') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -130,36 +134,36 @@
                             $t4 += $r->commercialCount;
                             $t5 += $r->total;
                         @endphp
-                        <tr>
-                            <td><strong style="color: var(--primary);">Kebele {{ $r->kebele }}</strong></td>
-                            <td>{{ $r->privateCount }}</td>
-                            <td>{{ $r->governmentCount }}</td>
-                            <td>{{ $r->nonGovernmentCount }}</td>
-                            <td>{{ $r->commercialCount }}</td>
-                            <td><strong style="color: var(--on-surface);">{{ $r->total }}</strong></td>
+                        <tr class="border-b border-slate-100 odd:bg-white even:bg-slate-50/40 hover:bg-emerald-50/60 transition-colors">
+                            <td class="px-4 py-2.5"><strong class="text-emerald-700">Kebele {{ $r->kebele }}</strong></td>
+                            <td class="px-4 py-2.5 text-slate-600">{{ $r->privateCount }}</td>
+                            <td class="px-4 py-2.5 text-slate-600">{{ $r->governmentCount }}</td>
+                            <td class="px-4 py-2.5 text-slate-600">{{ $r->nonGovernmentCount }}</td>
+                            <td class="px-4 py-2.5 text-slate-600">{{ $r->commercialCount }}</td>
+                            <td class="px-4 py-2.5"><strong class="text-slate-900">{{ $r->total }}</strong></td>
                         </tr>
                     @endforeach
                     </tbody>
                     <tfoot>
-                        <tr style="background: var(--surface-container-low); font-weight: 700;">
-                            <td>TOTAL SUMMARY</td>
-                            <td>{{ $t1 }}</td>
-                            <td>{{ $t2 }}</td>
-                            <td>{{ $t3 }}</td>
-                            <td>{{ $t4 }}</td>
-                            <td style="color: var(--primary); font-size: 14px;">{{ $t5 }}</td>
+                        <tr class="bg-slate-50 font-bold text-slate-700">
+                            <td class="px-4 py-3">TOTAL SUMMARY</td>
+                            <td class="px-4 py-3">{{ $t1 }}</td>
+                            <td class="px-4 py-3">{{ $t2 }}</td>
+                            <td class="px-4 py-3">{{ $t3 }}</td>
+                            <td class="px-4 py-3">{{ $t4 }}</td>
+                            <td class="px-4 py-3 text-emerald-700 text-sm">{{ $t5 }}</td>
                         </tr>
                     </tfoot>
                 </table>
             @elseif ($reportType === 'status')
-                <table class="data-table compact" id="statsTable" style="width: 100%;">
+                <table class="w-full text-[13px]" id="statsTable">
                     <thead>
-                        <tr>
-                            <th>{{ t('Kebele') }}</th>
-                            <th>{{ t('Active') }}</th>
-                            <th>DC</th>
-                            <th>{{ t('Updated') }}</th>
-                            <th>{{ t('Deleted') }}</th>
+                        <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                            <th class="text-left px-4 py-3">{{ t('Kebele') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('Active') }}</th>
+                            <th class="text-left px-4 py-3">DC</th>
+                            <th class="text-left px-4 py-3">{{ t('Updated') }}</th>
+                            <th class="text-left px-4 py-3">{{ t('Deleted') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -171,50 +175,50 @@
                             $t3 += $r->updatedCount;
                             $t4 += $r->deletedCount;
                         @endphp
-                        <tr>
-                            <td><strong style="color: var(--primary);">Kebele {{ $r->kebele }}</strong></td>
-                            <td><span class="badge badge-success">{{ $r->activeCount }}</span></td>
-                            <td><span class="badge badge-danger">{{ $r->dcCount }}</span></td>
-                            <td><span class="badge badge-warning">{{ $r->updatedCount }}</span></td>
-                            <td><span class="badge badge-secondary">{{ $r->deletedCount }}</span></td>
+                        <tr class="border-b border-slate-100 odd:bg-white even:bg-slate-50/40 hover:bg-emerald-50/60 transition-colors">
+                            <td class="px-4 py-2.5"><strong class="text-emerald-700">Kebele {{ $r->kebele }}</strong></td>
+                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->activeCount }}</span></td>
+                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->dcCount }}</span></td>
+                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->updatedCount }}</span></td>
+                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->deletedCount }}</span></td>
                         </tr>
                     @endforeach
                     </tbody>
                     <tfoot>
-                        <tr style="background: var(--surface-container-low); font-weight: 700;">
-                            <td>TOTAL SUMMARY</td>
-                            <td style="color: var(--success);">{{ $t1 }}</td>
-                            <td style="color: var(--danger);">{{ $t2 }}</td>
-                            <td>{{ $t3 }}</td>
-                            <td>{{ $t4 }}</td>
+                        <tr class="bg-slate-50 font-bold text-slate-700">
+                            <td class="px-4 py-3">TOTAL SUMMARY</td>
+                            <td class="px-4 py-3 text-emerald-700">{{ $t1 }}</td>
+                            <td class="px-4 py-3 text-rose-600">{{ $t2 }}</td>
+                            <td class="px-4 py-3">{{ $t3 }}</td>
+                            <td class="px-4 py-3">{{ $t4 }}</td>
                         </tr>
                     </tfoot>
                 </table>
             @else
-                <table class="data-table compact" id="statsTable" style="width: 100%;">
+                <table class="w-full text-[13px]" id="statsTable">
                     <thead>
-                        <tr>
-                            <th rowspan="2">{{ t('Kebele') }}</th>
-                            <th colspan="4" style="text-align: center; background: var(--surface-container-low);">Dhunfaa</th>
-                            <th colspan="4" style="text-align: center; background: var(--surface-container-low);">Daldaltoota & Industry</th>
-                            <th colspan="4" style="text-align: center; background: var(--surface-container-low);">Waajjira Motummaa</th>
-                            <th colspan="4" style="text-align: center; background: var(--surface-container-low);">Waajjira Miti-Motummaa</th>
+                        <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                            <th class="text-left px-4 py-3" rowspan="2">{{ t('Kebele') }}</th>
+                            <th colspan="4" class="px-2 py-2 text-center bg-emerald-50 text-emerald-800">Dhunfaa</th>
+                            <th colspan="4" class="px-2 py-2 text-center bg-sky-50 text-sky-800">Daldaltoota & Industry</th>
+                            <th colspan="4" class="px-2 py-2 text-center bg-violet-50 text-violet-800">Waajjira Motummaa</th>
+                            <th colspan="4" class="px-2 py-2 text-center bg-slate-100 text-slate-700">Waajjira Miti-Motummaa</th>
                         </tr>
-                        <tr>
-                            <th>Active</th><th>DC</th><th>Upd.</th><th>Del.</th>
-                            <th>Active</th><th>DC</th><th>Upd.</th><th>Del.</th>
-                            <th>Active</th><th>DC</th><th>Upd.</th><th>Del.</th>
-                            <th>Active</th><th>DC</th><th>Upd.</th><th>Del.</th>
+                        <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase tracking-wider font-bold">
+                            <th class="px-2 py-2">Active</th><th class="px-2 py-2">DC</th><th class="px-2 py-2">Upd.</th><th class="px-2 py-2">Del.</th>
+                            <th class="px-2 py-2">Active</th><th class="px-2 py-2">DC</th><th class="px-2 py-2">Upd.</th><th class="px-2 py-2">Del.</th>
+                            <th class="px-2 py-2">Active</th><th class="px-2 py-2">DC</th><th class="px-2 py-2">Upd.</th><th class="px-2 py-2">Del.</th>
+                            <th class="px-2 py-2">Active</th><th class="px-2 py-2">DC</th><th class="px-2 py-2">Upd.</th><th class="px-2 py-2">Del.</th>
                         </tr>
                     </thead>
                     <tbody>
                     @foreach ($rows as $r)
-                        <tr>
-                            <td><strong style="color: var(--primary);">Kebele {{ $r->kebele }}</strong></td>
-                            <td>{{ $r->dhunfaaActive }}</td><td>{{ $r->dhunfaaDc }}</td><td>{{ $r->dhunfaaUpdated }}</td><td>{{ $r->dhunfaaDeleted }}</td>
-                            <td>{{ $r->daldaltootaIndustryActive }}</td><td>{{ $r->daldaltootaIndustryDc }}</td><td>{{ $r->daldaltootaIndustryUpdated }}</td><td>{{ $r->daldaltootaIndustryDeleted }}</td>
-                            <td>{{ $r->waajjiraMotummaaActive }}</td><td>{{ $r->waajjiraMotummaaDc }}</td><td>{{ $r->waajjiraMotummaaUpdated }}</td><td>{{ $r->waajjiraMotummaaDeleted }}</td>
-                            <td>{{ $r->waajjiraMitiMotummaaActive }}</td><td>{{ $r->waajjiraMitiMotummaaDc }}</td><td>{{ $r->waajjiraMitiMotummaaUpdated }}</td><td>{{ $r->waajjiraMitiMotummaaDeleted }}</td>
+                        <tr class="border-b border-slate-100 odd:bg-white even:bg-slate-50/40 hover:bg-emerald-50/60 transition-colors">
+                            <td class="px-4 py-2.5"><strong class="text-emerald-700">Kebele {{ $r->kebele }}</strong></td>
+                            <td class="px-2 py-2.5 text-slate-600">{{ $r->dhunfaaActive }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->dhunfaaDc }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->dhunfaaUpdated }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->dhunfaaDeleted }}</td>
+                            <td class="px-2 py-2.5 text-slate-600">{{ $r->daldaltootaIndustryActive }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->daldaltootaIndustryDc }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->daldaltootaIndustryUpdated }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->daldaltootaIndustryDeleted }}</td>
+                            <td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMotummaaActive }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMotummaaDc }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMotummaaUpdated }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMotummaaDeleted }}</td>
+                            <td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMitiMotummaaActive }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMitiMotummaaDc }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMitiMotummaaUpdated }}</td><td class="px-2 py-2.5 text-slate-600">{{ $r->waajjiraMitiMotummaaDeleted }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -227,13 +231,12 @@
 <!-- Collapsible Floating Quick Action Menu (FAB) -->
 <div class="fab-wrapper">
     <div class="fab-menu" id="fabMenu">
-        <button type="button" class="fab-item" onclick="window.print(); toggleFabMenu();">
-            <span class="icon">{!! icon('print', 16) !!}</span>
-            <span class="label">{{ t('Print Report') }}</span>
+        <button type="button" class="fab-item inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-slate-900 text-white text-[13px] font-semibold border border-white/15 shadow-lg hover:bg-emerald-700 transition" onclick="window.print(); toggleFabMenu();">
+            {!! icon('print', 16) !!} <span>{{ t('Print Report') }}</span>
         </button>
     </div>
-    <button type="button" class="fab-trigger-btn" onclick="toggleFabMenu()" title="Quick Actions">
-        <span class="fab-icon-main">{!! icon('plus', 22) !!}</span>
+    <button type="button" class="fab-trigger-btn w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_8px_24px_rgba(5,150,105,0.45)] flex items-center justify-center transition" onclick="toggleFabMenu()" title="Quick Actions">
+        {!! icon('plus', 22) !!}
     </button>
 </div>
 
@@ -263,7 +266,7 @@ function toggleFabMenu() {
                     labels: Object.keys(byType),
                     datasets: [{
                         data: Object.values(byType),
-                        backgroundColor: ['#10B981', '#3B82F6', '#6366F1', '#FEA619', '#8B5CF6'],
+                        backgroundColor: ['#059669', '#3B82F6', '#6366F1', '#F59E0B', '#8B5CF6'],
                         borderWidth: 2,
                         borderColor: '#ffffff'
                     }]
@@ -291,7 +294,7 @@ function toggleFabMenu() {
                     datasets: [{
                         label: 'Count',
                         data: Object.values(byStatus),
-                        backgroundColor: ['#10B981', '#EF4444', '#FEA619', '#64748B'],
+                        backgroundColor: ['#059669', '#EF4444', '#F59E0B', '#64748B'],
                         borderRadius: 6
                     }]
                 },
@@ -300,7 +303,7 @@ function toggleFabMenu() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10 } } },
                         x: { grid: { display: false }, ticks: { font: { size: 11 } } }
                     }
                 }
@@ -319,7 +322,7 @@ function toggleFabMenu() {
                     datasets: [{
                         label: 'Customers',
                         data: byKebele.map(r => r.cnt),
-                        backgroundColor: '#3B82F6',
+                        backgroundColor: '#059669',
                         borderRadius: 6
                     }]
                 },
@@ -328,7 +331,7 @@ function toggleFabMenu() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10 } } },
                         x: { grid: { display: false }, ticks: { font: { size: 10 } } }
                     }
                 }
@@ -343,8 +346,8 @@ function toggleFabMenu() {
 
             const ctx = trendCtx.getContext('2d');
             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.45)');
-            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.01)');
+            gradient.addColorStop(0, 'rgba(5, 150, 105, 0.45)');
+            gradient.addColorStop(1, 'rgba(5, 150, 105, 0.01)');
 
             new Chart(ctx, {
                 type: 'line',
@@ -353,12 +356,12 @@ function toggleFabMenu() {
                     datasets: [{
                         label: 'New Customers',
                         data: trend.map(r => r.cnt),
-                        borderColor: '#10B981',
+                        borderColor: '#059669',
                         backgroundColor: gradient,
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: '#10B981',
+                        pointBackgroundColor: '#059669',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
                         pointRadius: 4,
@@ -370,7 +373,7 @@ function toggleFabMenu() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10 } } },
                         x: { grid: { display: false }, ticks: { font: { size: 10 } } }
                     }
                 }

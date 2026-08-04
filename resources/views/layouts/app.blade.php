@@ -4,92 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $pageTitle ?? config('app.name') }} — {{ config('app.name') }}</title>
+
+<!-- Tailwind CSS 4 (browser CDN) + EOS Modern Steward theme tokens -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+@theme {
+    --color-primary: #059669;
+    --color-primary-600: #059669;
+    --color-primary-700: #047857;
+    --color-primary-800: #065F46;
+    --color-primary-50: #ECFDF5;
+    --color-primary-100: #D1FAE5;
+    --color-on-primary-container: #065F46;
+    --color-surface-base: #F8FAF8;
+    --color-surface-card: #FFFFFF;
+    --color-text-main: #0F172A;
+    --color-text-muted: #64748B;
+    --color-accent-warm: #E11D48;
+    --color-border-subtle: #E2E8F0;
+
+    --shadow-card: 0 4px 20px rgba(16, 185, 129, 0.05);
+    --shadow-hover: 0 10px 25px rgba(16, 185, 129, 0.12);
+
+    --font-sans: "Inter", "Noto Sans Ethiopic", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --font-serif: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+</style>
+
 <link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css?v={{ time() }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="{{ $baseUrl }}/assets/js/app.js?v={{ time() }}"></script>
-<script>
-window.initGlobalGSAPAnimations = function() {
-    if (typeof gsap === 'undefined') return;
-    if (document.querySelector('.gsap-hero')) {
-        gsap.from('.gsap-hero', { opacity: 0, y: -20, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
-    }
-    if (document.querySelectorAll('.gsap-stat-card').length) {
-        gsap.from('.gsap-stat-card', { opacity: 0, y: 20, scale: 0.96, stagger: 0.08, duration: 0.5, ease: 'back.out(1.2)', clearProps: 'all' });
-    }
-    if (document.querySelectorAll('.gsap-chart-card').length) {
-        gsap.from('.gsap-chart-card', { opacity: 0, scale: 0.94, y: 15, stagger: 0.1, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
-    }
-    if (document.querySelectorAll('.gsap-section-card').length) {
-        gsap.from('.gsap-section-card', { opacity: 0, y: 25, stagger: 0.12, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
-    }
-    document.querySelectorAll('[data-gsap-counter]').forEach(function(el) {
-        var target = parseFloat(el.getAttribute('data-target-val') || '0');
-        if (isNaN(target) || target === 0) return;
-        var obj = { val: 0 };
-        gsap.to(obj, {
-            val: target,
-            duration: 1.2,
-            ease: 'power1.out',
-            onUpdate: function() {
-                el.innerText = Math.round(obj.val).toLocaleString();
-            }
-        });
-    });
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-    window.initGlobalGSAPAnimations();
-});
-
-window.toggleSidebar = function(e) {
-    if (e && e.preventDefault) e.preventDefault();
-    var shell = document.querySelector('.app-shell');
-    if (!shell) return;
-    var collapsed = shell.classList.toggle('sidebar-collapsed');
-    localStorage.setItem('eteya_sidebar_collapsed', collapsed ? 'true' : 'false');
-};
-
-window.toggleCategoryGroup = function(headerEl) {
-    var shell = document.querySelector('.app-shell');
-    if (shell && shell.classList.contains('sidebar-collapsed')) {
-        shell.classList.remove('sidebar-collapsed');
-        localStorage.setItem('eteya_sidebar_collapsed', 'false');
-    }
-
-    var group = headerEl.closest('.sidebar-category-group');
-    if (!group) return;
-    var isAlreadyOpen = group.classList.contains('open');
-    document.querySelectorAll('.sidebar-category-group').forEach(function(g) {
-        g.classList.remove('open');
-        var h = g.querySelector('.sidebar-category-header');
-        if (h) h.setAttribute('aria-expanded', 'false');
-    });
-    if (!isAlreadyOpen) {
-        group.classList.add('open');
-        headerEl.setAttribute('aria-expanded', 'true');
-    }
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-    if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
-        var shell = document.querySelector('.app-shell');
-        if (shell) shell.classList.add('sidebar-collapsed');
-    }
-});
-</script>
 </head>
-<body>
+<body class="antialiased">
+
+<!-- Splash loader -->
+<div id="eosSplashScreen" class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
+    <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-card mb-5" id="splashLogo">
+        <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-10 h-10 object-contain">
+    </div>
+    <div class="text-sm font-bold text-slate-900 tracking-tight mb-1">{{ config('app.name') }}</div>
+    <div class="text-[11px] text-slate-500 mb-5">{{ t('Water Utility Billing System') }}</div>
+    <div class="w-40 h-1 bg-slate-100 rounded-full overflow-hidden">
+        <div id="splashProgressBar" class="h-full w-0 bg-emerald-600 rounded-full"></div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div id="toastContainer" class="toast-container"></div>
+
 <div class="app-shell">
-<script>
-if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
-    document.querySelector('.app-shell').classList.add('sidebar-collapsed');
-}
-</script>
 
 @php
     $user = auth()->user();
@@ -101,6 +69,28 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     $devCredit = get_setting('developer_credit', 'GITAN ICT Work PLC');
     $brandShort = get_setting('default_branch', 'Eteya');
     $currentPage = request()->segment(1) ?? 'dashboard';
+
+    // Category accent → Tailwind class map (module accents must stay consistent)
+    $accents = [
+        'emerald' => [
+            'icon'   => 'text-emerald-600',
+            'soft'   => 'bg-emerald-50',
+            'hover'  => 'hover:bg-emerald-50 hover:text-emerald-900',
+            'active' => 'bg-emerald-600 text-white shadow-sm',
+        ],
+        'indigo' => [
+            'icon'   => 'text-indigo-600',
+            'soft'   => 'bg-indigo-50',
+            'hover'  => 'hover:bg-indigo-50 hover:text-indigo-900',
+            'active' => 'bg-indigo-600 text-white shadow-sm',
+        ],
+        'gold' => [
+            'icon'   => 'text-amber-600',
+            'soft'   => 'bg-amber-50',
+            'hover'  => 'hover:bg-amber-50 hover:text-amber-900',
+            'active' => 'bg-amber-600 text-white shadow-sm',
+        ],
+    ];
 
     $allGroups = [
         [
@@ -147,7 +137,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
             $navGroups[] = [
                 'title'     => $group['title'],
                 'icon'      => $group['icon'],
-                'accent'    => $group['accent'],
+                'accent'    => $accents[$group['accent']] ?? $accents['emerald'],
                 'hasActive' => $hasActive,
                 'items'     => array_values($allowedItems)
             ];
@@ -159,75 +149,69 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     $pageAction = $pageAction ?? null;
 @endphp
 
-<aside class="sidebar">
-    <!--
-    THESIS: A floating light utility card, not a full-height dark slab. The operator
-    scans three accent-coded modules, the active page is unmistakable, and the rail
-    can collapse to an icon-only shelf that previews destinations on hover.
-    OWN-WORLD: Project tokens — emerald primary, indigo tertiary, gold secondary —
-    each owning a module group (icon, active pill, hover wash). Sidebar surface is
-    the app's own white card layer with a 1px outline and soft ambient shadow.
-    STORY: Billing staff move between Operations, Reports and Administration as if
-    between rooms; the active room is lit, the rest are quiet.
-    FIRST VIEWPORT: Inset rounded card, brand chip + enterprise name up top, three
-    category groups, icon-led rows with a 2px active left border per DESIGN.md, and
-    an avatar + role + logout footer pinned to the rail bottom.
-    FORM: Floating card sidebar (EOS-style, per skills/SKILL.md), expanded 256px /
-    collapsed 72px, hover flyouts preserved.
-    FINISH: unreviewed and undocumented is unfinished; this build ends with the
-    finish review, the verdict, and DESIGN.md.
-    -->
-    <div class="sidebar-brand">
-        <div class="brand-chip">
-            <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="brand-logo">
+<!-- ============================================================
+     SIDEBAR — Floating light utility card (EOS Modern Steward)
+     THESIS / OWN-WORLD / STORY: see DESIGN.md.
+     ============================================================ -->
+<aside id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden">
+
+    <!-- 1. Brand header -->
+    <div class="sidebar-brand shrink-0 flex items-center gap-3 px-5 py-4 border-b border-slate-200 bg-white">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 p-1.5 flex items-center justify-center shrink-0">
+            <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-full h-full object-contain">
         </div>
-        <div class="brand-text">
-            <div class="name">{{ $brandShort ?? t('Eteya') }}</div>
-            <div class="tag">Water Supply & Sewerage Enterprise</div>
+        <div class="brand-text min-w-0 flex-1">
+            <div class="name font-extrabold text-[15px] tracking-tight text-slate-900 truncate">{{ $brandShort ?? t('Eteya') }}</div>
+            <div class="tag text-[10px] text-slate-500 truncate">Water Supply & Sewerage Enterprise</div>
         </div>
-        <button type="button" class="sidebar-collapse-toggle" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
-            {!! icon('panel-left', 18) !!}
+        <button type="button" class="sidebar-collapse-toggle shrink-0 w-9 h-9 rounded-[10px] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 flex items-center justify-center cursor-pointer transition" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
+            {!! icon('panel-left', 16) !!}
         </button>
     </div>
 
-    <div class="sidebar-categories-container">
+    <!-- 2. Category navigation -->
+    <div class="sidebar-categories-container flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-2">
     @foreach ($navGroups as $idx => $group)
-        <div class="sidebar-category-group {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}" data-accent="{{ $group['accent'] }}">
-            <div class="sidebar-category-header" onclick="toggleCategoryGroup(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategoryGroup(this);}" role="button" tabindex="0" aria-expanded="{{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'true' : 'false' }}">
-                <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
-                <span class="cat-title">{{ $group['title'] }}</span>
-                <span class="chevron">{!! icon('chevron-down', 12) !!}</span>
+        <div class="sidebar-category-group relative {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
+            <div class="sidebar-category-header flex items-center gap-2.5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer select-none transition {{ $group['hasActive'] ? $group['accent']['soft'].' '.$group['accent']['icon'] : '' }}"
+                 onclick="toggleCategoryGroup(this)"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategoryGroup(this);}"
+                 role="button" tabindex="0"
+                 aria-expanded="{{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'true' : 'false' }}">
+                <span class="cat-icon shrink-0 {{ $group['accent']['icon'] }}">{!! icon($group['icon'], 16) !!}</span>
+                <span class="cat-title flex-1 min-w-0 truncate">{{ $group['title'] }}</span>
+                <span class="chevron shrink-0 opacity-60 transition-transform duration-300">{!! icon('chevron-down', 12) !!}</span>
             </div>
 
-            <div class="sidebar-category-body">
-                <ul class="sidebar-nav">
+            <div class="sidebar-category-body pt-1">
+                <ul class="sidebar-nav space-y-1">
                     @foreach ($group['items'] as $item)
-                        <li data-title="{{ $item['label'] }}">
+                        <li>
                             <a href="{{ route($item['route']) }}"
-                               class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
-                                <span class="icon">{!! icon($item['icon'], 18) !!}</span>
-                                <span class="nav-label">{{ $item['label'] }}</span>
+                               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition {{ $currentPage === $item['page'] ? $group['accent']['active'] : 'text-slate-600 '.$group['accent']['hover'] }}">
+                                <span class="icon shrink-0 flex items-center justify-center {{ $currentPage === $item['page'] ? '' : $group['accent']['icon'] }}">{!! icon($item['icon'], 18) !!}</span>
+                                <span class="nav-label truncate">{{ $item['label'] }}</span>
                             </a>
                         </li>
                     @endforeach
                 </ul>
             </div>
 
-            <!-- Category Flyout Panel in Collapsed Mode -->
+            <!-- Category flyout panel (collapsed hover) -->
             <div class="category-flyout-panel">
-                <div class="flyout-card-inner">
-                    <div class="flyout-header">
-                        <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
-                        <span class="cat-title">{{ $group['title'] }}</span>
+                <div class="bg-white border border-slate-200 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] p-3">
+                    <div class="flex items-center gap-2 pb-2.5 mb-2 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        <span class="{{ $group['accent']['icon'] }}">{!! icon($group['icon'], 14) !!}</span>
+                        <span>{{ $group['title'] }}</span>
                     </div>
-                    <div class="flyout-body">
+                    <div class="flex flex-col gap-1">
                         @foreach ($group['items'] as $item)
-                            <a href="{{ route($item['route']) }}" class="flyout-item {{ $currentPage === $item['page'] ? 'active' : '' }}">
-                                <span class="icon">{!! icon($item['icon'], 16) !!}</span>
-                                <div class="details">
-                                    <div class="title">{{ $item['label'] }}</div>
-                                    <div class="sub">{{ $item['desc'] }}</div>
-                                </div>
+                            <a href="{{ route($item['route']) }}" class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
+                                <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
+                                <span class="min-w-0">
+                                    <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
+                                    <span class="block text-[11px] text-slate-500 leading-snug mt-0.5">{{ $item['desc'] }}</span>
+                                </span>
                             </a>
                         @endforeach
                     </div>
@@ -237,22 +221,23 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     @endforeach
     </div>
 
-    <div class="sidebar-footer">
-        <div class="sidebar-user">
-            <div class="user-avatar">
-                <img src="{{ $photoUrl }}" alt="{{ $fullName }}">
+    <!-- 3. User footer -->
+    <div class="sidebar-footer shrink-0 px-4 py-3.5 border-t border-slate-200 bg-white">
+        <div class="sidebar-user flex items-center gap-2.5 min-w-0">
+            <div class="user-avatar w-9 h-9 rounded-full overflow-hidden shrink-0 ring-2 ring-emerald-100">
+                <img src="{{ $photoUrl }}" alt="{{ $fullName }}" class="w-full h-full object-cover block">
             </div>
-            <div class="user-meta">
-                <div class="user-name">{{ $fullName }}</div>
-                <div class="user-role"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
+            <div class="user-meta flex-1 min-w-0">
+                <div class="user-name text-[13px] font-bold text-slate-900 truncate">{{ $fullName }}</div>
+                <div class="user-role mt-0.5 truncate"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
             </div>
-            <a href="{{ route('logout') }}" class="logout-link" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <span class="icon">{!! icon('logout', 16) !!}</span>
+            <a href="{{ route('logout') }}" class="logout-link shrink-0 w-9 h-9 rounded-lg inline-flex items-center justify-center text-slate-500 border border-slate-200 bg-slate-50 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                {!! icon('logout', 16) !!}
             </a>
         </div>
-        <div class="footer-meta">
-            <span class="footer-info-badge">{{ $appVersion }}</span>
-            <span class="footer-info-credit">{{ $devCredit }}</span>
+        <div class="footer-meta mt-3 pt-2.5 border-t border-dashed border-slate-200 text-[10px] text-slate-500 flex flex-col gap-0.5">
+            <span class="font-semibold text-slate-600">{{ $appVersion }}</span>
+            <span class="opacity-90">{{ $devCredit }}</span>
         </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
@@ -260,69 +245,97 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     </div>
 </aside>
 
-<div class="main-area">
-<header class="topbar">
-    <div style="display: flex; align-items: center; gap: 12px;">
+<!-- ============================================================
+     MAIN AREA
+     ============================================================ -->
+<div class="main-area flex flex-col min-w-0">
+
+    <!-- Topbar -->
+    <header class="topbar sticky top-0 z-[40] flex items-center gap-4 px-6 py-4 bg-white/85 backdrop-blur border-b border-slate-200 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div>
-            <div class="page-title">{{ $pageTitle ?? t('Dashboard') }}</div>
-            <div class="page-subtitle">{{ $enterpriseEN }}</div>
+            <div class="page-title text-lg font-bold tracking-tight text-slate-900">{{ $pageTitle ?? t('Dashboard') }}</div>
+            <div class="page-subtitle text-xs text-slate-500 mt-0.5">{{ $enterpriseEN }}</div>
         </div>
-    </div>
-    <div class="spacer"></div>
+        <div class="spacer flex-1"></div>
 
-    <div style="position: relative; width: 220px;" class="topbar-search-bar">
-        <input type="text" class="form-control" placeholder="Search (Ctrl + K)" onclick="openModal('quickCmdModal')" readonly style="padding-left: 30px; font-size: 12px; height: 34px; cursor: pointer; background: var(--surface-container-low);">
-        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5;">{!! icon('search', 13) !!}</span>
-    </div>
+        <div class="relative w-56">
+            <input type="text" class="w-full pl-8 pr-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" placeholder="Search (Ctrl + K)" onclick="openModal('quickCmdModal')" readonly>
+            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400">{!! icon('search', 13) !!}</span>
+        </div>
 
-    @if (! empty($pageAction))
-    <a href="{{ $pageAction['href'] ?? '#' }}"
-       class="btn btn-primary topbar-action"
-       onclick="{{ $pageAction['onclick'] ?? '' }}">
-        {!! icon($pageAction['icon'] ?? 'plus', 16) !!}
-        <span>{{ $pageAction['label'] ?? 'Action' }}</span>
-    </a>
-    @endif
+        @if (! empty($pageAction))
+        <a href="{{ $pageAction['href'] ?? '#' }}"
+           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm"
+           onclick="{{ $pageAction['onclick'] ?? '' }}">
+            {!! icon($pageAction['icon'] ?? 'plus', 15) !!}
+            <span>{{ $pageAction['label'] ?? 'Action' }}</span>
+        </a>
+        @endif
 
-    <div class="lang-switcher">
-        {!! icon('globe', 15) !!}
-        <select id="langSelect" onchange="changeLanguage(this.value)" title="Language">
+        <!-- Language switcher (segmented) -->
+        <div class="inline-flex items-center bg-slate-100 border border-slate-200 rounded-lg p-1 gap-0.5">
             @foreach ($languages as $code => $info)
-                <option value="{{ $code }}" @if($code === $currentLang) selected @endif>
-                    {{ $info[1] }}
-                </option>
+                @php $isActive = $code === $currentLang; @endphp
+                <a href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
+                   class="px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition {{ $isActive ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}"
+                   title="{{ $info[0] }}">{{ $info[2] }}</a>
             @endforeach
-        </select>
-    </div>
-
-    <div class="user-chip">
-        <div style="position: relative; display: flex; align-items: center;">
-            <img src="{{ $photoUrl }}" alt="User photo">
-            <span style="position: absolute; right: 0; bottom: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--primary-container); border: 2px solid #fff;"></span>
         </div>
-        <div>
-            <div class="name" style="font-size: 13px; font-weight: 700; color: var(--on-surface); line-height: 1.2;">{{ $fullName }}</div>
-            <div class="role" style="margin-top: 2px;"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
-        </div>
-    </div>
-</header>
 
-<main class="content">
+        <!-- User chip -->
+        <div class="flex items-center gap-2.5 pl-2.5 pr-3 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm">
+            <div class="relative flex items-center">
+                <img src="{{ $photoUrl }}" alt="User photo" class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm">
+                <span class="absolute right-0 bottom-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
+            </div>
+            <div>
+                <div class="text-[13px] font-bold text-slate-900 leading-tight max-w-[140px] truncate">{{ $fullName }}</div>
+                <div class="mt-0.5"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="content p-6 flex-1 max-w-[1600px] w-full mx-auto">
+        <script>
+        window.API_BASE = '{{ $baseUrl }}/api';
+        window.apiUrl = function(path) { return window.API_BASE + '/' + path; };
+
+        function changeLanguage(code) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('lang', code);
+            window.location.href = url.toString();
+        }
+        </script>
+
+        @yield('content')
+    </main>
+</div>
+</div>
+
 <script>
-window.API_BASE = '{{ $baseUrl }}/api';
-window.apiUrl = function(path) { return window.API_BASE + '/' + path; };
-
-function changeLanguage(code) {
-    var url = new URL(window.location.href);
-    url.searchParams.set('lang', code);
-    window.location.href = url.toString();
-}
+// Splash loader (guarded, always-has-fallback)
+(function() {
+    var splash = document.getElementById('eosSplashScreen');
+    var bar = document.getElementById('splashProgressBar');
+    if (!splash) return;
+    var done = false;
+    function finish() {
+        if (done) return;
+        done = true;
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.45s ease';
+        setTimeout(function() { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 500);
+    }
+    if (typeof gsap !== 'undefined') {
+        gsap.fromTo('#splashLogo', { scale: 0.85 }, { scale: 1.05, duration: 0.6, yoyo: true, repeat: 1, ease: 'power1.inOut', clearProps: 'all' });
+        gsap.to(bar, { width: '100%', duration: 0.7, ease: 'power2.out', onComplete: finish });
+    } else {
+        bar.style.width = '100%';
+        setTimeout(finish, 700);
+    }
+    setTimeout(finish, 900);
+})();
 </script>
-
-@yield('content')
-
-</main>
-</div>
-</div>
+<script src="{{ $baseUrl }}/assets/js/app.js?v={{ time() }}"></script>
 </body>
 </html>

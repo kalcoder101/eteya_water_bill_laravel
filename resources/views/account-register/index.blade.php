@@ -1,15 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="panel">
-    <div class="panel-header">{!! icon('user', 16) !!} {{ t('Account Registration') }}</div>
-    <div class="panel-body">
+<div class="gsap-hero flex flex-wrap items-end justify-between gap-4 mb-6">
+    <div>
+        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500 mb-1">
+            {{ t('Operations') }} &bull; {{ t('New Customer Onboarding') }}
+        </div>
+        <h2 class="m-0 text-[22px] font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <span class="text-emerald-600">{!! icon('user', 24) !!}</span> {{ t('Account Registration') }}
+        </h2>
+        <p class="mt-1 text-[13px] text-slate-500">{{ t('Register a new water meter account with full customer, address and photo details') }}</p>
+    </div>
+</div>
+<div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden mb-6">
+    <div class="flex items-center gap-3 px-5 py-3.5 border-b border-slate-100">
+        <span class="text-emerald-600">{!! icon('user', 16) !!}</span>
+        <span class="font-serif font-bold text-slate-900 text-sm">{{ t('Account Registration') }}</span>
+    </div>
+    <div class="p-5">
         <form method="post" action="{{ route('account-register.save') }}" enctype="multipart/form-data" id="regForm">
             @csrf
-            <div class="form-grid">
-                <div class="form-group" style="grid-column: span 2;">
-                    <label>{{ t('Job Role') }} <span style="color:red;">*</span></label>
-                    <select name="jobRole" id="jobRole" required onchange="updateRoleInfo()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Job Role') }} <span class="text-rose-600">*</span></label>
+                    <select name="jobRole" id="jobRole" required onchange="updateRoleInfo()" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
                         <option value="">Select a role...</option>
                         @foreach ($roles as $roleName => $roleInfo)
                             <option value="{{ $roleName }}" data-display="{{ $roleInfo['display'] }}" data-badge="{{ $roleInfo['badge'] }}">
@@ -17,77 +31,106 @@
                             </option>
                         @endforeach
                     </select>
-                    <div id="roleDescription" style="margin-top:8px; padding:8px; background:#f5f5f5; border-left:3px solid #ddd; display:none;"></div>
+                    <div id="roleDescription" class="hidden mt-2 px-3 py-2 bg-slate-50 border-l-4 border-slate-300 text-xs text-slate-600 rounded-r-md"></div>
                 </div>
-                <div class="form-group"><label>{{ t('User ID') }}</label><input type="text" name="userId" placeholder="e.g. EMP007" required></div>
-                <div class="form-group"><label>{{ t('First Name') }}</label><input type="text" name="firstName" required></div>
-                <div class="form-group"><label>{{ t('Middle Name') }}</label><input type="text" name="middleName"></div>
-                <div class="form-group"><label>{{ t('Phone Number') }}</label><input type="text" name="phoneNumber" placeholder="+2519..."></div>
-                <div class="form-group"><label>Email</label><input type="email" name="emailId"></div>
-                <div class="form-group"><label>{{ t('Username') }}</label><input type="text" name="userName" required pattern="[A-Za-z]\w{5,29}" title="6-30 chars, starts with letter"></div>
-                <div class="form-group">
-                    <label>{{ t('Password') }}</label>
-                    <div style="position:relative;">
-                        <input type="password" name="userPassword" id="passwordField" required style="padding-right: 36px;">
-                        <button type="button" class="btn-icon-toggle" onclick="togglePasswordVisibility()" style="position:absolute; right:4px; top:4px; background:none; border:none; cursor:pointer; padding:4px; color:#666;">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('User ID') }}</label>
+                    <input type="text" name="userId" placeholder="e.g. EMP007" required class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('First Name') }}</label>
+                    <input type="text" name="firstName" required class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Middle Name') }}</label>
+                    <input type="text" name="middleName" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Phone Number') }}</label>
+                    <input type="text" name="phoneNumber" placeholder="+2519..." class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Email</label>
+                    <input type="email" name="emailId" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Username') }}</label>
+                    <input type="text" name="userName" required pattern="[A-Za-z]\w{5,29}" title="6-30 chars, starts with letter" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Password') }}</label>
+                    <div class="relative">
+                        <input type="password" name="userPassword" id="passwordField" required class="w-full px-3 py-2.5 pr-10 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+                        <button type="button" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition" onclick="togglePasswordVisibility()" title="Show/hide password">
                             {!! icon('eye', 18) !!}
                         </button>
                     </div>
                 </div>
-                <div class="form-group"><label>Photo</label><input type="file" name="photo" accept="image/*"></div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Photo</label>
+                    <input type="file" name="photo" accept="image/*" class="w-full text-sm text-slate-500 file:mr-3 file:px-3.5 file:py-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold file:text-xs hover:file:bg-emerald-100 transition">
+                </div>
             </div>
-            <div style="margin-top: 16px;">
-                <button type="submit" class="btn btn-success">{!! icon('check', 16) !!} {{ t('Update') }} / {{ t('Register') }}</button>
+            <div class="mt-5 flex gap-3">
+                <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('check', 16) !!} {{ t('Update') }} / {{ t('Register') }}</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="panel">
-    <div class="panel-header">{!! icon('customers', 16) !!} {{ t('System Users') }} ({{ count($users) }})</div>
-    <div style="overflow-x:auto; max-height: 500px; overflow-y:auto;">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>{{ t('User ID') }}</th>
-                    <th>{{ t('Name') }}</th>
-                    <th>{{ t('Phone') }}</th>
-                    <th>Email</th>
-                    <th>{{ t('Role') }}</th>
-                    <th>{{ t('Username') }}</th>
-                    <th>Photo</th>
-                    <th>{{ t('Actions') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach ($users as $u)
-                @php $roleInfo = $roles[$u->job_role] ?? ['display' => $u->job_role, 'badge' => 'badge-default']; @endphp
-                <tr>
-                    <td><strong>{{ $u->user_id }}</strong></td>
-                    <td>{{ trim(($u->first_name ?? '').' '.($u->last_name ?? '')) }}</td>
-                    <td>{{ $u->phone_number }}</td>
-                    <td>{{ $u->email_id }}</td>
-                    <td><span class="badge {{ $roleInfo['badge'] }}">{{ $roleInfo['display'] }}</span></td>
-                    <td>{{ $u->user_name }}</td>
-                    <td>
-                        @if ($u->photo)
-                            <img src="{{ route('api.user.photo', ['userId' => $u->user_id]) }}" alt="photo" style="height:30px; width:30px; border-radius:50%; object-fit:cover;">
-                        @else
-                            <span style="color:#9ca3af;">—</span>
-                        @endif
-                    </td>
-                    <td>
-                        <button class="btn btn-sm" type="button" onclick="editUser('{{ e($u->user_id) }}')">{!! icon('edit', 14) !!} {{ t('Edit') }}</button>
-                        <form method="post" action="{{ route('account-register.delete') }}" style="display:inline; margin:0;">
-                            @csrf
-                            <input type="hidden" name="id" value="{{ $u->user_id }}">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?')">{!! icon('trash', 14) !!} {{ t('Delete') }}</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
+<div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+    <div class="flex items-center gap-3 px-5 py-3.5 border-b border-slate-100">
+        <span class="text-emerald-600">{!! icon('customers', 16) !!}</span>
+        <span class="font-serif font-bold text-slate-900 text-sm">{{ t('System Users') }} <span class="inline-flex items-center rounded-full bg-slate-100 text-slate-600 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider border border-slate-200 ml-1">{{ count($users) }}</span></span>
+    </div>
+    <div class="scrollable-table border-0 rounded-none">
+        <div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
+        <div class="table-scroll-view">
+            <table class="w-full text-[13px]">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                        <th class="text-left px-4 py-3 whitespace-nowrap">{{ t('User ID') }}</th>
+                        <th class="text-left px-4 py-3 whitespace-nowrap">{{ t('Name') }}</th>
+                        <th class="text-left px-4 py-3 whitespace-nowrap">{{ t('Phone') }}</th>
+                        <th class="text-left px-4 py-3 whitespace-nowrap">Email</th>
+                        <th class="text-left px-4 py-3 whitespace-nowrap">{{ t('Role') }}</th>
+                        <th class="text-left px-4 py-3 whitespace-nowrap">{{ t('Username') }}</th>
+                        <th class="text-left px-4 py-3 whitespace-nowrap">Photo</th>
+                        <th class="text-right px-4 py-3 whitespace-nowrap">{{ t('Actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach ($users as $u)
+                    @php $roleInfo = $roles[$u->job_role] ?? ['display' => $u->job_role, 'badge' => 'badge-default']; @endphp
+                    <tr class="border-b border-slate-100 odd:bg-white even:bg-slate-50/40 hover:bg-emerald-50/60 transition-colors">
+                        <td class="px-4 py-2.5 text-slate-700 align-middle"><strong class="font-mono">{{ $u->user_id }}</strong></td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle">{{ trim(($u->first_name ?? '').' '.($u->last_name ?? '')) }}</td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle">{{ $u->phone_number }}</td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle">{{ $u->email_id }}</td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle"><span class="badge {{ $roleInfo['badge'] }}">{{ $roleInfo['display'] }}</span></td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle">{{ $u->user_name }}</td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle">
+                            @if ($u->photo)
+                                <img src="{{ route('api.user.photo', ['userId' => $u->user_id]) }}" alt="photo" class="h-8 w-8 rounded-full object-cover border border-slate-200">
+                            @else
+                                <span class="text-slate-400">—</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2.5 text-slate-700 align-middle">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" type="button" onclick="editUser('{{ e($u->user_id) }}')">{!! icon('edit', 14) !!} {{ t('Edit') }}</button>
+                                <form method="post" action="{{ route('account-register.delete') }}" class="inline m-0">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $u->user_id }}">
+                                    <button type="submit" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition" onclick="return confirm('Delete this user?')">{!! icon('trash', 14) !!} {{ t('Delete') }}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

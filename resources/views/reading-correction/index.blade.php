@@ -1,114 +1,162 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-header-block">
-    <div class="page-info">
-        <h2>{{ t('Reading Correction') }}</h2>
-        <p>{{ t('Submit and process meter-reading complaints') }}</p>
-    </div>
-    <div class="page-actions">
-        <div class="segmented">
-            <a class="{{ $view==='all'?'active':'' }}" href="?view=all">{{ t('All') }}</a>
-            <a class="{{ $view==='daily'?'active':'' }}" href="?view=daily&date={{ date('Y-m-d') }}">{{ t('Daily') }}</a>
-            <a class="{{ $view==='monthly'?'active':'' }}" href="?view=monthly&year={{ get_setting('current_bill_year', date('Y')) }}&month={{ $months[0] }}">{{ t('Monthly') }}</a>
-            <a class="{{ $view==='annual'?'active':'' }}" href="?view=annual&year={{ get_setting('current_bill_year', date('Y')) }}">{{ t('Annual') }}</a>
-            <a class="{{ $view==='personal'?'active':'' }}" href="?view=personal">{{ t('Personal') }}</a>
+
+<!-- Page Header -->
+<div class="gsap-hero flex flex-wrap items-end justify-between gap-4 mb-6">
+    <div>
+        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500 mb-1">
+            {{ t('Operations') }} &bull; {{ t('Complaint Management') }}
         </div>
+        <h2 class="m-0 text-[22px] font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <span class="text-emerald-600">{!! icon('wrench', 22) !!}</span> {{ t('Reading Correction') }}
+        </h2>
+        <p class="mt-1 text-[13px] text-slate-500">{{ t('Submit and process meter-reading complaints') }}</p>
+    </div>
+    <div class="segmented bg-slate-100 p-1">
+        <a class="{{ $view==='all'?'active':'' }}" href="?view=all">{{ t('All') }}</a>
+        <a class="{{ $view==='daily'?'active':'' }}" href="?view=daily&date={{ date('Y-m-d') }}">{{ t('Daily') }}</a>
+        <a class="{{ $view==='monthly'?'active':'' }}" href="?view=monthly&year={{ get_setting('current_bill_year', date('Y')) }}&month={{ $months[0] }}">{{ t('Monthly') }}</a>
+        <a class="{{ $view==='annual'?'active':'' }}" href="?view=annual&year={{ get_setting('current_bill_year', date('Y')) }}">{{ t('Annual') }}</a>
+        <a class="{{ $view==='personal'?'active':'' }}" href="?view=personal">{{ t('Personal') }}</a>
     </div>
 </div>
 
 @if ($view === 'personal')
-<div class="toolbar" style="margin-bottom: 14px;">
-    <form method="get" action="" style="display:flex; gap:8px; align-items:center;">
+<div class="bg-white border border-slate-200 rounded-xl shadow-card p-3 mb-4">
+    <form method="get" action="" class="flex flex-wrap gap-2 items-center">
         <input type="hidden" name="view" value="personal">
-        <input type="text" name="customerCode" placeholder="{{ t('Customer Code') }}" value="{{ request()->get('customerCode', '') }}" style="min-width: 220px;">
-        <button class="btn btn-sm btn-primary">{!! icon('search', 14) !!} {{ t('Search') }}</button>
+        <input type="text" name="customerCode" placeholder="{{ t('Customer Code') }}" value="{{ request()->get('customerCode', '') }}"
+               class="flex-1 min-w-[220px] px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+        <button class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('search', 14) !!} {{ t('Search') }}</button>
     </form>
 </div>
 @endif
 
-<div class="card-grid cols-4" style="margin-bottom: 14px;">
-    <div class="kpi-mini"><div class="kpi-icon lime">{!! icon('file-text', 18) !!}</div><div><div class="kpi-label">{{ t('Total') }}</div><div class="kpi-value">{{ count($complaints) }}</div></div></div>
-    <div class="kpi-mini"><div class="kpi-icon yellow">{!! icon('clock', 18) !!}</div><div><div class="kpi-label">{{ t('Pending') }}</div><div class="kpi-value">{{ $pendingCount }}</div></div></div>
-    <div class="kpi-mini"><div class="kpi-icon green">{!! icon('check', 18) !!}</div><div><div class="kpi-label">{{ t('Approved') }}</div><div class="kpi-value">{{ $approvedCount }}</div></div></div>
-    <div class="kpi-mini"><div class="kpi-icon red">{!! icon('x', 18) !!}</div><div><div class="kpi-label">{{ t('Rejected') }}</div><div class="kpi-value">{{ $rejectedCount }}</div></div></div>
-</div>
-
-<div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:14px;">
-
-<div class="form-card">
-    <div class="form-card-header">
-        {!! icon('wrench', 22) !!}
+<!-- KPI Mini Cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+    <div class="gsap-stat-card gsap-hover-card flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-card">
+        <div class="w-11 h-11 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">{!! icon('file-text', 20) !!}</div>
         <div>
-            <h3>{{ t('Reading Correction Form') }}</h3>
-            <div class="subtitle">{{ t('Submit a new meter-reading complaint') }}</div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ t('Total') }}</div>
+            <div class="text-xl font-bold text-slate-900 font-mono tabular-nums" data-gsap-counter data-target-val="{{ count($complaints) }}">{{ count($complaints) }}</div>
         </div>
     </div>
-    <div class="form-card-body">
+    <div class="gsap-stat-card gsap-hover-card flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-card">
+        <div class="w-11 h-11 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">{!! icon('clock', 20) !!}</div>
+        <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ t('Pending') }}</div>
+            <div class="text-xl font-bold text-slate-900 font-mono tabular-nums text-amber-600" data-gsap-counter data-target-val="{{ $pendingCount }}">{{ $pendingCount }}</div>
+        </div>
+    </div>
+    <div class="gsap-stat-card gsap-hover-card flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-card">
+        <div class="w-11 h-11 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">{!! icon('check', 20) !!}</div>
+        <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ t('Approved') }}</div>
+            <div class="text-xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $approvedCount }}">{{ $approvedCount }}</div>
+        </div>
+    </div>
+    <div class="gsap-stat-card gsap-hover-card flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-card">
+        <div class="w-11 h-11 rounded-lg bg-rose-500/10 text-rose-600 flex items-center justify-center shrink-0">{!! icon('x', 20) !!}</div>
+        <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ t('Rejected') }}</div>
+            <div class="text-xl font-bold text-slate-900 font-mono tabular-nums text-rose-600" data-gsap-counter data-target-val="{{ $rejectedCount }}">{{ $rejectedCount }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-5 items-start">
+
+<!-- Reading Correction Form Card -->
+<div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+    <div class="h-1 bg-emerald-600"></div>
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+        <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">{!! icon('wrench', 20) !!}</div>
+        <div>
+            <h3 class="m-0 text-sm font-bold text-slate-900">{{ t('Reading Correction Form') }}</h3>
+            <div class="text-xs text-slate-500 mt-0.5">{{ t('Submit a new meter-reading complaint') }}</div>
+        </div>
+    </div>
+    <div class="p-5">
         <form id="complaintForm">
-            <div class="field-row">
-                <label>{{ t('Customer Code') }} <span class="required">*</span></label>
-                <input type="text" id="customerCode" name="customerCode" required placeholder="ETY-0001">
+            <div class="mb-4">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Customer Code') }} <span class="text-rose-600">*</span></label>
+                <input type="text" id="customerCode" name="customerCode" required placeholder="ETY-0001"
+                       class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
             </div>
-            <div class="field-row">
-                <label>{{ t('Year') }} <span class="required">*</span></label>
-                <input type="text" name="readingYear" value="{{ get_setting('current_bill_year', date('Y')) }}" required>
+            <div class="mb-4">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Year') }} <span class="text-rose-600">*</span></label>
+                <input type="text" name="readingYear" value="{{ get_setting('current_bill_year', date('Y')) }}" required
+                       class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
             </div>
-            <div class="field-row">
-                <label>{{ t('Reading Month') }} <span class="required">*</span></label>
-                <select name="readingMonth" class="fancy" required>
+            <div class="mb-4">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Reading Month') }} <span class="text-rose-600">*</span></label>
+                <select name="readingMonth" class="fancy w-full" required>
                     @foreach ($months as $m)
                         <option value="{{ $m }}">{{ $m }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="field-row">
-                <label>{{ t('Complain Date') }} <span class="required">*</span></label>
-                <input type="text" name="complainDateTime" value="{{ date('Y-m-d H:i:s') }}" required>
+            <div class="mb-2">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Complain Date') }} <span class="text-rose-600">*</span></label>
+                <input type="text" name="complainDateTime" value="{{ date('Y-m-d H:i:s') }}" required
+                       class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
             </div>
         </form>
     </div>
-    <div class="form-card-footer">
-        <button type="button" class="btn btn-warning" onclick="submitComplaint()">{!! icon('send', 16) !!} {{ t('Send Complain') }}</button>
+    <div class="px-5 py-4 bg-slate-50 border-t border-slate-100">
+        <button type="button" onclick="submitComplaint()" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition shadow-sm">{!! icon('send', 16) !!} {{ t('Send Complain') }}</button>
     </div>
 </div>
 
+<!-- Complaints List -->
 <div>
-    <div class="panel">
-        <div class="panel-header">
-            <span>{{ t('Complaints') }} ({{ count($complaints) }})</span>
+    <div class="bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+        <div class="h-1 bg-emerald-600"></div>
+        <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+            <span class="font-bold text-sm text-slate-900">{{ t('Complaints') }} ({{ count($complaints) }})</span>
         </div>
-        <div class="panel-body" style="padding: 12px; max-height: 700px; overflow-y: auto;">
+        <div class="p-3 max-h-[700px] overflow-y-auto space-y-3">
             @if ($complaints->isEmpty())
-                <div class="empty-state">
-                    {!! icon('file-text', 48) !!}
-                    <div class="empty-title">{{ t('No complaints') }}</div>
-                    <div class="empty-text">{{ t('Submit a complaint using the form on the left.') }}</div>
+                <div class="text-center py-10 px-6 text-slate-500">
+                    <div class="text-slate-300 mb-3">{!! icon('file-text', 48) !!}</div>
+                    <div class="text-sm font-semibold text-slate-700">{{ t('No complaints') }}</div>
+                    <div class="text-xs mt-1">{{ t('Submit a complaint using the form on the left.') }}</div>
                 </div>
             @else
                 @foreach ($complaints as $c)
-                    <div class="complaint-card {{ strtolower($c->correction_status) }}">
-                        <div class="complaint-header">
+                    @php
+                        $statusKey = strtolower($c->correction_status);
+                        $border = match($statusKey) { 'approved' => 'border-l-emerald-500', 'rejected' => 'border-l-rose-500', default => 'border-l-amber-500' };
+                    @endphp
+                    <div class="complaint-card border border-slate-200 border-l-4 {{ $border }} rounded-lg bg-white p-4 shadow-card hover:shadow-hover transition-shadow">
+                        <div class="flex items-start justify-between gap-3">
                             <div>
-                                <div class="complaint-title">{{ $c->customer_code }} — {{ $c->reading_month }} {{ $c->reading_year }}</div>
-                                <div class="complaint-meta">{{ t('Submitted') }}: {{ $c->complain_date_time }} · {{ t('By') }}: {{ $c->sending_department }}</div>
+                                <div class="text-[13px] font-bold text-slate-900">{{ $c->customer_code }} — {{ $c->reading_month }} {{ $c->reading_year }}</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5">{{ t('Submitted') }}: {{ $c->complain_date_time }} &middot; {{ t('By') }}: {{ $c->sending_department }}</div>
                             </div>
                             @if ($c->correction_status === 'Approved')
-                                <span class="badge badge-success">{{ t('Approved') }}</span>
+                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider shrink-0">{!! icon('check', 11) !!} {{ t('Approved') }}</span>
                             @elseif ($c->correction_status === 'Rejected')
-                                <span class="badge badge-danger">{{ t('Rejected') }}</span>
+                                <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider shrink-0">{!! icon('x', 11) !!} {{ t('Rejected') }}</span>
                             @else
-                                <span class="badge badge-warning">{{ t('Pending') }}</span>
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider shrink-0">{{ t('Pending') }}</span>
                             @endif
                         </div>
-                        <div class="complaint-body">
-                            <div class="meta-item"><div class="label">{{ t('New Reading') }}</div><div class="value">{{ $c->new_reading }}</div></div>
-                            <div class="meta-item"><div class="label">{{ t('Approved By') }}</div><div class="value">{{ $c->approved_name }}</div></div>
+                        <div class="grid grid-cols-2 gap-3 mt-3 border-t border-slate-100 pt-3">
+                            <div>
+                                <div class="text-[11px] text-slate-500 font-semibold">{{ t('New Reading') }}</div>
+                                <div class="text-[13px] font-bold text-slate-900 font-mono tabular-nums">{{ $c->new_reading }}</div>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500 font-semibold">{{ t('Approved By') }}</div>
+                                <div class="text-[13px] font-bold text-slate-900">{{ $c->approved_name }}</div>
+                            </div>
                         </div>
                         @if ($c->correction_status === 'Pending')
-                        <div style="margin-top: 10px; display: flex; gap: 6px;">
-                            <button class="btn btn-sm btn-success" onclick="approveComplaint({{ $c->id }}, '{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">{!! icon('check', 14) !!} {{ t('Approve') }}</button>
-                            <button class="btn btn-sm btn-danger" onclick="rejectComplaint('{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">{!! icon('x', 14) !!} {{ t('Reject') }}</button>
+                        <div class="mt-3 flex gap-2">
+                            <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="approveComplaint({{ $c->id }}, '{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">{!! icon('check', 14) !!} {{ t('Approve') }}</button>
+                            <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition shadow-sm" onclick="rejectComplaint('{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">{!! icon('x', 14) !!} {{ t('Reject') }}</button>
                         </div>
                         @endif
                     </div>
@@ -120,28 +168,30 @@
 
 </div>
 
+<!-- Approve Reading Correction Modal -->
 <div class="modal-backdrop" id="approveModal">
-    <div class="modal" style="max-width: 420px;">
-        <div class="modal-header">
-            <div class="modal-icon">{!! icon('check', 20) !!}</div>
-            <div class="modal-title">
-                <h3>{{ t('Approve Reading Correction') }}</h3>
-                <div class="modal-subtitle">{{ t('Enter the corrected meter reading value') }}</div>
+    <div class="modal v2 bg-white rounded-2xl shadow-2xl w-full max-w-[420px] overflow-hidden flex flex-col" style="max-height: 90vh;">
+        <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">{!! icon('check', 20) !!}</div>
+            <div class="flex-1">
+                <h3 class="m-0 text-sm font-bold text-slate-900">{{ t('Approve Reading Correction') }}</h3>
+                <div class="text-xs text-slate-500 mt-0.5">{{ t('Enter the corrected meter reading value') }}</div>
             </div>
-            <button class="close" onclick="closeModal('approveModal')">{!! icon('x', 18) !!}</button>
+            <button class="close w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition" onclick="closeModal('approveModal')">{!! icon('x', 18) !!}</button>
         </div>
-        <div class="modal-body">
+        <div class="p-5">
             <input type="hidden" id="approveId">
             <input type="hidden" id="approveCode">
             <input type="hidden" id="approveDate">
-            <div class="field-row" style="grid-template-columns: 1fr;">
-                <label>{{ t('Corrected Reading Value') }} <span class="required">*</span></label>
-                <input type="number" step="0.01" id="correctedValue" placeholder="e.g. 105.5">
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Corrected Reading Value') }} <span class="text-rose-600">*</span></label>
+                <input type="number" step="0.01" id="correctedValue" placeholder="e.g. 105.5"
+                       class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="closeModal('approveModal')">{{ t('Cancel') }}</button>
-            <button class="btn btn-success" onclick="confirmApprove()">{!! icon('check', 16) !!} {{ t('Approve') }}</button>
+        <div class="flex items-center justify-end gap-2 px-5 py-4 bg-slate-50 border-t border-slate-100">
+            <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition" onclick="closeModal('approveModal')">{{ t('Cancel') }}</button>
+            <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="confirmApprove()">{!! icon('check', 16) !!} {{ t('Approve') }}</button>
         </div>
     </div>
 </div>
