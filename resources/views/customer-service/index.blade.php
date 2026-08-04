@@ -177,9 +177,29 @@
     </div>
 </div>
 
-<!-- Floating Quick Action Bar (FAB) -->
-<div class="fab-quick-bar">
-    <button class="fab-btn fab-sm" onclick="openExcelImportModal()">{!! icon('upload', 14) !!} {{ t('Import Excel') }}</button>
+<!-- Collapsible Floating Quick Action Menu (FAB) -->
+<div class="fab-wrapper">
+    <div class="fab-menu" id="fabMenu">
+        <button type="button" class="fab-item" onclick="openRegisterModal(); toggleFabMenu();">
+            <span class="icon">{!! icon('plus', 16) !!}</span>
+            <span class="label">{{ t('Register New Customer') }}</span>
+        </button>
+        <button type="button" class="fab-item" onclick="openExcelImportModal(); toggleFabMenu();">
+            <span class="icon">{!! icon('upload', 16) !!}</span>
+            <span class="label">{{ t('Import Excel (CSV)') }}</span>
+        </button>
+        <button type="button" class="fab-item" onclick="syncCustomerList(); toggleFabMenu();">
+            <span class="icon">{!! icon('sync', 16) !!}</span>
+            <span class="label">{{ t('Sync Database') }}</span>
+        </button>
+        <button type="button" class="fab-item" onclick="exportCustomersCSV(); toggleFabMenu();">
+            <span class="icon">{!! icon('download', 16) !!}</span>
+            <span class="label">{{ t('Export CSV') }}</span>
+        </button>
+    </div>
+    <button type="button" class="fab-trigger-btn" onclick="toggleFabMenu()" title="Quick Actions">
+        <span class="fab-icon-main">{!! icon('plus', 22) !!}</span>
+    </button>
 </div>
 
 <!-- Multi-Step Registration Modal -->
@@ -449,6 +469,11 @@ let currentRegStep = 1;
 
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function toggleFabMenu() {
+    const wrapper = document.querySelector('.fab-wrapper');
+    if (wrapper) wrapper.classList.toggle('open');
+}
 
 function switchRegStep(step) {
     currentRegStep = step;
