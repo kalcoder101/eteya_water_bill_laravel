@@ -19,6 +19,18 @@ window.toggleSidebar = function(e) {
     var collapsed = shell.classList.toggle('sidebar-collapsed');
     localStorage.setItem('eteya_sidebar_collapsed', collapsed ? 'true' : 'false');
 };
+
+window.toggleCategoryGroup = function(headerEl) {
+    var group = headerEl.closest('.sidebar-category-group');
+    if (!group) return;
+    var isAlreadyOpen = group.classList.contains('open');
+    document.querySelectorAll('.sidebar-category-group').forEach(function(g) {
+        g.classList.remove('open');
+    });
+    if (!isAlreadyOpen) {
+        group.classList.add('open');
+    }
+};
 </script>
 </head>
 <body>
@@ -42,6 +54,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     $allGroups = [
         [
             'title' => t('Operations'),
+            'icon'  => 'dashboard',
             'items' => [
                 ['page' => 'dashboard',        'label' => t('Dashboard'),        'desc' => 'Overview stats, charts & recent activity logs',  'icon' => 'dashboard', 'route' => 'dashboard'],
                 ['page' => 'customer-service', 'label' => t('Customer Service'), 'desc' => 'Register, update & search active customers',    'icon' => 'customers', 'route' => 'customer-service.index'],
@@ -50,6 +63,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
         ],
         [
             'title' => t('Reports & Ledger'),
+            'icon'  => 'ledger',
             'items' => [
                 ['page' => 'customer-ledger',      'label' => t('Customers Ledger'),   'desc' => 'Customer billing history & printable ledger',    'icon' => 'ledger',     'route' => 'customer-ledger.index'],
                 ['page' => 'customer-statistics', 'label' => t('Detail Statistics'),  'desc' => 'Pivot reports: kebele × type × status',        'icon' => 'statistics', 'route' => 'customer-statistics.index'],
@@ -58,6 +72,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
         ],
         [
             'title' => t('Administration'),
+            'icon'  => 'shield',
             'items' => [
                 ['page' => 'account-register', 'label' => t('Account Register'), 'desc' => 'Register staff accounts & manage job roles', 'icon' => 'lock', 'route' => 'account-register.index'],
             ]
@@ -68,9 +83,18 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     foreach ($allGroups as $group) {
         $allowedItems = array_filter($group['items'], fn($item) => is_allowed_page($item['page'], $user?->job_role ?? ''));
         if (!empty($allowedItems)) {
+            $hasActive = false;
+            foreach ($allowedItems as $it) {
+                if ($it['page'] === $currentPage) {
+                    $hasActive = true;
+                    break;
+                }
+            }
             $navGroups[] = [
-                'title' => $group['title'],
-                'items' => array_values($allowedItems)
+                'title'     => $group['title'],
+                'icon'      => $group['icon'],
+                'hasActive' => $hasActive,
+                'items'     => array_values($allowedItems)
             ];
         }
     }
@@ -92,28 +116,50 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
         </button>
     </div>
 
-    @foreach ($navGroups as $group)
-        <div class="sidebar-section-title">{{ $group['title'] }}</div>
-        <ul class="sidebar-nav">
-            @foreach ($group['items'] as $item)
-                <li data-title="{{ $item['label'] }}">
-                    <a href="{{ route($item['route']) }}"
-                       class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
-                        <span class="icon">{!! icon($item['icon'], 18) !!}</span>
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                    <div class="nav-flyout">
-                        <div class="flyout-category">{{ $group['title'] }}</div>
-                        <div class="flyout-title">{{ $item['label'] }}</div>
-                        <div class="flyout-desc">{{ $item['desc'] }}</div>
-                        @if ($currentPage === $item['page'])
-                            <div class="flyout-status"><span class="dot"></span> Active Section</div>
-                        @endif
-                    </div>
-                </li>
-            @endforeach
-        </ul>
+    <div class="sidebar-categories-container">
+    @foreach ($navGroups as $idx => $group)
+        <div class="sidebar-category-group {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
+            <div class="sidebar-category-header" onclick="toggleCategoryGroup(this)">
+                <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
+                <span class="cat-title">{{ $group['title'] }}</span>
+                <span class="chevron">{!! icon('chevron-down', 12) !!}</span>
+            </div>
+
+            <div class="sidebar-category-body">
+                <ul class="sidebar-nav">
+                    @foreach ($group['items'] as $item)
+                        <li data-title="{{ $item['label'] }}">
+                            <a href="{{ route($item['route']) }}"
+                               class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
+                                <span class="icon">{!! icon($item['icon'], 18) !!}</span>
+                                <span>{{ $item['label'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+
+            <!-- Category Flyout Panel in Collapsed Mode -->
+            <div class="category-flyout-panel">
+                <div class="flyout-header">
+                    <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
+                    <span class="cat-title">{{ $group['title'] }}</span>
+                </div>
+                <div class="flyout-body">
+                    @foreach ($group['items'] as $item)
+                        <a href="{{ route($item['route']) }}" class="flyout-item {{ $currentPage === $item['page'] ? 'active' : '' }}">
+                            <span class="icon">{!! icon($item['icon'], 16) !!}</span>
+                            <div class="details">
+                                <div class="title">{{ $item['label'] }}</div>
+                                <div class="sub">{{ $item['desc'] }}</div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     @endforeach
+    </div>
 
     <div class="sidebar-footer">
         <button type="button" class="sidebar-footer-collapse-btn" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
