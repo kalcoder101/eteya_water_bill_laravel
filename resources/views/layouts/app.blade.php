@@ -66,9 +66,12 @@ window.toggleCategoryGroup = function(headerEl) {
     var isAlreadyOpen = group.classList.contains('open');
     document.querySelectorAll('.sidebar-category-group').forEach(function(g) {
         g.classList.remove('open');
+        var h = g.querySelector('.sidebar-category-header');
+        if (h) h.setAttribute('aria-expanded', 'false');
     });
     if (!isAlreadyOpen) {
         group.classList.add('open');
+        headerEl.setAttribute('aria-expanded', 'true');
     }
 };
 
@@ -96,12 +99,14 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     $fullName = $user ? $user->fullName() : '';
     $enterpriseEN = get_setting('enterprise_name_en', 'HHD Water Supply and Sewerage Service Enterprise');
     $devCredit = get_setting('developer_credit', 'GITAN ICT Work PLC');
+    $brandShort = get_setting('default_branch', 'Eteya');
     $currentPage = request()->segment(1) ?? 'dashboard';
 
     $allGroups = [
         [
-            'title' => t('Operations'),
-            'icon'  => 'dashboard',
+            'title'   => t('Operations'),
+            'icon'    => 'dashboard',
+            'accent'  => 'emerald',
             'items' => [
                 ['page' => 'dashboard',        'label' => t('Dashboard'),        'desc' => 'Overview stats, charts & recent activity logs',  'icon' => 'dashboard', 'route' => 'dashboard'],
                 ['page' => 'customer-service', 'label' => t('Customer Service'), 'desc' => 'Register, update & search active customers',    'icon' => 'customers', 'route' => 'customer-service.index'],
@@ -109,8 +114,9 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
             ]
         ],
         [
-            'title' => t('Reports & Ledger'),
-            'icon'  => 'ledger',
+            'title'   => t('Reports & Ledger'),
+            'icon'    => 'ledger',
+            'accent'  => 'indigo',
             'items' => [
                 ['page' => 'customer-ledger',      'label' => t('Customers Ledger'),   'desc' => 'Customer billing history & printable ledger',    'icon' => 'ledger',     'route' => 'customer-ledger.index'],
                 ['page' => 'customer-statistics', 'label' => t('Detail Statistics'),  'desc' => 'Pivot reports: kebele × type × status',        'icon' => 'statistics', 'route' => 'customer-statistics.index'],
@@ -118,8 +124,9 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
             ]
         ],
         [
-            'title' => t('Administration'),
-            'icon'  => 'shield',
+            'title'   => t('Administration'),
+            'icon'    => 'shield',
+            'accent'  => 'gold',
             'items' => [
                 ['page' => 'account-register', 'label' => t('Account Register'), 'desc' => 'Register staff accounts & manage job roles', 'icon' => 'lock', 'route' => 'account-register.index'],
             ]
@@ -140,6 +147,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
             $navGroups[] = [
                 'title'     => $group['title'],
                 'icon'      => $group['icon'],
+                'accent'    => $group['accent'],
                 'hasActive' => $hasActive,
                 'items'     => array_values($allowedItems)
             ];
@@ -152,10 +160,29 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 @endphp
 
 <aside class="sidebar">
+    <!--
+    THESIS: A floating light utility card, not a full-height dark slab. The operator
+    scans three accent-coded modules, the active page is unmistakable, and the rail
+    can collapse to an icon-only shelf that previews destinations on hover.
+    OWN-WORLD: Project tokens — emerald primary, indigo tertiary, gold secondary —
+    each owning a module group (icon, active pill, hover wash). Sidebar surface is
+    the app's own white card layer with a 1px outline and soft ambient shadow.
+    STORY: Billing staff move between Operations, Reports and Administration as if
+    between rooms; the active room is lit, the rest are quiet.
+    FIRST VIEWPORT: Inset rounded card, brand chip + enterprise name up top, three
+    category groups, icon-led rows with a 2px active left border per DESIGN.md, and
+    an avatar + role + logout footer pinned to the rail bottom.
+    FORM: Floating card sidebar (EOS-style, per skills/SKILL.md), expanded 256px /
+    collapsed 72px, hover flyouts preserved.
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the
+    finish review, the verdict, and DESIGN.md.
+    -->
     <div class="sidebar-brand">
-        <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="brand-logo">
+        <div class="brand-chip">
+            <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="brand-logo">
+        </div>
         <div class="brand-text">
-            <div class="name">{{ t('Dashboard') }}</div>
+            <div class="name">{{ $brandShort ?? t('Eteya') }}</div>
             <div class="tag">Water Supply & Sewerage Enterprise</div>
         </div>
         <button type="button" class="sidebar-collapse-toggle" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
@@ -165,8 +192,8 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 
     <div class="sidebar-categories-container">
     @foreach ($navGroups as $idx => $group)
-        <div class="sidebar-category-group {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
-            <div class="sidebar-category-header" onclick="toggleCategoryGroup(this)">
+        <div class="sidebar-category-group {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}" data-accent="{{ $group['accent'] }}">
+            <div class="sidebar-category-header" onclick="toggleCategoryGroup(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategoryGroup(this);}" role="button" tabindex="0" aria-expanded="{{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'true' : 'false' }}">
                 <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
                 <span class="cat-title">{{ $group['title'] }}</span>
                 <span class="chevron">{!! icon('chevron-down', 12) !!}</span>
@@ -179,7 +206,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
                             <a href="{{ route($item['route']) }}"
                                class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
                                 <span class="icon">{!! icon($item['icon'], 18) !!}</span>
-                                <span>{{ $item['label'] }}</span>
+                                <span class="nav-label">{{ $item['label'] }}</span>
                             </a>
                         </li>
                     @endforeach
@@ -211,14 +238,25 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     </div>
 
     <div class="sidebar-footer">
-        <a href="{{ route('logout') }}" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <span class="icon">{!! icon('logout', 18) !!}</span> <span class="label">{{ t('Logout') }}</span>
-        </a>
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <img src="{{ $photoUrl }}" alt="{{ $fullName }}">
+            </div>
+            <div class="user-meta">
+                <div class="user-name">{{ $fullName }}</div>
+                <div class="user-role"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
+            </div>
+            <a href="{{ route('logout') }}" class="logout-link" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <span class="icon">{!! icon('logout', 16) !!}</span>
+            </a>
+        </div>
+        <div class="footer-meta">
+            <span class="footer-info-badge">{{ $appVersion }}</span>
+            <span class="footer-info-credit">{{ $devCredit }}</span>
+        </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
-        <div class="footer-info-badge">{{ $appVersion }} · <span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
-        <div class="footer-info-credit">{{ $devCredit }}</div>
     </div>
 </aside>
 
