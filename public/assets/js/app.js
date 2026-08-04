@@ -107,7 +107,19 @@
         if (m) m.classList.remove('show');
     };
 
-    // Override native confirm() to use our custom dialog
-    // (Can't override synchronously — only async version. Native confirm still works
-    //  for inline onclick handlers; new code should use confirmDialog().)
+    // ---------- Sidebar Collapse Toggle ----------
+    window.toggleSidebar = function() {
+        const shell = document.querySelector('.app-shell');
+        if (!shell) return;
+        const collapsed = shell.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('eteya_sidebar_collapsed', collapsed ? 'true' : 'false');
+    };
+
+    // Auto-apply saved sidebar state
+    document.addEventListener('DOMContentLoaded', function() {
+        if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
+            const shell = document.querySelector('.app-shell');
+            if (shell) shell.classList.add('sidebar-collapsed');
+        }
+    });
 })();

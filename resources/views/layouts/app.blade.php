@@ -11,9 +11,19 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="{{ $baseUrl }}/assets/js/app.js"></script>
+<script>
+if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
+    document.documentElement.classList.add('sidebar-collapsed-boot');
+}
+</script>
 </head>
 <body>
 <div class="app-shell">
+<script>
+if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
+    document.querySelector('.app-shell').classList.add('sidebar-collapsed');
+}
+</script>
 
 @php
     $user = auth()->user();
@@ -57,7 +67,7 @@
     <div class="sidebar-section-title">{{ t('Menu') }}</div>
     <ul class="sidebar-nav">
         @foreach ($navItems as $item)
-            <li>
+            <li data-title="{{ $item['label'] }}">
                 <a href="{{ route($item['route']) }}"
                    class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
                     <span class="icon">{!! icon($item['icon'], 18) !!}</span>
@@ -81,6 +91,9 @@
 
 <div class="main-area">
 <header class="topbar">
+    <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+        {!! icon('menu', 18) !!}
+    </button>
     <div>
         <div class="page-title">{{ $pageTitle ?? t('Dashboard') }}</div>
         <div class="page-subtitle">{{ $enterpriseEN }}</div>

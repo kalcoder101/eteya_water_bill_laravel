@@ -112,6 +112,10 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     grid-template-columns: 264px 1fr;
     min-height: 100vh;
     background: var(--ghost-white);
+    transition: grid-template-columns 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.app-shell.sidebar-collapsed {
+    grid-template-columns: 72px 1fr;
 }
 
 /* ---------- Sidebar ---------- */
@@ -125,7 +129,9 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     top: 0;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: 4px 0 24px rgba(26, 16, 84, 0.12);
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease;
 }
 .sidebar-brand {
     display: flex;
@@ -134,6 +140,7 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     padding: 0 var(--space-5) var(--space-5);
     border-bottom: 1px solid rgba(255, 255, 255, 0.10);
     margin-bottom: var(--space-4);
+    white-space: nowrap;
 }
 .sidebar-brand .brand-logo {
     width: 38px;
@@ -142,6 +149,7 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     background: rgba(255, 255, 255, 0.95);
     padding: 5px;
     box-shadow: var(--shadow-glow);
+    flex-shrink: 0;
 }
 .sidebar-brand .brand-text .name {
     font-weight: 700;
@@ -163,6 +171,7 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     color: var(--text-on-dark-muted);
     padding: 0 var(--space-5);
     margin: var(--space-4) 0 var(--space-2);
+    white-space: nowrap;
 }
 .sidebar-nav {
     list-style: none;
@@ -170,7 +179,7 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     margin: 0;
     flex: 1;
 }
-.sidebar-nav li { margin-bottom: 2px; }
+.sidebar-nav li { margin-bottom: 2px; position: relative; }
 .sidebar-nav a {
     display: flex;
     align-items: center;
@@ -180,8 +189,9 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     color: rgba(255, 255, 255, 0.78);
     font-size: 13.5px;
     font-weight: 500;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.15s, color 0.15s, padding 0.2s;
     position: relative;
+    white-space: nowrap;
 }
 .sidebar-nav a:hover {
     background: rgba(255, 255, 255, 0.08);
@@ -196,9 +206,10 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
-    opacity: 0.85;
+    width: 20px;
+    height: 20px;
+    opacity: 0.9;
+    flex-shrink: 0;
 }
 .sidebar-footer {
     padding: var(--space-5) var(--space-5) 0;
@@ -206,6 +217,7 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     margin-top: var(--space-4);
     font-size: 11px;
     color: var(--text-on-dark-muted);
+    white-space: nowrap;
 }
 .sidebar-footer .logout-link {
     display: flex;
@@ -220,6 +232,56 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
 }
 .sidebar-footer .logout-link:hover { color: #fff; }
 .sidebar-footer div { margin-top: var(--space-1); }
+
+/* ---------- Collapsed Sidebar Spec ---------- */
+.app-shell.sidebar-collapsed .sidebar-brand {
+    padding: 0 var(--space-3) var(--space-4);
+    justify-content: center;
+}
+.app-shell.sidebar-collapsed .sidebar-brand .brand-text,
+.app-shell.sidebar-collapsed .sidebar-section-title,
+.app-shell.sidebar-collapsed .sidebar-nav a span:not(.icon),
+.app-shell.sidebar-collapsed .sidebar-footer div,
+.app-shell.sidebar-collapsed .sidebar-footer .logout-link span:not(.icon) {
+    display: none !important;
+}
+.app-shell.sidebar-collapsed .sidebar-nav {
+    padding: 0 var(--space-2);
+}
+.app-shell.sidebar-collapsed .sidebar-nav a {
+    justify-content: center;
+    padding: 12px;
+}
+.app-shell.sidebar-collapsed .sidebar-footer {
+    padding: var(--space-4) 0 0;
+    display: flex;
+    justify-content: center;
+}
+.app-shell.sidebar-collapsed .sidebar-footer .logout-link {
+    margin-bottom: 0;
+    padding: 8px;
+    justify-content: center;
+}
+
+/* Tooltip on hover in collapsed mode */
+.app-shell.sidebar-collapsed .sidebar-nav li:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--persian-indigo-deep);
+    color: #fff;
+    padding: 5px 11px;
+    border-radius: var(--r-sm);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+    pointer-events: none;
+    animation: fadeIn 0.15s ease;
+}
 
 /* ---------- Main area ---------- */
 .main-area {
@@ -240,6 +302,24 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     position: sticky;
     top: 0;
     z-index: 10;
+}
+.sidebar-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    background: var(--ghost-white);
+    border: 1px solid var(--indigo-border);
+    color: var(--text-body);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.sidebar-toggle-btn:hover {
+    background: var(--indigo-wash);
+    color: var(--persian-indigo);
+    border-color: var(--persian-indigo-soft);
 }
 .topbar .page-title {
     font-size: 18px;
