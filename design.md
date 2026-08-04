@@ -20,20 +20,16 @@ Inspired by high-utility modern enterprise applications and design principles fr
 
 ---
 
-## 📂 Navigation Organization & Rectangular Panel Collapse
+## 📂 Navigation & Simplified Sidebar Collapse Layout
 
-### 1. Modern Rectangular Collapse Controls
-- **Header Toggle (`.sidebar-collapse-toggle`)**: Sleek rectangular container button in top brand header displaying the `panel-left` SVG icon (`<rect>` + dividing line + arrow).
-- **Footer Toggle (`.sidebar-footer-collapse-btn`)**: Rectangular container button in sidebar footer displaying the `panel-left` SVG icon + "Collapse Sidebar" text.
-- **Topbar Toggle (`.sidebar-toggle-btn`)**: Rectangular panel toggle button in topbar header.
+### 1. Expanded Mode (Open Sidebar)
+- **Top Tip Header**: Features enterprise logo, title, and a single rectangular `panel-left` collapse button (`.sidebar-collapse-toggle`) on the top right tip of the sidebar header.
+- **Bottom Footer**: Displays standard Logout link and developer credits. **No redundant bottom collapse button** when open.
+- **Topbar Header**: Clean topbar starting directly with page title and search bar (**No redundant toggle button in topbar**).
 
-### 2. Collapsed State Layout (Top & Bottom Icons)
-When collapsed (`.sidebar-collapsed`):
-- Top logo/text and footer text hide cleanly.
-- Both top and bottom collapse buttons remain centered in 44px rectangular container buttons.
-- The `panel-left` icon flips (`transform: scaleX(-1)`), signaling expand action.
-- The Logout button collapses into a centered rectangular icon button with hover red highlights.
+### 2. Collapsed Mode (Collapsed Sidebar)
+- **Top Header**: Centered enterprise logo badge + centered rectangular collapse toggle button.
+- **Bottom Footer**: Centered rectangular collapse toggle button + centered rectangular Logout icon button.
 
 ### 3. Rich Flyout Cards (`.nav-flyout`)
-Hovering over any collapsed icon displays a floating flyout card:
-- Category badge, title, subtext, and active section dot.
+Hovering over any collapsed icon displays a floating flyout card with category badge, title, description, and active status.

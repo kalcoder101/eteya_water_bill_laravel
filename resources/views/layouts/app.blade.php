@@ -118,7 +118,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     <div class="sidebar-footer">
         <button type="button" class="sidebar-footer-collapse-btn" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
             <span class="icon">{!! icon('panel-left', 18) !!}</span>
-            <span class="label">Collapse Sidebar</span>
+            <span class="label">Expand Sidebar</span>
         </button>
         <a href="{{ route('logout') }}" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <span class="icon">{!! icon('logout', 18) !!}</span> <span class="label">{{ t('Logout') }}</span>
@@ -133,9 +133,6 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 
 <div class="main-area">
 <header class="topbar">
-    <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar(event)" title="Toggle Sidebar">
-        {!! icon('panel-left', 18) !!}
-    </button>
     <div>
         <div class="page-title">{{ $pageTitle ?? t('Dashboard') }}</div>
         <div class="page-subtitle">{{ $enterpriseEN }}</div>
