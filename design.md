@@ -18,56 +18,36 @@ Inspired by high-utility modern enterprise applications and design principles fr
 - **Surface (`--surface`)**: `#FFFFFF` — Main card backgrounds, modal windows, table containers.
 - **Surface Tint (`--surface-tint`)**: `#F2F1FB` — Secondary headers, table header rows, sidebar footers.
 
-### Status Signals
-- **Success**: `#16A34A` / Soft: `#DCFCE7` — Paid bills, active accounts, completed operations.
-- **Warning**: `#D97706` / Soft: `#FEF3C7` — Disconnected accounts, pending corrections.
-- **Danger**: `#DC2626` / Soft: `#FEE2E2` — Overdue bills, rejected complaints, deletion alerts.
-- **Info**: `#0891B2` / Soft: `#CFFAFE` — Informational callouts, meter stats.
-
 ---
 
-## 📐 Layout & Sidebar Collapse System
+## 📂 Navigation Organization & Flyouts
 
-### Responsive Layout
-The interface uses a two-column grid shell:
-- **Expanded Sidebar**: `264px` width. Full brand title, nav labels, role details, and footer credits.
-- **Collapsed Sidebar**: `72px` width. Icon-only navigation, brand logo focus, tooltips on hover, maximized workspace for data tables & ledgers.
+### 1. Categorized Groups
+Navigation items are organized into distinct logical sections:
+- **Operations**: Dashboard, Customer Service, Bills & Printing.
+- **Reports & Ledger**: Customers Ledger, Detail Statistics, Reading Correction.
+- **Administration**: Account Register.
 
-### Sidebar Collapse Behavior
-- **Toggle Control**: Located in topbar next to the page title. Clicking toggles `.sidebar-collapsed` class on `.app-shell`.
-- **State Persistence**: Preserved in `localStorage` under key `eteya_sidebar_collapsed` (`'true'` / `'false'`).
-- **Smooth Animation**: `transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1)`.
+### 2. Rich Flyout Cards (`.nav-flyout`)
+When the sidebar is in collapsed mode (`.sidebar-collapsed`), hovering over any icon displays a floating **Flyout Card**:
+- **Category Badge**: Upper-case section name (`--persian-indigo-bright`).
+- **Title & Description**: High contrast header and helpful description text.
+- **Active Section Indicator**: Green dot indicator for the current active page section.
+- **Positioning**: Absolute right popout with a subtle left pointer arrow.
+
+### 3. Keyboard Shortcuts
+- `Ctrl + B` (or `Cmd + B`): Toggle sidebar collapse/expand mode.
+- `Ctrl + K` (or `Cmd + K`): Focus quick search / command input.
 
 ---
 
 ## 📦 Components Spec
 
-### 1. Cards & Panels (`.panel`, `.stat-card`, `.card`)
+### Cards & Panels (`.panel`, `.stat-card`, `.card`)
 - **Base Surface**: `#FFFFFF` background with `1px solid var(--indigo-border)` border.
 - **Border Radius**: `12px` (`--r-lg`).
-- **Elevation**: `shadow-sm` (`0 1px 3px rgba(39, 24, 126, 0.06)`). On hover, elevates with `translateY(-2px)` and `shadow-md`.
-- **Accent Top Bar**: Optional top border accent (e.g. `border-top: 3px solid var(--persian-indigo)`).
+- **Elevation**: `shadow-sm`. On hover, elevates with `translateY(-2px)` and `shadow-md`.
 
-### 2. Modals & Floating Windows (`.modal-backdrop`, `.modal-window`)
+### Modals & Floating Windows (`.modal-backdrop`, `.modal-window`)
 - **Backdrop**: `rgba(26, 16, 84, 0.45)` with `backdrop-filter: blur(6px)`.
 - **Window Container**: Glassmorphic / clean white surface, `16px` radius, `0 20px 48px rgba(26, 16, 84, 0.24)` ambient shadow.
-- **Header Bar**: Integrated title, subtitle, and close button (`&times;`).
-
-### 3. Status Badges & Pills (`.badge`)
-- **Rounded**: `999px` (`--r-pill`).
-- **Padding**: `4px 10px`.
-- **Font**: `11px`, `fontWeight: 600`, uppercase tracking `0.04em`.
-
-### 4. High-Density Data Tables (`.table`)
-- **Row Height**: `44px` standard, `36px` compact.
-- **Headers**: Uppercase label text, `--text-muted`, `--surface-tint` background.
-- **Hover**: Subtle row highlight (`#F7F7FF`) for scannability.
-
----
-
-## 🔤 Typography & Hierarchy
-
-- **Font Family**: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif.
-- **Page Titles**: `22px`, `fontWeight: 700`, `--persian-indigo-deep`.
-- **Card Headings**: `16px`, `fontWeight: 600`.
-- **Tabular Data / Codes / Currency**: Monospace font (`JetBrains Mono`, `Consolas`).

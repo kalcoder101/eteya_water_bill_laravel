@@ -107,13 +107,30 @@
         if (m) m.classList.remove('show');
     };
 
-    // ---------- Sidebar Collapse Toggle ----------
-    window.toggleSidebar = function() {
+    // ---------- Sidebar Collapse Toggle & Shortcuts ----------
+    window.toggleSidebar = function(e) {
+        if (e && e.preventDefault) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         const shell = document.querySelector('.app-shell');
         if (!shell) return;
         const collapsed = shell.classList.toggle('sidebar-collapsed');
         localStorage.setItem('eteya_sidebar_collapsed', collapsed ? 'true' : 'false');
     };
+
+    // Global Keyboard Shortcuts (Ctrl+B: toggle sidebar, Ctrl+K: focus quick search)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+            e.preventDefault();
+            window.toggleSidebar();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            const searchInput = document.getElementById('cmdSearchInput') || document.querySelector('.topbar-search input');
+            if (searchInput) searchInput.focus();
+        }
+    });
 
     // Auto-apply saved sidebar state
     document.addEventListener('DOMContentLoaded', function() {

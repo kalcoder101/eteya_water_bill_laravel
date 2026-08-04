@@ -35,19 +35,40 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     $devCredit = get_setting('developer_credit', 'GITAN ICT Work PLC');
     $currentPage = request()->segment(1) ?? 'dashboard';
 
-    $navItems = [
-        ['page' => 'dashboard',           'label' => t('Dashboard'),           'icon' => 'dashboard', 'route' => 'dashboard'],
-        ['page' => 'customer-service',    'label' => t('Customer Service'),    'icon' => 'customers', 'route' => 'customer-service.index'],
-        ['page' => 'customer-ledger',      'label' => t('Customers Ledger'),    'icon' => 'ledger',    'route' => 'customer-ledger.index'],
-        ['page' => 'customer-statistics', 'label' => t('Detail Statistics'),   'icon' => 'statistics','route' => 'customer-statistics.index'],
-        ['page' => 'reading-correction',   'label' => t('Reading Correction'),  'icon' => 'wrench',    'route' => 'reading-correction.index'],
-        ['page' => 'bills',                'label' => t('Bills & Printing'),    'icon' => 'receipt',  'route' => 'bills.index'],
+    $allGroups = [
+        [
+            'title' => t('Operations'),
+            'items' => [
+                ['page' => 'dashboard',        'label' => t('Dashboard'),        'desc' => 'Overview stats, charts & recent activity logs',  'icon' => 'dashboard', 'route' => 'dashboard'],
+                ['page' => 'customer-service', 'label' => t('Customer Service'), 'desc' => 'Register, update & search active customers',    'icon' => 'customers', 'route' => 'customer-service.index'],
+                ['page' => 'bills',             'label' => t('Bills & Printing'), 'desc' => 'Calculate monthly bills & print receipts',     'icon' => 'receipt',   'route' => 'bills.index'],
+            ]
+        ],
+        [
+            'title' => t('Reports & Ledger'),
+            'items' => [
+                ['page' => 'customer-ledger',      'label' => t('Customers Ledger'),   'desc' => 'Customer billing history & printable ledger',    'icon' => 'ledger',     'route' => 'customer-ledger.index'],
+                ['page' => 'customer-statistics', 'label' => t('Detail Statistics'),  'desc' => 'Pivot reports: kebele × type × status',        'icon' => 'statistics', 'route' => 'customer-statistics.index'],
+                ['page' => 'reading-correction',   'label' => t('Reading Correction'), 'desc' => 'Manage meter reading complaint approvals',    'icon' => 'wrench',     'route' => 'reading-correction.index'],
+            ]
+        ],
+        [
+            'title' => t('Administration'),
+            'items' => [
+                ['page' => 'account-register', 'label' => t('Account Register'), 'desc' => 'Register staff accounts & manage job roles', 'icon' => 'lock', 'route' => 'account-register.index'],
+            ]
+        ]
     ];
 
-    $navItems = array_filter($navItems, fn($item) => is_allowed_page($item['page'], $user?->job_role ?? ''));
-
-    if ($user && is_allowed_page('account-register', $user->job_role)) {
-        $navItems[] = ['page' => 'account-register', 'label' => t('Account Register'), 'icon' => 'lock', 'route' => 'account-register.index'];
+    $navGroups = [];
+    foreach ($allGroups as $group) {
+        $allowedItems = array_filter($group['items'], fn($item) => is_allowed_page($item['page'], $user?->job_role ?? ''));
+        if (!empty($allowedItems)) {
+            $navGroups[] = [
+                'title' => $group['title'],
+                'items' => array_values($allowedItems)
+            ];
+        }
     }
 
     $languages = available_languages();
@@ -62,22 +83,39 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
             <div class="name">{{ t('Dashboard') }}</div>
             <div class="tag">Water Supply & Sewerage Enterprise</div>
         </div>
+        <button type="button" class="sidebar-collapse-toggle" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
+            {!! icon('arrow-left', 14) !!}
+        </button>
     </div>
 
-    <div class="sidebar-section-title">{{ t('Menu') }}</div>
-    <ul class="sidebar-nav">
-        @foreach ($navItems as $item)
-            <li data-title="{{ $item['label'] }}">
-                <a href="{{ route($item['route']) }}"
-                   class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
-                    <span class="icon">{!! icon($item['icon'], 18) !!}</span>
-                    <span>{{ $item['label'] }}</span>
-                </a>
-            </li>
-        @endforeach
-    </ul>
+    @foreach ($navGroups as $group)
+        <div class="sidebar-section-title">{{ $group['title'] }}</div>
+        <ul class="sidebar-nav">
+            @foreach ($group['items'] as $item)
+                <li data-title="{{ $item['label'] }}">
+                    <a href="{{ route($item['route']) }}"
+                       class="{{ $currentPage === $item['page'] ? 'active' : '' }}">
+                        <span class="icon">{!! icon($item['icon'], 18) !!}</span>
+                        <span>{{ $item['label'] }}</span>
+                    </a>
+                    <div class="nav-flyout">
+                        <div class="flyout-category">{{ $group['title'] }}</div>
+                        <div class="flyout-title">{{ $item['label'] }}</div>
+                        <div class="flyout-desc">{{ $item['desc'] }}</div>
+                        @if ($currentPage === $item['page'])
+                            <div class="flyout-status"><span class="dot"></span> Active Section</div>
+                        @endif
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+    @endforeach
 
     <div class="sidebar-footer">
+        <button type="button" class="sidebar-footer-collapse-btn" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
+            <span class="icon">{!! icon('arrow-left', 14) !!}</span>
+            <span class="label">Collapse Sidebar</span>
+        </button>
         <a href="{{ route('logout') }}" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <span class="icon">{!! icon('logout', 16) !!}</span> {{ t('Logout') }}
         </a>
@@ -91,7 +129,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 
 <div class="main-area">
 <header class="topbar">
-    <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+    <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar(event)" title="Toggle Sidebar">
         {!! icon('menu', 18) !!}
     </button>
     <div>

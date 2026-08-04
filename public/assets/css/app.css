@@ -120,6 +120,8 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
 
 /* ---------- Sidebar ---------- */
 .sidebar {
+    width: 264px;
+    min-width: 264px;
     background: var(--gradient-primary);
     color: var(--text-on-dark);
     display: flex;
@@ -131,7 +133,18 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     overflow-y: auto;
     overflow-x: hidden;
     box-shadow: 4px 0 24px rgba(26, 16, 84, 0.12);
-    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s ease, padding 0.25s ease;
+}
+
+/* ---------- Collapsed Sidebar Spec ---------- */
+.app-shell.sidebar-collapsed .sidebar {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+}
+.app-shell.sidebar-collapsed .sidebar-brand {
+    padding: 0 var(--space-3) var(--space-4);
+    justify-content: center;
 }
 .sidebar-brand {
     display: flex;
@@ -163,6 +176,48 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     margin-top: 2px;
     letter-spacing: 0.02em;
 }
+
+/* Sidebar Collapse Toggle Buttons inside Sidebar */
+.sidebar-collapse-toggle {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-md);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+.sidebar-collapse-toggle:hover {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.sidebar-footer-collapse-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--r-md);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: background 0.15s ease;
+}
+.sidebar-footer-collapse-btn:hover {
+    background: rgba(255, 255, 255, 0.20);
+}
+
 .sidebar-section-title {
     text-transform: uppercase;
     font-size: 10px;
@@ -238,12 +293,27 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     padding: 0 var(--space-3) var(--space-4);
     justify-content: center;
 }
+.app-shell.sidebar-collapsed .sidebar-brand .brand-logo,
 .app-shell.sidebar-collapsed .sidebar-brand .brand-text,
 .app-shell.sidebar-collapsed .sidebar-section-title,
 .app-shell.sidebar-collapsed .sidebar-nav a span:not(.icon),
 .app-shell.sidebar-collapsed .sidebar-footer div,
 .app-shell.sidebar-collapsed .sidebar-footer .logout-link span:not(.icon) {
     display: none !important;
+}
+.app-shell.sidebar-collapsed .sidebar-collapse-toggle {
+    margin-left: 0;
+}
+.app-shell.sidebar-collapsed .sidebar-footer-collapse-btn {
+    justify-content: center;
+    padding: 9px;
+}
+.app-shell.sidebar-collapsed .sidebar-footer-collapse-btn .label {
+    display: none !important;
+}
+.app-shell.sidebar-collapsed .sidebar-footer-collapse-btn .icon {
+    transform: rotate(180deg);
+    transition: transform 0.25s ease;
 }
 .app-shell.sidebar-collapsed .sidebar-nav {
     padding: 0 var(--space-2);
@@ -263,24 +333,74 @@ pre { padding: var(--space-3) var(--space-4); overflow-x: auto; border-radius: v
     justify-content: center;
 }
 
-/* Tooltip on hover in collapsed mode */
-.app-shell.sidebar-collapsed .sidebar-nav li:hover::after {
-    content: attr(data-title);
+/* Rich Flyout Cards in Collapsed Mode */
+.sidebar-nav li .nav-flyout {
+    display: none;
     position: absolute;
-    left: calc(100% + 12px);
+    left: calc(100% + 14px);
     top: 50%;
     transform: translateY(-50%);
-    background: var(--persian-indigo-deep);
-    color: #fff;
-    padding: 5px 11px;
-    border-radius: var(--r-sm);
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    z-index: 100;
-    box-shadow: var(--shadow-md);
+    width: 250px;
+    background: var(--surface);
+    border: 1px solid var(--indigo-border);
+    border-radius: var(--r-lg);
+    padding: var(--space-4);
+    box-shadow: 0 16px 40px rgba(26, 16, 84, 0.20), 0 4px 14px rgba(26, 16, 84, 0.08);
+    z-index: 1000;
     pointer-events: none;
-    animation: fadeIn 0.15s ease;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.sidebar-nav li .nav-flyout::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: var(--surface);
+    border-left: 1px solid var(--indigo-border);
+    border-bottom: 1px solid var(--indigo-border);
+}
+.app-shell.sidebar-collapsed .sidebar-nav li:hover .nav-flyout {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+.nav-flyout .flyout-category {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--persian-indigo-bright);
+    margin-bottom: 4px;
+}
+.nav-flyout .flyout-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 6px;
+}
+.nav-flyout .flyout-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+.nav-flyout .flyout-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--success);
+}
+.nav-flyout .flyout-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
 }
 
 /* ---------- Main area ---------- */
