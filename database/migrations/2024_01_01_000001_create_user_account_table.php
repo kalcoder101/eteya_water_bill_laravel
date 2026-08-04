@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('user_name', 50)->unique();
             $table->string('user_password', 255);
             $table->binary('photo')->nullable();
+            $table->rememberToken();
             $table->dateTime('created_at')->useCurrent();
         });
     }

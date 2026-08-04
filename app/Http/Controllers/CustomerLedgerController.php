@@ -39,7 +39,7 @@ class CustomerLedgerController extends Controller
         }
 
         $customer = null;
-        $ledger   = [];
+        $ledger   = collect([]);
 
         if ($meterSerial) {
             $customer = ActiveCustomer::where('meter_serial', $meterSerial)->first();
@@ -81,7 +81,7 @@ class CustomerLedgerController extends Controller
                 $unpaidTotal += (float) $row->total_monthly_cost;
             }
         }
-        $paidBills   = $ledger->filter(fn ($r) => $r->payment_status === 'Paid')->count();
+        $paidBills   = collect($ledger)->filter(fn ($r) => $r->payment_status === 'Paid')->count();
         $unpaidBills = count($ledger) - $paidBills;
 
         return view('customer-ledger.index', [

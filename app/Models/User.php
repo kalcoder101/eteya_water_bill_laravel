@@ -40,7 +40,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'user_id', 'first_name', 'last_name', 'phone_number', 'email_id',
-        'job_role', 'user_name', 'user_password', 'photo',
+        'job_role', 'user_name', 'user_password', 'photo', 'remember_token',
     ];
 
     /**
@@ -53,11 +53,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Override the username field for the auth guard.
+     * Unique identifier column name for authentication.
      */
     public function getAuthIdentifierName()
     {
-        return 'user_name';
+        return 'user_id';
     }
 
     public function getAuthIdentifier()
