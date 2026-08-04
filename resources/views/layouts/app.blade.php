@@ -10,8 +10,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="{{ $baseUrl }}/assets/js/app.js?v={{ time() }}"></script>
 <script>
+window.initGlobalGSAPAnimations = function() {
+    if (typeof gsap === 'undefined') return;
+    if (document.querySelector('.gsap-hero')) {
+        gsap.from('.gsap-hero', { opacity: 0, y: -20, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
+    }
+    if (document.querySelectorAll('.gsap-stat-card').length) {
+        gsap.from('.gsap-stat-card', { opacity: 0, y: 20, scale: 0.96, stagger: 0.08, duration: 0.5, ease: 'back.out(1.2)', clearProps: 'all' });
+    }
+    if (document.querySelectorAll('.gsap-chart-card').length) {
+        gsap.from('.gsap-chart-card', { opacity: 0, scale: 0.94, y: 15, stagger: 0.1, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
+    }
+    if (document.querySelectorAll('.gsap-section-card').length) {
+        gsap.from('.gsap-section-card', { opacity: 0, y: 25, stagger: 0.12, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
+    }
+    document.querySelectorAll('[data-gsap-counter]').forEach(function(el) {
+        var target = parseFloat(el.getAttribute('data-target-val') || '0');
+        if (isNaN(target) || target === 0) return;
+        var obj = { val: 0 };
+        gsap.to(obj, {
+            val: target,
+            duration: 1.2,
+            ease: 'power1.out',
+            onUpdate: function() {
+                el.innerText = Math.round(obj.val).toLocaleString();
+            }
+        });
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    window.initGlobalGSAPAnimations();
+});
+
 window.toggleSidebar = function(e) {
     if (e && e.preventDefault) e.preventDefault();
     var shell = document.querySelector('.app-shell');
