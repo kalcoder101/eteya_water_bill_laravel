@@ -190,11 +190,18 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 
 <div class="main-area">
 <header class="topbar">
-    <div>
-        <div class="page-title">{{ $pageTitle ?? t('Dashboard') }}</div>
-        <div class="page-subtitle">{{ $enterpriseEN }}</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <div>
+            <div class="page-title">{{ $pageTitle ?? t('Dashboard') }}</div>
+            <div class="page-subtitle">{{ $enterpriseEN }}</div>
+        </div>
     </div>
     <div class="spacer"></div>
+
+    <div style="position: relative; width: 220px;" class="topbar-search-bar">
+        <input type="text" class="form-control" placeholder="Search (Ctrl + K)" onclick="openModal('quickCmdModal')" readonly style="padding-left: 30px; font-size: 12px; height: 34px; cursor: pointer; background: var(--surface-container-low);">
+        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5;">{!! icon('search', 13) !!}</span>
+    </div>
 
     @if (! empty($pageAction))
     <a href="{{ $pageAction['href'] ?? '#' }}"
@@ -206,7 +213,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     @endif
 
     <div class="lang-switcher">
-        {!! icon('globe', 16) !!}
+        {!! icon('globe', 15) !!}
         <select id="langSelect" onchange="changeLanguage(this.value)" title="Language">
             @foreach ($languages as $code => $info)
                 <option value="{{ $code }}" @if($code === $currentLang) selected @endif>
@@ -217,10 +224,13 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     </div>
 
     <div class="user-chip">
-        <img src="{{ $photoUrl }}" alt="User photo">
+        <div style="position: relative; display: flex; align-items: center;">
+            <img src="{{ $photoUrl }}" alt="User photo">
+            <span style="position: absolute; right: 0; bottom: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--primary-container); border: 2px solid #fff;"></span>
+        </div>
         <div>
-            <div class="name">{{ $fullName }}</div>
-            <div class="role"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
+            <div class="name" style="font-size: 13px; font-weight: 700; color: var(--on-surface); line-height: 1.2;">{{ $fullName }}</div>
+            <div class="role" style="margin-top: 2px;"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
         </div>
     </div>
 </header>

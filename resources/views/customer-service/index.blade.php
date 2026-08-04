@@ -180,7 +180,6 @@
 <!-- Floating Quick Action Bar (FAB) -->
 <div class="fab-quick-bar">
     <button class="fab-btn fab-sm" onclick="openExcelImportModal()">{!! icon('upload', 14) !!} {{ t('Import Excel') }}</button>
-    <button class="fab-btn" onclick="openRegisterModal()">{!! icon('plus', 18) !!} {{ t('Register Customer') }}</button>
 </div>
 
 <!-- Multi-Step Registration Modal -->

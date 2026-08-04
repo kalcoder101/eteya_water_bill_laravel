@@ -51,12 +51,6 @@ class CustomerServiceController extends Controller
             'paymentWays' => payment_ways(),
             'branches'    => $branches,
             'pageTitle'   => 'Customer Service',
-            'pageAction'   => [
-                'label'    => t('Register New Customer'),
-                'href'     => '#',
-                'icon'     => 'plus',
-                'onclick'  => 'openRegisterModal(); return false;',
-            ],
         ]);
     }
 }
