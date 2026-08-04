@@ -20,34 +20,20 @@ Inspired by high-utility modern enterprise applications and design principles fr
 
 ---
 
-## 📂 Navigation Organization & Flyouts
+## 📂 Navigation Organization & Rectangular Panel Collapse
 
-### 1. Categorized Groups
-Navigation items are organized into distinct logical sections:
-- **Operations**: Dashboard, Customer Service, Bills & Printing.
-- **Reports & Ledger**: Customers Ledger, Detail Statistics, Reading Correction.
-- **Administration**: Account Register.
+### 1. Modern Rectangular Collapse Controls
+- **Header Toggle (`.sidebar-collapse-toggle`)**: Sleek rectangular container button in top brand header displaying the `panel-left` SVG icon (`<rect>` + dividing line + arrow).
+- **Footer Toggle (`.sidebar-footer-collapse-btn`)**: Rectangular container button in sidebar footer displaying the `panel-left` SVG icon + "Collapse Sidebar" text.
+- **Topbar Toggle (`.sidebar-toggle-btn`)**: Rectangular panel toggle button in topbar header.
 
-### 2. Rich Flyout Cards (`.nav-flyout`)
-When the sidebar is in collapsed mode (`.sidebar-collapsed`), hovering over any icon displays a floating **Flyout Card**:
-- **Category Badge**: Upper-case section name (`--persian-indigo-bright`).
-- **Title & Description**: High contrast header and helpful description text.
-- **Active Section Indicator**: Green dot indicator for the current active page section.
-- **Positioning**: Absolute right popout with a subtle left pointer arrow.
+### 2. Collapsed State Layout (Top & Bottom Icons)
+When collapsed (`.sidebar-collapsed`):
+- Top logo/text and footer text hide cleanly.
+- Both top and bottom collapse buttons remain centered in 44px rectangular container buttons.
+- The `panel-left` icon flips (`transform: scaleX(-1)`), signaling expand action.
+- The Logout button collapses into a centered rectangular icon button with hover red highlights.
 
-### 3. Keyboard Shortcuts
-- `Ctrl + B` (or `Cmd + B`): Toggle sidebar collapse/expand mode.
-- `Ctrl + K` (or `Cmd + K`): Focus quick search / command input.
-
----
-
-## 📦 Components Spec
-
-### Cards & Panels (`.panel`, `.stat-card`, `.card`)
-- **Base Surface**: `#FFFFFF` background with `1px solid var(--indigo-border)` border.
-- **Border Radius**: `12px` (`--r-lg`).
-- **Elevation**: `shadow-sm`. On hover, elevates with `translateY(-2px)` and `shadow-md`.
-
-### Modals & Floating Windows (`.modal-backdrop`, `.modal-window`)
-- **Backdrop**: `rgba(26, 16, 84, 0.45)` with `backdrop-filter: blur(6px)`.
-- **Window Container**: Glassmorphic / clean white surface, `16px` radius, `0 20px 48px rgba(26, 16, 84, 0.24)` ambient shadow.
+### 3. Rich Flyout Cards (`.nav-flyout`)
+Hovering over any collapsed icon displays a floating flyout card:
+- Category badge, title, subtext, and active section dot.

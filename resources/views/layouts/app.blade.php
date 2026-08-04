@@ -88,7 +88,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
             <div class="tag">Water Supply & Sewerage Enterprise</div>
         </div>
         <button type="button" class="sidebar-collapse-toggle" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
-            {!! icon('arrow-left', 14) !!}
+            {!! icon('panel-left', 18) !!}
         </button>
     </div>
 
@@ -117,16 +117,16 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 
     <div class="sidebar-footer">
         <button type="button" class="sidebar-footer-collapse-btn" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
-            <span class="icon">{!! icon('arrow-left', 14) !!}</span>
+            <span class="icon">{!! icon('panel-left', 18) !!}</span>
             <span class="label">Collapse Sidebar</span>
         </button>
         <a href="{{ route('logout') }}" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <span class="icon">{!! icon('logout', 16) !!}</span> {{ t('Logout') }}
+            <span class="icon">{!! icon('logout', 18) !!}</span> <span class="label">{{ t('Logout') }}</span>
         </a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
-        <div>{{ $appVersion }} · <span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
+        <div class="user-footer-badge">{{ $appVersion }} · <span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
         <div style="margin-top:4px; opacity:0.7; font-size: 10.5px;">{{ $devCredit }}</div>
     </div>
 </aside>
@@ -134,7 +134,7 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 <div class="main-area">
 <header class="topbar">
     <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar(event)" title="Toggle Sidebar">
-        {!! icon('menu', 18) !!}
+        {!! icon('panel-left', 18) !!}
     </button>
     <div>
         <div class="page-title">{{ $pageTitle ?? t('Dashboard') }}</div>
