@@ -21,6 +21,12 @@ window.toggleSidebar = function(e) {
 };
 
 window.toggleCategoryGroup = function(headerEl) {
+    var shell = document.querySelector('.app-shell');
+    if (shell && shell.classList.contains('sidebar-collapsed')) {
+        shell.classList.remove('sidebar-collapsed');
+        localStorage.setItem('eteya_sidebar_collapsed', 'false');
+    }
+
     var group = headerEl.closest('.sidebar-category-group');
     if (!group) return;
     var isAlreadyOpen = group.classList.contains('open');
@@ -31,6 +37,13 @@ window.toggleCategoryGroup = function(headerEl) {
         group.classList.add('open');
     }
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
+        var shell = document.querySelector('.app-shell');
+        if (shell) shell.classList.add('sidebar-collapsed');
+    }
+});
 </script>
 </head>
 <body>
@@ -141,20 +154,22 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
 
             <!-- Category Flyout Panel in Collapsed Mode -->
             <div class="category-flyout-panel">
-                <div class="flyout-header">
-                    <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
-                    <span class="cat-title">{{ $group['title'] }}</span>
-                </div>
-                <div class="flyout-body">
-                    @foreach ($group['items'] as $item)
-                        <a href="{{ route($item['route']) }}" class="flyout-item {{ $currentPage === $item['page'] ? 'active' : '' }}">
-                            <span class="icon">{!! icon($item['icon'], 16) !!}</span>
-                            <div class="details">
-                                <div class="title">{{ $item['label'] }}</div>
-                                <div class="sub">{{ $item['desc'] }}</div>
-                            </div>
-                        </a>
-                    @endforeach
+                <div class="flyout-card-inner">
+                    <div class="flyout-header">
+                        <span class="cat-icon">{!! icon($group['icon'], 16) !!}</span>
+                        <span class="cat-title">{{ $group['title'] }}</span>
+                    </div>
+                    <div class="flyout-body">
+                        @foreach ($group['items'] as $item)
+                            <a href="{{ route($item['route']) }}" class="flyout-item {{ $currentPage === $item['page'] ? 'active' : '' }}">
+                                <span class="icon">{!! icon($item['icon'], 16) !!}</span>
+                                <div class="details">
+                                    <div class="title">{{ $item['label'] }}</div>
+                                    <div class="sub">{{ $item['desc'] }}</div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
@@ -162,18 +177,14 @@ if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
     </div>
 
     <div class="sidebar-footer">
-        <button type="button" class="sidebar-footer-collapse-btn" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
-            <span class="icon">{!! icon('panel-left', 18) !!}</span>
-            <span class="label">Expand Sidebar</span>
-        </button>
         <a href="{{ route('logout') }}" class="logout-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <span class="icon">{!! icon('logout', 18) !!}</span> <span class="label">{{ t('Logout') }}</span>
         </a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
-        <div class="user-footer-badge">{{ $appVersion }} · <span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
-        <div style="margin-top:4px; opacity:0.7; font-size: 10.5px;">{{ $devCredit }}</div>
+        <div class="footer-info-badge">{{ $appVersion }} · <span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
+        <div class="footer-info-credit">{{ $devCredit }}</div>
     </div>
 </aside>
 
