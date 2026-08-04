@@ -4,17 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $pageTitle ?? config('app.name') }} — {{ config('app.name') }}</title>
-<link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css">
+<link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css?v={{ time() }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="{{ $baseUrl }}/assets/js/app.js"></script>
+<script src="{{ $baseUrl }}/assets/js/app.js?v={{ time() }}"></script>
 <script>
-if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-collapsed-boot');
-}
+window.toggleSidebar = function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var shell = document.querySelector('.app-shell');
+    if (!shell) return;
+    var collapsed = shell.classList.toggle('sidebar-collapsed');
+    localStorage.setItem('eteya_sidebar_collapsed', collapsed ? 'true' : 'false');
+};
 </script>
 </head>
 <body>
