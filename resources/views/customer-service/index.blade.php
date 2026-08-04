@@ -4,14 +4,12 @@
 
 <!-- Page Header & Banner -->
 <div class="gsap-hero flex flex-wrap items-end justify-between gap-4 mb-6">
-    <div>
-        <div class="text-[11px] uppercase tracking-widest font-bold text-slate-500 mb-1">
-            {{ t('Operations') }} &bull; {{ t('Customer Registry') }}
-        </div>
-        <h2 class="m-0 text-[22px] font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <span class="text-emerald-600">{!! icon('users', 24) !!}</span> {{ t('Customer Service Management') }}
+    <div class="min-w-0">
+        <h2 class="m-0 text-[22px] font-bold tracking-tight text-slate-900 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 inline-flex items-center justify-center shrink-0">{!! icon('users', 20) !!}</span>
+            <span>{{ t('Customer Service Management') }}</span>
         </h2>
-        <p class="mt-1 text-[13px] text-slate-500">{{ t('Register, search, update and manage all water meter customers across Kebeles') }}</p>
+        <p class="mt-2 text-[13px] text-slate-500">{{ t('Register, search, update and manage all water meter customers across Kebeles') }}</p>
     </div>
 </div>
 
