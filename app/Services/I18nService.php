@@ -76,9 +76,9 @@ class I18nService
                 'orm' => 'Maqaa fayyadamaa fi jechoota-darbee dogoggora.',
                 'am'  => 'የተጠቃሚ ስም እና የይለፍ ቃል የተሳሳተ ነው።',
             ],
-            'Eteya Water Bill' => [
-                'orm' => 'Baajii Bishaanii Eteya',
-                'am'  => 'የኤትያ የውሃ ሂሳብ',
+            'WaterSteward Enterprise System' => [
+                'orm' => 'Sistiimii Bishaanii WaterSteward',
+                'am'  => 'WaterSteward ኢንተርፕራይዝ ሲስተም',
             ],
             'Water Utility Billing System' => [
                 'orm' => 'Sistiimii Baajii Bishaanii',

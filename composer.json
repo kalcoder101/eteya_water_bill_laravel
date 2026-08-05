@@ -1,8 +1,8 @@
 {
-    "name": "eteya/water-bill-laravel",
+    "name": "watersteward/utility-enterprise",
     "type": "project",
-    "description": "Eteya Water Bill Management System - Laravel 11 Edition. A complete water utility billing system ported to Laravel 11 from a PHP/MySQL procedural codebase originally developed by GITAN ICT Work PLC for the Eteya Town Water Supply & Sewerage Service Enterprise (Oromia Region, Ethiopia).",
-    "keywords": ["laravel", "water-bill", "billing", "ethiopia", "eteya", "oromia", "utility"],
+    "description": "WaterSteward Enterprise System - Laravel 11 Edition. A complete water utility management and billing system ported to Laravel 11 from a PHP/MySQL procedural codebase originally developed by GITAN ICT Work PLC.",
+    "keywords": ["laravel", "watersteward", "water-bill", "billing", "utility", "enterprise"],
     "license": "MIT",
     "require": {
         "php": "^8.2",

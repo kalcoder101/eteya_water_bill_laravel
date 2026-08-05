@@ -20,7 +20,7 @@ return [
 
     'lottery' => [2, 100],
 
-    'cookie' => env('SESSION_COOKIE', 'eteya_water_bill_session'),
+    'cookie' => env('SESSION_COOKIE', 'watersteward_enterprise_session'),
 
     'path' => env('SESSION_PATH', '/'),
 

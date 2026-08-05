@@ -1,4 +1,4 @@
-# Eteya Water Bill Management System — Laravel 11 Edition
+# WaterSteward Enterprise System — Laravel 11 Edition
 
 A complete Laravel 11 rewrite of the original PHP/MySQL water-utility billing
 system originally developed by **GITAN ICT Work PLC** for the **Eteya Town Water
@@ -54,7 +54,7 @@ original Java getters/setters exactly (e.g. `meterSerial`, `firstName`,
 ### Laravel 11 Architecture
 
 ```
-eteya_water_bill_laravel/
+watersteward_enterprise/
 ├── app/
 │   ├── Models/              ← 13 Eloquent models with relationships
 │   ├── Http/
@@ -129,7 +129,7 @@ eteya_water_bill_laravel/
 ### Step 2 — Install dependencies
 
 ```bash
-cd eteya_water_bill_laravel
+cd watersteward_enterprise
 composer install
 cp .env.example .env
 php artisan key:generate

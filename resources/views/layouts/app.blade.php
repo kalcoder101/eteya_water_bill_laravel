@@ -67,7 +67,7 @@
     $fullName = $user ? $user->fullName() : '';
     $enterpriseEN = get_setting('enterprise_name_en', 'HHD Water Supply and Sewerage Service Enterprise');
     $devCredit = get_setting('developer_credit', 'GITAN ICT Work PLC');
-    $brandShort = get_setting('default_branch', 'Eteya');
+    $brandShort = get_setting('default_branch', 'WaterSteward');
     $currentPage = request()->segment(1) ?? 'dashboard';
 
     // Category accent → Tailwind class map (module accents must stay consistent)
@@ -172,7 +172,7 @@
             <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-full h-full object-contain">
         </div>
         <div class="brand-text min-w-0 flex-1">
-            <div class="name font-extrabold text-[15px] tracking-tight text-slate-900 truncate">{{ $brandShort ?? t('Eteya') }}</div>
+            <div class="name font-extrabold text-[15px] tracking-tight text-slate-900 truncate">{{ $brandShort ?? t('WaterSteward') }}</div>
             <div class="tag text-[10px] text-slate-500 truncate">Water Supply & Sewerage Enterprise</div>
         </div>
         <button type="button" class="sidebar-collapse-toggle shrink-0 w-9 h-9 rounded-[10px] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 flex items-center justify-center cursor-pointer transition" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">

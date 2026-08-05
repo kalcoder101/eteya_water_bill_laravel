@@ -12,8 +12,8 @@ class SettingsSeeder extends Seeder
         $settings = [
             'enterprise_name_en' => 'HHD Water Supply and Sewerage Service Enterprise',
             'enterprise_name_or' => "Dhaabbata Tajaajila Bishaan Dhugaatii fi Dhangala'aa",
-            'town_name'          => 'Eteya',
-            'default_branch'     => 'Eteya',
+            'town_name'          => 'WaterSteward',
+            'default_branch'     => 'WaterSteward',
             'developer_credit'   => 'Designed & Developed By: GITAN ICT Work PLC, Phone: +251-967-67-1810, +251-907-60-6050',
             'bill_slogan'        => 'Bishaan Lubbuu Dha!!!',
             'app_version'         => '1.0.0 Laravel',

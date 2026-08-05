@@ -42,7 +42,7 @@ radius:
 
 ## Brand & Style
 
-**Modern Steward** is the design language for the Eteya Water Bill administration suite. It pairs the trust and reliability of a municipal utility with a crisp, contemporary, high-utility interface. The personality is **Calm, Dependable, and Efficient** — a system an operator trusts for a decade of daily billing work.
+**Modern Steward** is the design language for the WaterSteward Enterprise System administration suite. It pairs the trust and reliability of a municipal utility with a crisp, contemporary, high-utility interface. The personality is **Calm, Dependable, and Efficient** — a system an operator trusts for a decade of daily billing work.
 
 The implementation is **utility-first Tailwind CSS 4** compiled at runtime via the official CDN script. No build step. Component conventions are codified as utility strings and reused verbatim across every Blade view. Where utility classes cannot express something (page base rules, sidebar flyouts, print layout, JS-injected HTML), the rule lives in `public/assets/css/app.css`.
 

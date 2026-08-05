@@ -2,7 +2,7 @@
 
 return [
 
-    'name' => env('APP_NAME', 'Eteya Water Bill Management System'),
+    'name' => env('APP_NAME', 'WaterSteward Enterprise System'),
     'version' => env('APP_VERSION', '1.0.0 Laravel'),
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool) env('APP_DEBUG', false),

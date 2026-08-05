@@ -15,5 +15,5 @@ return [
         ],
         'array' => ['driver' => 'array', 'serialize' => false],
     ],
-    'prefix' => env('CACHE_PREFIX', 'eteya_cache'),
+    'prefix' => env('CACHE_PREFIX', 'watersteward_cache'),
 ];

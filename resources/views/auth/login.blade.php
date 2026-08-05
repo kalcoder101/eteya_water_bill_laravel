@@ -35,7 +35,7 @@
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-md shadow-emerald-500/10 border border-slate-200/80 p-2.5 mb-4 group transition-transform duration-300 hover:scale-105">
                 <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-full h-full object-contain">
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ t('Eteya Water Enterprise') }}</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ t('WaterSteward Enterprise System') }}</h1>
             <p class="text-xs text-slate-500 font-medium mt-1">{{ t('Water Utility Billing & Management System') }}</p>
         </div>
 
@@ -129,7 +129,7 @@
 
 <!-- Footer -->
 <footer class="relative z-10 py-4 text-center text-xs text-slate-400">
-    <p>&copy; {{ date('Y') }} {{ t('Eteya Town Water Supply and Sewerage Service Enterprise') }} &bull; {{ get_setting('developer_credit', 'GITAN ICT Work PLC') }}</p>
+    <p>&copy; {{ date('Y') }} {{ t('WaterSteward Water Supply and Sewerage Service Enterprise') }} &bull; {{ get_setting('developer_credit', 'GITAN ICT Work PLC') }}</p>
 </footer>
 
 <script>

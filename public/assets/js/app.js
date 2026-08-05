@@ -1,5 +1,5 @@
 /**
- * Eteya Water Bill — Global JS utilities (EOS Modern Steward layer)
+ * WaterSteward Enterprise System — Global JS utilities (EOS Modern Steward layer)
  *
  * - GSAP entrance engine (gsap-* hooks, data-gsap-counter/progress)
  * - AJAX SPA navigation (intercepts same-origin <a> clicks)
@@ -259,14 +259,14 @@
         var shell = document.querySelector('.app-shell');
         if (!shell) return;
         var collapsed = shell.classList.toggle('sidebar-collapsed');
-        localStorage.setItem('eteya_sidebar_collapsed', collapsed ? 'true' : 'false');
+        localStorage.setItem('watersteward_sidebar_collapsed', collapsed ? 'true' : 'false');
     };
 
     window.toggleCategoryGroup = function(headerEl) {
         var shell = document.querySelector('.app-shell');
         if (shell && shell.classList.contains('sidebar-collapsed')) {
             shell.classList.remove('sidebar-collapsed');
-            localStorage.setItem('eteya_sidebar_collapsed', 'false');
+            localStorage.setItem('watersteward_sidebar_collapsed', 'false');
         }
 
         var group = headerEl.closest('.sidebar-category-group');
@@ -298,7 +298,7 @@
 
     // Auto-apply saved sidebar state
     document.addEventListener('DOMContentLoaded', function() {
-        if (localStorage.getItem('eteya_sidebar_collapsed') === 'true') {
+        if (localStorage.getItem('watersteward_sidebar_collapsed') === 'true') {
             var shell = document.querySelector('.app-shell');
             if (shell) shell.classList.add('sidebar-collapsed');
         }

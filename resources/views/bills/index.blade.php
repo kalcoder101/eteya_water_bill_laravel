@@ -253,7 +253,7 @@
             <div id="receiptPrintArea" class="bg-white text-slate-900 p-4 rounded-lg border border-slate-200 font-mono text-[11px] leading-relaxed">
                 <div class="text-center border-b-2 border-dashed border-slate-800 pb-3 mb-3">
                     <div class="font-extrabold text-[13px]">HHD WATER SUPPLY & SEWERAGE</div>
-                    <div class="text-[10.5px]">ETEYA WATER SERVICE ENTERPRISE</div>
+                    <div class="text-[10.5px]">WATERSTEWARD ENTERPRISE</div>
                     <div class="text-[10px] mt-1">Period: {{ $year }} {{ $month }}</div>
                 </div>
 
@@ -282,7 +282,7 @@
                 </table>
 
                 <div class="text-[10px] text-center text-slate-500 border-t border-dashed border-slate-400 pt-2">
-                    Thank you for using Eteya Water Enterprise. Please retain this receipt.
+                    Thank you for using WaterSteward Enterprise. Please retain this receipt.
                 </div>
             </div>
         </div>

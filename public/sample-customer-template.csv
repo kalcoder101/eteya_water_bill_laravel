@@ -1,4 +1,4 @@
 meterSerial,firstName,middleName,lastName,kebele,soldDate,meterNum,meterSize,customerType,billNum,phoneNumber,startValue,paymentWay,customerBranch,customerStatus,readerBlock
-ETY-0101,Abebe,Kebede,Tola,01,2024-11-01,101,1/2",Dhunfaa,SN-0101,+251911001122,0,BANK,Eteya,Active,Block-A
-ETY-0102,Birtukan,Tadesse,Gemechu,01,2024-11-05,102,1/2",Dhunfaa,SN-0102,+251911223344,0,NON_BANK,Eteya,Active,Block-A
-ETY-0103,Chala,Deme,Roba,02,2024-11-10,103,3/4",Daldaltoota fi Industry,SN-0103,+251911445566,0,BANK,Eteya,Active,Block-B
+ETY-0101,Abebe,Kebede,Tola,01,2024-11-01,101,1/2",Dhunfaa,SN-0101,+251911001122,0,BANK,WaterSteward,Active,Block-A
+ETY-0102,Birtukan,Tadesse,Gemechu,01,2024-11-05,102,1/2",Dhunfaa,SN-0102,+251911223344,0,NON_BANK,WaterSteward,Active,Block-A
+ETY-0103,Chala,Deme,Roba,02,2024-11-10,103,3/4",Daldaltoota fi Industry,SN-0103,+251911445566,0,BANK,WaterSteward,Active,Block-B
