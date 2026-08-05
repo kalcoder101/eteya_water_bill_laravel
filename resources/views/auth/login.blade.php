@@ -9,128 +9,114 @@
 <style type="text/tailwindcss">
 @theme {
     --color-primary: #059669;
-    --color-primary-hover: #047857;
-    --color-surface-base: #F8FAF8;
-    --color-surface-card: #FFFFFF;
     --font-sans: "Inter", "Noto Sans Ethiopic", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+.animate-shake { animation: shake 0.4s ease-in-out; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="antialiased font-sans bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+<body class="min-h-screen flex flex-col sm:justify-center items-center py-10 bg-gray-100 font-sans antialiased selection:bg-emerald-500 selection:text-white">
 
-<!-- Ambient Background Decorative Elements -->
-<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-    <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
-    <div class="absolute top-1/2 -right-40 w-96 h-96 rounded-full bg-teal-500/10 blur-3xl"></div>
-    <div class="absolute -bottom-40 left-1/3 w-96 h-96 rounded-full bg-emerald-600/5 blur-3xl"></div>
-</div>
+<!-- Login Card (compact Breeze style) -->
+<div class="w-full sm:max-w-sm px-6 py-6 bg-white shadow-md overflow-hidden sm:rounded-lg">
 
-<main class="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-    <div class="w-full max-w-[420px]">
-        <!-- Brand Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-md shadow-emerald-500/10 border border-slate-200/80 p-2.5 mb-4 group transition-transform duration-300 hover:scale-105">
-                <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-full h-full object-contain">
-            </div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ t('WaterSteward Enterprise System') }}</h1>
-            <p class="text-xs text-slate-500 font-medium mt-1">{{ t('Water Utility Billing & Management System') }}</p>
+    <!-- Brand Header inside Card -->
+    <div class="flex flex-col items-center text-center mb-6">
+        <a href="{{ url('/') }}" class="inline-flex items-center justify-center mb-2.5">
+            <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-12 h-12 object-contain">
+        </a>
+        <h1 class="text-base font-bold text-gray-900 leading-snug">{{ t('WaterSteward Enterprise System') }}</h1>
+        <p class="text-xs font-medium text-gray-500 mt-0.5">{{ t('Water Utility Billing & Management') }}</p>
+    </div>
+
+    @php
+        $err = '';
+        if (session('errors')) {
+            $err = session('errors')->get('username')[0] ?? (session('errors')->get('password')[0] ?? '');
+        }
+        if (empty($err) && ! empty($error)) {
+            $err = $error;
+        }
+    @endphp
+
+    @if ($err)
+        <div class="flex items-center gap-2 mb-4 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 animate-shake">
+            {!! icon('alert', 14) !!}
+            <span>{{ $err }}</span>
+        </div>
+    @endif
+
+    <form method="post" action="{{ route('login.submit') }}" id="loginForm">
+        @csrf
+
+        <!-- Username -->
+        <div>
+            <label for="username" class="block font-medium text-sm text-gray-700">{{ t('Username') }}</label>
+            <input type="text" id="username" name="username"
+                   value="{{ old('username') }}"
+                   placeholder="{{ t('Enter username') }}"
+                   autocomplete="username" autofocus required
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-sm px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none">
         </div>
 
-        <!-- Login Card -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-200/50 p-6 sm:p-8">
-            <div class="mb-6">
-                <h2 class="text-lg font-bold text-slate-900">{{ t('Sign In') }}</h2>
-                <p class="text-xs text-slate-500 mt-0.5">{{ t('Enter your account credentials to access system') }}</p>
-            </div>
-
-            <!-- Error Alerts -->
-            @if (session('errors'))
-                @php $err = session('errors')->get('username')[0] ?? (session('errors')->get('password')[0] ?? ''); @endphp
-                @if ($err)
-                <div class="flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50/80 text-rose-700 p-3.5 text-xs font-semibold mb-5 animate-shake">
-                    {!! icon('alert', 16) !!}
-                    <span>{{ $err }}</span>
-                </div>
-                @endif
-            @endif
-            @if (! empty($error))
-                <div class="flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50/80 text-rose-700 p-3.5 text-xs font-semibold mb-5 animate-shake">
-                    {!! icon('alert', 16) !!}
-                    <span>{{ $error }}</span>
-                </div>
-            @endif
-
-            <!-- Form -->
-            <form method="post" action="{{ route('login.submit') }}" id="loginForm">
-                @csrf
-                <div class="mb-4">
-                    <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">{{ t('Username') }}</label>
-                    <div class="relative">
-                        <input type="text" id="username" name="username"
-                               value="{{ old('username') }}"
-                               placeholder="Enter username"
-                               autocomplete="username" autofocus required
-                               class="w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 transition-all">
-                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                            {!! icon('user', 16) !!}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-5">
-                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">{{ t('Password') }}</label>
-                    <div class="relative">
-                        <input type="password" id="password" name="password"
-                               placeholder="••••••••"
-                               autocomplete="current-password" required
-                               class="w-full pl-10 pr-10 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 transition-all">
-                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                            {!! icon('lock', 16) !!}
-                        </div>
-                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition" onclick="togglePasswordVisibility()" title="Toggle Password">
-                            <span id="eyeIcon">{!! icon('eye', 16) !!}</span>
-                        </button>
-                    </div>
-                </div>
-
-                <button type="submit"
-                        class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-600/25 hover:shadow-xl hover:shadow-emerald-600/35 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                    {{ t('SIGN IN') }}
+        <!-- Password -->
+        <div class="mt-4">
+            <label for="password" class="block font-medium text-sm text-gray-700">{{ t('Password') }}</label>
+            <div class="relative mt-1">
+                <input type="password" id="password" name="password"
+                       placeholder="••••••••"
+                       autocomplete="current-password" required
+                       class="block w-full rounded-md border-gray-300 shadow-sm text-sm pl-3 pr-10 py-2 text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none">
+                <button type="button" class="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded text-gray-400 hover:text-emerald-700 hover:bg-emerald-50 transition" onclick="togglePasswordVisibility()" title="Toggle Password">
+                    <span id="eyeIcon">{!! icon('eye', 15) !!}</span>
                 </button>
-            </form>
-
-            <!-- Quick Demo Accounts selector -->
-            <div class="mt-6 pt-5 border-t border-slate-100">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center justify-between">
-                    <span>{{ t('Quick Demo Login') }}</span>
-                    <span class="text-[10px] text-emerald-600 font-semibold">1-Click Fill</span>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="fillDemo('admin', 'admin123')" class="px-2.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-800 transition text-center group">
-                        <div class="text-[11px] font-bold group-hover:text-emerald-700">Admin</div>
-                        <div class="text-[9.5px] text-slate-400 group-hover:text-emerald-600">System Admin</div>
-                    </button>
-                    <button type="button" onclick="fillDemo('cs', 'cs123')" class="px-2.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-800 transition text-center group">
-                        <div class="text-[11px] font-bold group-hover:text-emerald-700">CS Agent</div>
-                        <div class="text-[9.5px] text-slate-400 group-hover:text-emerald-600">Customer Desk</div>
-                    </button>
-                    <button type="button" onclick="fillDemo('chaltu', 'chaltu123')" class="px-2.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-800 transition text-center group">
-                        <div class="text-[11px] font-bold group-hover:text-emerald-700">Chaltu</div>
-                        <div class="text-[9.5px] text-slate-400 group-hover:text-emerald-600">Billing Clerk</div>
-                    </button>
-                </div>
             </div>
+        </div>
+
+        <!-- Remember me + help -->
+        <div class="flex items-center justify-between mt-4">
+            <label for="remember_me" class="inline-flex items-center">
+                <input id="remember_me" type="checkbox" name="remember"
+                       class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500" checked>
+                <span class="ms-2 text-sm text-gray-600">{{ t('Remember me') }}</span>
+            </label>
+            <span class="text-xs text-gray-400">{{ t('Contact admin for password reset') }}</span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="mt-5 w-full inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            {{ t('Sign in') }}
+        </button>
+    </form>
+
+    <!-- Quick Demo Accounts (compact) -->
+    <div class="mt-5 pt-4 border-t border-gray-100">
+        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{{ t('Quick Demo Login') }}</div>
+        <div class="grid grid-cols-3 gap-1.5">
+            <button type="button" onclick="fillDemo('admin', 'admin123')" class="px-2 py-1.5 rounded-md border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-600 hover:text-emerald-800 transition text-center">
+                <span class="block text-[11px] font-bold">Admin</span>
+                <span class="block text-[9px] text-gray-400">System Admin</span>
+            </button>
+            <button type="button" onclick="fillDemo('cs', 'cs123')" class="px-2 py-1.5 rounded-md border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-600 hover:text-emerald-800 transition text-center">
+                <span class="block text-[11px] font-bold">CS Agent</span>
+                <span class="block text-[9px] text-gray-400">Customer Desk</span>
+            </button>
+            <button type="button" onclick="fillDemo('chaltu', 'chaltu123')" class="px-2 py-1.5 rounded-md border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-600 hover:text-emerald-800 transition text-center">
+                <span class="block text-[11px] font-bold">Chaltu</span>
+                <span class="block text-[9px] text-gray-400">Billing Clerk</span>
+            </button>
         </div>
     </div>
-</main>
+</div>
 
-<!-- Footer -->
-<footer class="relative z-10 py-4 text-center text-xs text-slate-400">
-    <p>&copy; {{ date('Y') }} {{ t('WaterSteward Water Supply and Sewerage Service Enterprise') }} &bull; {{ get_setting('developer_credit', 'GITAN ICT Work PLC') }}</p>
-</footer>
 
 <script>
 function togglePasswordVisibility() {
@@ -138,10 +124,10 @@ function togglePasswordVisibility() {
     var eyeSpan = document.getElementById('eyeIcon');
     if (field.type === 'password') {
         field.type = 'text';
-        eyeSpan.innerHTML = '{!! icon('eye-off', 16) !!}';
+        eyeSpan.innerHTML = '{!! icon('eye-off', 15) !!}';
     } else {
         field.type = 'password';
-        eyeSpan.innerHTML = '{!! icon('eye', 16) !!}';
+        eyeSpan.innerHTML = '{!! icon('eye', 15) !!}';
     }
 }
 
