@@ -117,7 +117,7 @@
             </span>
             <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ number_format($totalConsumption, 1) }} m³ Total</span>
         </div>
-        <div class="h-[190px] relative flex items-center justify-center">
+        <div class="chart-wrapper-md h-[190px] relative flex items-center justify-center" style="min-height: 190px;">
             <canvas id="ledgerConsChart"></canvas>
         </div>
     </div>
@@ -129,7 +129,7 @@
             </span>
             <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ number_format($grandTotal, 0) }} ETB Total</span>
         </div>
-        <div class="h-[190px] relative flex items-center justify-center">
+        <div class="chart-wrapper-md h-[190px] relative flex items-center justify-center" style="min-height: 190px;">
             <canvas id="ledgerCostChart"></canvas>
         </div>
     </div>
@@ -417,11 +417,27 @@ function filterCustomerOptions() {
         }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
+    let retries = 0;
+    const safeRun = () => {
+        const testCanvas = document.getElementById('ledgerConsChart') || document.getElementById('ledgerCostChart');
+        if (!testCanvas || typeof Chart === 'undefined') return;
+
+        if (testCanvas.parentElement && testCanvas.parentElement.clientHeight === 0 && retries < 10) {
+            retries++;
+            setTimeout(safeRun, 50);
+            return;
+        }
+
+        run();
+    };
+
+    if (document.readyState === 'complete') {
+        safeRun();
     } else {
-        setTimeout(run, 100);
+        document.addEventListener('DOMContentLoaded', safeRun);
+        window.addEventListener('load', safeRun);
     }
+    window.addEventListener('resize', safeRun);
 })();
 </script>
 @endif

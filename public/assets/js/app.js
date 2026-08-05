@@ -344,8 +344,8 @@
                     if (!newMain) { fail(); return; }
 
                     // Re-run scripts inside the new main (needed for chart init etc.)
-                    var scripts = newMain.querySelectorAll('script');
-                    scripts.forEach(function(s) { s.remove(); });
+                    var scriptList = Array.prototype.slice.call(newMain.querySelectorAll('script'));
+                    scriptList.forEach(function(s) { s.remove(); });
 
                     main.innerHTML = newMain.innerHTML;
 
@@ -361,8 +361,7 @@
                     var newSidebar = doc.getElementById('mainSidebar');
                     if (sidebar && newSidebar) sidebar.innerHTML = newSidebar.innerHTML;
 
-                    scripts = newMain.querySelectorAll('script');
-                    scripts.forEach(function(s) {
+                    scriptList.forEach(function(s) {
                         var ns = document.createElement('script');
                         if (s.src) { ns.src = s.src; }
                         else { ns.textContent = s.textContent; }

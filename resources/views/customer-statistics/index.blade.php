@@ -53,7 +53,7 @@
             </span>
             <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ count($byType) }} {{ t('Categories') }}</span>
         </div>
-        <div class="h-[220px] relative flex items-center justify-center">
+        <div class="chart-wrapper-md h-[220px] relative flex items-center justify-center" style="min-height: 220px;">
             <canvas id="typeChart"></canvas>
         </div>
     </div>
@@ -65,7 +65,7 @@
             </span>
             <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $totalCustomers }} {{ t('Total') }}</span>
         </div>
-        <div class="h-[220px] relative flex items-center justify-center">
+        <div class="chart-wrapper-md h-[220px] relative flex items-center justify-center" style="min-height: 220px;">
             <canvas id="statusChart"></canvas>
         </div>
     </div>
@@ -80,7 +80,7 @@
             </span>
             <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">Top Kebeles</span>
         </div>
-        <div class="h-[240px] relative flex items-center justify-center">
+        <div class="chart-wrapper-lg h-[240px] relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="kebeleChart"></canvas>
         </div>
     </div>
@@ -92,7 +92,7 @@
             </span>
             <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">Growth Trend</span>
         </div>
-        <div class="h-[240px] relative flex items-center justify-center">
+        <div class="chart-wrapper-lg h-[240px] relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="trendChart"></canvas>
         </div>
     </div>
@@ -378,11 +378,27 @@ function toggleFabMenu() {
         }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
+    let retries = 0;
+    const safeRun = () => {
+        const testCanvas = document.getElementById('typeChart') || document.getElementById('statusChart');
+        if (!testCanvas || typeof Chart === 'undefined') return;
+
+        if (testCanvas.parentElement && testCanvas.parentElement.clientHeight === 0 && retries < 10) {
+            retries++;
+            setTimeout(safeRun, 50);
+            return;
+        }
+
+        run();
+    };
+
+    if (document.readyState === 'complete') {
+        safeRun();
     } else {
-        setTimeout(run, 100);
+        document.addEventListener('DOMContentLoaded', safeRun);
+        window.addEventListener('load', safeRun);
     }
+    window.addEventListener('resize', safeRun);
 })();
 </script>
 @endsection

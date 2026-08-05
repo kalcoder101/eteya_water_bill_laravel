@@ -97,7 +97,7 @@
             </span>
             <span class="inline-flex items-center rounded-full bg-slate-100 text-slate-600 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider border border-slate-200">{{ number_format($totalAmount, 0) }} ETB</span>
         </div>
-        <div class="h-[190px] relative">
+        <div class="chart-wrapper-md h-[190px] relative flex items-center justify-center" style="min-height: 190px;">
             <canvas id="billingStatusChart"></canvas>
         </div>
     </div>
@@ -105,11 +105,11 @@
     <div class="gsap-chart-card bg-white border border-slate-200 rounded-xl shadow-card p-5">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
             <span class="font-serif font-bold text-slate-900 text-sm flex items-center gap-2">
-                <span class="text-emerald-600">{!! icon('bar-chart', 16) !!}</span> {{ t('Cost Components Breakdown') }}
+                <span class="text-emerald-600">{!! icon('line-chart', 16) !!}</span> {{ t('Cost Components Breakdown') }}
             </span>
             <span class="inline-flex items-center rounded-full bg-emerald-50 text-emerald-800 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider border border-emerald-300">{{ $year }} {{ $month }}</span>
         </div>
-        <div class="h-[190px] relative">
+        <div class="chart-wrapper-md h-[190px] relative flex items-center justify-center" style="min-height: 190px;">
             <canvas id="billingComponentsChart"></canvas>
         </div>
     </div>
@@ -410,17 +410,23 @@ function printAllBills() {
             });
         }
 
-        // Cost Components Bar Chart
+        // Cost Components Line Chart
         const compCtx = document.getElementById('billingComponentsChart');
         if (compCtx) {
             const oldComp = Chart.getChart(compCtx);
             if (oldComp) oldComp.destroy();
-            new Chart(compCtx.getContext('2d'), {
-                type: 'bar',
+
+            const ctxComp = compCtx.getContext('2d');
+            const gradComp = ctxComp.createLinearGradient(0, 0, 0, 180);
+            gradComp.addColorStop(0, 'rgba(5, 150, 105, 0.35)');
+            gradComp.addColorStop(1, 'rgba(5, 150, 105, 0.01)');
+
+            new Chart(ctxComp, {
+                type: 'line',
                 data: {
                     labels: ['Water Cons.', 'Meter Fee', 'Service Fee', 'Penalty', 'Fund'],
                     datasets: [{
-                        label: 'ETB',
+                        label: 'Cost (ETB)',
                         data: [
                             {{ $bills->sum('consumption_cost') }},
                             {{ $bills->sum('meter_price') }},
@@ -428,8 +434,16 @@ function printAllBills() {
                             {{ $bills->sum('penalty_cost') }},
                             {{ $bills->sum('state_price') }}
                         ],
-                        backgroundColor: ['#10B981', '#3B82F6', '#6366F1', '#EF4444', '#F59E0B'],
-                        borderRadius: 6
+                        borderColor: '#059669',
+                        backgroundColor: gradComp,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#059669',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
@@ -437,19 +451,35 @@ function printAllBills() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10, family: 'Inter' } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Inter' } } }
                     }
                 }
             });
         }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
+    let retries = 0;
+    const safeRun = () => {
+        const testCanvas = document.getElementById('billingStatusChart') || document.getElementById('billingComponentsChart');
+        if (!testCanvas || typeof Chart === 'undefined') return;
+
+        if (testCanvas.parentElement && testCanvas.parentElement.clientHeight === 0 && retries < 10) {
+            retries++;
+            setTimeout(safeRun, 50);
+            return;
+        }
+
+        run();
+    };
+
+    if (document.readyState === 'complete') {
+        safeRun();
     } else {
-        setTimeout(run, 100);
+        document.addEventListener('DOMContentLoaded', safeRun);
+        window.addEventListener('load', safeRun);
     }
+    window.addEventListener('resize', safeRun);
 })();
 </script>
 @endsection

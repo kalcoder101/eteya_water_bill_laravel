@@ -85,7 +85,7 @@
                 <button type="button" id="btnChartTypeBar" onclick="switchDashboardChartType('bar')">Bar View</button>
             </div>
         </div>
-        <div class="h-60 relative flex items-center justify-center">
+        <div class="chart-wrapper-lg h-60 relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="dashboardTrendChart"></canvas>
         </div>
     </div>
@@ -98,7 +98,7 @@
             </h3>
             <div class="text-[11.5px] text-slate-500 mt-0.5">{{ t('Active vs DC vs Unpaid Invoices') }}</div>
         </div>
-        <div class="h-60 relative flex items-center justify-center">
+        <div class="chart-wrapper-lg h-60 relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="dashboardStatusChart"></canvas>
         </div>
     </div>
@@ -291,11 +291,22 @@ function initDashboardTrendChart(type) {
 }
 
 (function initDashboardCharts() {
+    let retries = 0;
     const run = () => {
+        const trendCanvas = document.getElementById('dashboardTrendChart');
+        if (!trendCanvas || typeof Chart === 'undefined') return;
+
+        // If parent layout is not ready yet (0px height), retry up to 10 times (every 50ms)
+        if (trendCanvas.parentElement && trendCanvas.parentElement.clientHeight === 0 && retries < 10) {
+            retries++;
+            setTimeout(run, 50);
+            return;
+        }
+
         initDashboardTrendChart('line');
 
         const statusCtx = document.getElementById('dashboardStatusChart');
-        if (statusCtx && typeof Chart !== 'undefined') {
+        if (statusCtx) {
             const oldStatus = Chart.getChart(statusCtx);
             if (oldStatus) oldStatus.destroy();
             new Chart(statusCtx.getContext('2d'), {
@@ -321,11 +332,13 @@ function initDashboardTrendChart(type) {
         }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
+    if (document.readyState === 'complete') {
+        run();
     } else {
-        setTimeout(run, 100);
+        document.addEventListener('DOMContentLoaded', run);
+        window.addEventListener('load', run);
     }
+    window.addEventListener('resize', run);
 })();
 
 function runQuickCmdSearch(q) {

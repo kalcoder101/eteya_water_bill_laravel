@@ -99,6 +99,11 @@ a { color: #059669; text-decoration: none; transition: color 0.15s ease; }
 a:hover { color: #047857; }
 h1, h2, h3, h4, h5, h6 { color: #0F172A; margin: 0 0 0.75rem 0; font-weight: 700; }
 
+/* Chart container size guarantees (prevents 0px canvas heights before Tailwind CDN JIT loads) */
+.chart-wrapper-lg { min-height: 240px; height: 240px; position: relative; width: 100%; }
+.chart-wrapper-md { min-height: 220px; height: 220px; position: relative; width: 100%; }
+canvas { max-width: 100%; }
+
 ::selection { background: #059669; color: #fff; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }

@@ -69,7 +69,7 @@
             </h3>
             <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border bg-slate-100 text-slate-700 border-slate-200">{{ $totalCount }} {{ t('Total') }}</span>
         </div>
-        <div class="h-[180px] relative">
+        <div class="chart-wrapper-md h-[180px] relative flex items-center justify-center" style="min-height: 180px;">
             <canvas id="statusChart"></canvas>
         </div>
     </div>
@@ -81,7 +81,7 @@
             </h3>
             <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border bg-emerald-100 text-emerald-800 border-emerald-300">4 {{ t('Branches') }}</span>
         </div>
-        <div class="h-[180px] relative">
+        <div class="chart-wrapper-md h-[180px] relative flex items-center justify-center" style="min-height: 180px;">
             <canvas id="branchChart"></canvas>
         </div>
     </div>
@@ -926,11 +926,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
+    let retries = 0;
+    const safeRun = () => {
+        const testCanvas = document.getElementById('statusChart') || document.getElementById('branchChart');
+        if (!testCanvas || typeof Chart === 'undefined') return;
+
+        if (testCanvas.parentElement && testCanvas.parentElement.clientHeight === 0 && retries < 10) {
+            retries++;
+            setTimeout(safeRun, 50);
+            return;
+        }
+
+        run();
+    };
+
+    if (document.readyState === 'complete') {
+        safeRun();
     } else {
-        setTimeout(run, 100);
+        document.addEventListener('DOMContentLoaded', safeRun);
+        window.addEventListener('load', safeRun);
     }
+    window.addEventListener('resize', safeRun);
 })();
 </script>
 @endsection
