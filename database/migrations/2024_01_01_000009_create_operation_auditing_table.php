@@ -16,7 +16,7 @@ return new class extends Migration
             $table->dateTime('created_at')->useCurrent();
 
             $table->index('done_by', 'idx_done_by');
-            $table->index('log_date', 'idx_date');
+            $table->index('log_date', 'idx_oa_date');
         });
     }
 

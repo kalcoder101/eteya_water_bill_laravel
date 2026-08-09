@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('window_number', 20)->nullable();
             $table->dateTime('created_at')->useCurrent();
 
-            $table->index('meter_serial', 'idx_meter_serial');
+            $table->index('meter_serial', 'idx_bp_meter_serial');
         });
     }
 

@@ -58,8 +58,8 @@ return new class extends Migration
                   ->on('active_customers')
                   ->onDelete('cascade');
 
-            $table->index('meter_serial', 'idx_meter_serial');
-            $table->index(['bill_year', 'bill_month'], 'idx_year_month');
+            $table->index('meter_serial', 'idx_bf_meter_serial');
+            $table->index(['bill_year', 'bill_month'], 'idx_bf_year_month');
             $table->index('payment_status', 'idx_payment');
         });
     }

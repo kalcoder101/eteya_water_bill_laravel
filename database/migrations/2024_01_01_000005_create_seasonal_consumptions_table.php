@@ -26,8 +26,8 @@ return new class extends Migration
                   ->on('active_customers')
                   ->onDelete('cascade');
 
-            $table->index('meter_serial', 'idx_meter_serial');
-            $table->index(['reading_year', 'reading_month'], 'idx_year_month');
+            $table->index('meter_serial', 'idx_sc_meter_serial');
+            $table->index(['reading_year', 'reading_month'], 'idx_sc_year_month');
         });
     }
 

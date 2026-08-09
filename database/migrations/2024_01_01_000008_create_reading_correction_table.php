@@ -23,9 +23,9 @@ return new class extends Migration
             $table->string('sync_status', 20)->default('New');
             $table->dateTime('created_at')->useCurrent();
 
-            $table->index('customer_code', 'idx_customer_code');
-            $table->index('correction_status', 'idx_status');
-            $table->index('complain_date_time', 'idx_date');
+            $table->index('customer_code', 'idx_rc_customer_code');
+            $table->index('correction_status', 'idx_rc_status');
+            $table->index('complain_date_time', 'idx_rc_date');
         });
     }
 
