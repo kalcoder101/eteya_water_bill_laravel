@@ -435,9 +435,9 @@ function printAllBills() {
                             {{ $bills->sum('state_price') }}
                         ],
                         borderColor: '#059669',
-                        backgroundColor: gradComp,
+                        backgroundColor: '#059669',
                         borderWidth: 3,
-                        fill: true,
+                        fill: false,
                         tension: 0.4,
                         pointBackgroundColor: '#059669',
                         pointBorderColor: '#ffffff',

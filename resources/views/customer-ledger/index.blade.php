@@ -409,8 +409,8 @@ function filterCustomerOptions() {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                        y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { font: { size: 10, family: 'Inter' } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11, family: 'Inter' } } }
                     }
                 }
             });
