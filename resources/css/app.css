@@ -233,28 +233,31 @@
         box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14) !important;
     }
 
-    /* Collapsed Sidebar Icons & Spacing (Sidebar ONLY, excluding flyout popovers) */
-    .in-data-flux-sidebar-collapsed-desktop:not([data-flux-sidebar-group-dropdown]) [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *),
+    /* Maximum Specificity Collapsed Sidebar Icon & Spacing Scaling (Sidebar ONLY) */
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *),
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *),
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-group-dropdown] > button,
     .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-group-dropdown] > button {
-        height: 42px !important;
-        width: 42px !important;
-        margin-top: 0.35rem !important;
-        margin-bottom: 0.35rem !important;
-        border-radius: 0.625rem !important;
+        height: 48px !important;
+        width: 48px !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 0.75rem !important;
     }
 
-    .in-data-flux-sidebar-collapsed-desktop:not([data-flux-sidebar-group-dropdown]) [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *) [data-flux-icon],
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-group-dropdown] > button [data-flux-icon] {
-        width: 22px !important;
-        height: 22px !important;
-        min-width: 22px !important;
-        min-height: 22px !important;
-    }
-
-    .in-data-flux-sidebar-collapsed-desktop:not([data-flux-sidebar-group-dropdown]) [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *) [data-flux-icon] svg,
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-group-dropdown] > button [data-flux-icon] svg {
-        width: 22px !important;
-        height: 22px !important;
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *) svg,
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *) svg,
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-group-dropdown] > button svg,
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-group-dropdown] > button svg,
+    [data-flux-sidebar-collapsed-desktop] [data-flux-icon] svg,
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-icon] svg {
+        width: 26px !important;
+        height: 26px !important;
+        min-width: 26px !important;
+        min-height: 26px !important;
     }
 }
 
