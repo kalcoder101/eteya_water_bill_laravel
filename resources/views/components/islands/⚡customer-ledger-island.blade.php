@@ -31,9 +31,31 @@ new class extends Component
         }
     }
 
+    public function updatedMeterSerial(string $value): void
+    {
+        if (!empty($value)) {
+            Flux::toast("Loaded ledger statement for customer {$value}.", variant: 'info');
+        }
+    }
+
+    public function updatedYear(string $value): void
+    {
+        if (!empty($this->meterSerial)) {
+            Flux::toast("Switched statement view to year {$value}.", variant: 'info');
+        }
+    }
+
+    public function clearCustomer(): void
+    {
+        $this->meterSerial = '';
+        $this->searchFilter = '';
+        Flux::toast('Customer selection cleared.', variant: 'subtle');
+    }
+
     public function selectCustomer(string $serial): void
     {
         $this->meterSerial = $serial;
+        Flux::toast("Selected customer account {$serial}.", variant: 'success');
     }
 
     public function previewReceipt(string $billFinanceId): void
@@ -119,34 +141,45 @@ new class extends Component
     <flux:card class="p-4 mb-5 space-y-4">
         <div class="flex flex-wrap gap-4 items-end justify-between">
             <div class="flex-1 min-w-[280px]">
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Select Customer Account') }}</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <flux:input wire:model.live.debounce.300ms="searchFilter" placeholder="{{ t('Type code, name, phone to filter...') }}" icon="magnifying-glass" />
-                    <select wire:model.live="meterSerial" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
-                        <option value="">— {{ t('Choose a customer account') }} —</option>
-                        @foreach ($customers as $c)
-                            <option value="{{ $c->meter_serial }}">
-                                {{ $c->meter_serial }} — {{ trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? '')) }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <flux:field>
+                    <flux:label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Select Customer Account') }}</flux:label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <flux:input wire:model.live.debounce.300ms="searchFilter" placeholder="{{ t('Type code, name, phone to filter...') }}" icon="magnifying-glass" />
+                        <flux:select wire:model.live="meterSerial" placeholder="{{ t('Choose a customer account') }}">
+                            <flux:select.option value="">— {{ t('Choose a customer account') }} —</flux:select.option>
+                            @foreach ($customers as $c)
+                                <flux:select.option value="{{ $c->meter_serial }}">
+                                    {{ $c->meter_serial }} — {{ trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? '')) }}
+                                </flux:select.option>
+                            @endforeach
+                        </flux:select>
+                    </div>
+                </flux:field>
             </div>
 
             <div class="min-w-[150px]">
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Billing Year') }}</label>
-                <select wire:model.live="year" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
-                    @foreach ($availableYears as $y)
-                        <option value="{{ $y }}">{{ $y }}</option>
-                    @endforeach
-                </select>
+                <flux:field>
+                    <flux:label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Billing Year') }}</flux:label>
+                    <flux:select wire:model.live="year" placeholder="{{ t('Select Year') }}">
+                        @foreach ($availableYears as $y)
+                            <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                </flux:field>
             </div>
 
             @if (!empty($customer))
                 <div class="flex items-center gap-2">
-                    <flux:button variant="subtle" icon="printer" onclick="window.print()">
-                        {{ t('Print Statement') }}
-                    </flux:button>
+                    <flux:dropdown>
+                        <flux:button variant="subtle" icon="ellipsis-vertical">
+                            {{ t('Actions') }}
+                        </flux:button>
+                        <flux:menu>
+                            <flux:menu.item icon="printer" onclick="window.print()">{{ t('Print Statement') }}</flux:menu.item>
+                            <flux:menu.item icon="arrow-down-tray" href="{{ route('export.bills') }}?year={{ $year }}&meterSerial={{ urlencode($meterSerial) }}">{{ t('Export CSV') }}</flux:menu.item>
+                            <flux:menu.item icon="x-mark" wire:click="clearCustomer">{{ t('Clear Selection') }}</flux:menu.item>
+                        </flux:menu>
+                    </flux:dropdown>
                 </div>
             @endif
         </div>
@@ -156,7 +189,7 @@ new class extends Component
         <flux:card class="py-14 px-5 text-center">
             <div class="text-slate-300 mb-3 flex justify-center">{!! icon('book-open', 54) !!}</div>
             <h3 class="m-0 text-[15px] font-semibold text-slate-700">{{ t('No Customer Account Selected') }}</h3>
-            <p class="text-xs text-slate-500 mt-1.5">{{ t('Search and select a customer account from the toolbar above to view their financial ledger statement.') }}</p>
+            <p class="text-xs text-slate-500 mt-1.5">{{ t('Search and select a customer account from the dropdown above to load their ledger statement history.') }}</p>
         </flux:card>
     @else
         <!-- Customer Details Info Header -->
