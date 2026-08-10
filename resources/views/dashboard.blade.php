@@ -21,13 +21,8 @@
     </div>
 </div>
 
-<!-- KPI Stat Cards Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <x-kpi :label="t('Total Registered Customers')" :value="number_format($totalCustomers)" :subvalue="t('Active').' + '.t('Disconnected')" icon="users" color="emerald" />
-    <x-kpi :label="t('Active Connected Accounts')" :value="number_format($activeCount)" :subvalue="$activePct.'% '.t('connected rate')" icon="check" color="emerald" :active="true" />
-    <x-kpi :label="t('Disconnected Accounts (DC)')" :value="number_format($dcCount)" :subvalue="($totalCustomers - $activeCount - $dcCount).' '.t('pending verification')" icon="x" color="rose" />
-    <x-kpi :label="t('Unpaid Billing Invoices')" :value="number_format($unpaidBills)" :subvalue="$paidBills.' '.t('paid invoices')" icon="receipt" color="amber" />
-</div>
+<!-- KPI Stat Cards Grid (Lazy Livewire Island) -->
+<livewire:islands.dashboard-kpis lazy />
 
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-[2.2fr_1fr] gap-5 mb-6">
