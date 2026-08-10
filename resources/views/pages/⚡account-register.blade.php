@@ -333,14 +333,42 @@ new class extends Component
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 mb-1">Staff Profile Photo</label>
-                        <input type="file" wire:model="form.photo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:px-3.5 file:py-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold file:text-xs hover:file:bg-emerald-100 transition">
+                        <flux:file-upload wire:model="form.photo" label="{{ t('Staff Profile Photo') }}">
+                            <flux:file-upload.dropzone
+                                heading="{{ t('Drop files here or click to browse') }}"
+                                text="{{ t('JPG, PNG, GIF up to 10MB') }}"
+                            />
+                        </flux:file-upload>
                         @error('form.photo') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
-                        @if ($form->photo && is_object($form->photo))
-                            <div class="mt-2 flex items-center gap-2">
-                                <span class="text-xs text-emerald-600 font-semibold">Photo selected</span>
-                                <img src="{{ $form->photo->temporaryUrl() }}" class="w-9 h-9 rounded-full object-cover border border-emerald-300">
+
+                        @if ($form->photo && is_object($form->photo) && method_exists($form->photo, 'temporaryUrl'))
+                            <div class="mt-4 flex flex-col gap-2">
+                                <flux:file-item
+                                    :heading="$form->photo->getClientOriginalName()"
+                                    :image="$form->photo->temporaryUrl()"
+                                    :size="$form->photo->getSize()"
+                                >
+                                    <x-slot name="actions">
+                                        <flux:file-item.remove wire:click="$set('form.photo', null)" />
+                                    </x-slot>
+                                </flux:file-item>
                             </div>
+                        @elseif ($isEditing && $form->userId && ($userPhotoUrl = route('api.user.photo', ['userId' => $form->userId])))
+                            @php
+                                $currentUser = \App\Models\User::find($form->userId);
+                            @endphp
+                            @if ($currentUser && $currentUser->photo)
+                                <div class="mt-4 flex flex-col gap-2">
+                                    <flux:file-item
+                                        heading="{{ $form->userId }}_profile_photo.jpg"
+                                        :image="$userPhotoUrl"
+                                    >
+                                        <x-slot name="actions">
+                                            <flux:badge color="emerald" size="sm">{{ t('Current Photo') }}</flux:badge>
+                                        </x-slot>
+                                    </flux:file-item>
+                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>
