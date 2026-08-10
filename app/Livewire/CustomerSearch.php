@@ -14,14 +14,18 @@ class CustomerSearch extends Component
     public string $status = 'all';
     public string $kebele = 'all';
     public string $customerType = 'all';
+    public string $readerBlock = 'all';
     public string $sortBy = 'meter_serial';
     public string $sortDir = 'asc';
 
     protected $queryString = [
-        'search' => ['except' => ''],
-        'status' => ['except' => 'all'],
-        'kebele' => ['except' => 'all'],
+        'search'       => ['except' => ''],
+        'status'       => ['except' => 'all'],
+        'kebele'       => ['except' => 'all'],
         'customerType' => ['except' => 'all'],
+        'readerBlock'  => ['except' => 'all'],
+        'sortBy'       => ['except' => 'meter_serial'],
+        'sortDir'      => ['except' => 'asc'],
     ];
 
     public function updatingSearch()
@@ -41,6 +45,23 @@ class CustomerSearch extends Component
 
     public function updatingCustomerType()
     {
+        $this->resetPage();
+    }
+
+    public function updatingReaderBlock()
+    {
+        $this->resetPage();
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->status = 'all';
+        $this->kebele = 'all';
+        $this->customerType = 'all';
+        $this->readerBlock = 'all';
+        $this->sortBy = 'meter_serial';
+        $this->sortDir = 'asc';
         $this->resetPage();
     }
 
@@ -82,10 +103,15 @@ class CustomerSearch extends Component
             $query->where('customer_type', $this->customerType);
         }
 
+        if ($this->readerBlock !== 'all') {
+            $query->where('reader_block', $this->readerBlock);
+        }
+
         $customers = $query->orderBy($this->sortBy, $this->sortDir)->paginate(15);
 
-        $kebeles = ActiveCustomer::distinct()->whereNotNull('kebele')->pluck('kebele')->sort();
-        $types = ActiveCustomer::distinct()->whereNotNull('customer_type')->pluck('customer_type')->sort();
+        $kebeles = ActiveCustomer::distinct()->whereNotNull('kebele')->where('kebele', '!=', '')->pluck('kebele')->sort();
+        $types   = ActiveCustomer::distinct()->whereNotNull('customer_type')->where('customer_type', '!=', '')->pluck('customer_type')->sort();
+        $blocks  = ActiveCustomer::distinct()->whereNotNull('reader_block')->where('reader_block', '!=', '')->pluck('reader_block')->sort();
 
         $counts = [
             'total'   => ActiveCustomer::count(),
@@ -95,11 +121,15 @@ class CustomerSearch extends Component
             'deleted' => ActiveCustomer::where('customer_status', 'Deleted')->count(),
         ];
 
+        $hasActiveFilters = !empty($this->search) || $this->status !== 'all' || $this->kebele !== 'all' || $this->customerType !== 'all' || $this->readerBlock !== 'all';
+
         return view('livewire.customer-search', [
-            'customers' => $customers,
-            'kebeles'   => $kebeles,
-            'types'     => $types,
-            'counts'    => $counts,
+            'customers'        => $customers,
+            'kebeles'          => $kebeles,
+            'types'            => $types,
+            'blocks'           => $blocks,
+            'counts'           => $counts,
+            'hasActiveFilters' => $hasActiveFilters,
         ]);
     }
 }
