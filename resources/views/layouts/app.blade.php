@@ -152,7 +152,7 @@
 
     <flux:sidebar.nav>
         @foreach ($navGroups as $idx => $group)
-            <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid">
+            <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid relative group/cat">
                 @foreach ($group['items'] as $item)
                     <flux:sidebar.item
                         :icon="$item['icon']"
@@ -163,6 +163,27 @@
                         {{ $item['label'] }}
                     </flux:sidebar.item>
                 @endforeach
+
+                <!-- Category flyout panel (collapsed hover) -->
+                <div class="category-flyout-panel">
+                    <div class="bg-white border border-slate-200 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] p-3">
+                        <div class="flex items-center gap-2 pb-2.5 mb-2 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <span class="{{ $group['accent']['icon'] }}">{!! icon($group['icon'], 14) !!}</span>
+                            <span>{{ $group['title'] }}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            @foreach ($group['items'] as $item)
+                                <a href="{{ route($item['route']) }}" wire:navigate class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
+                                    <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
+                                        <span class="block text-[11px] text-slate-500 leading-snug mt-0.5">{{ $item['desc'] }}</span>
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </flux:sidebar.group>
         @endforeach
     </flux:sidebar.nav>
