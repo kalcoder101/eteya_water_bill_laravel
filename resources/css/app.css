@@ -224,7 +224,14 @@
     .badge-info    { background: #E0F2FE; color: #075985; }
     .badge-default { background: #F1F5F9; color: #475569; }
     .badge-primary { background: #059669; color: #fff; }
-    .badge-secondary { background: #F1F5F9; color: #334155; border: 1px solid #E2E8F0; }
+    /* Flux UI Collapsible Group Flyout Dropdown Card Sizing */
+    [data-flux-sidebar-group-dropdown] [data-flux-menu],
+    [data-flux-sidebar-group-dropdown] [data-flux-popover] {
+        min-width: 240px !important;
+        padding: 0.5rem !important;
+        border-radius: 0.875rem !important;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14) !important;
+    }
 }
 
 @layer utilities {

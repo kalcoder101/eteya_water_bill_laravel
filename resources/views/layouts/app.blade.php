@@ -155,6 +155,7 @@
             <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid">
                 @foreach ($group['items'] as $item)
                     <flux:sidebar.item
+                        :icon="$item['icon']"
                         :href="route($item['route'])"
                         wire:navigate
                         :current="$currentPage === $item['page']"
