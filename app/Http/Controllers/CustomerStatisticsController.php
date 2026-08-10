@@ -80,14 +80,26 @@ class CustomerStatisticsController extends Controller
              LIMIT 10"
         );
 
-        $trend = DB::select(
-            "SELECT DATE_FORMAT(sold_date, '%Y-%m') AS ym, COUNT(*) AS cnt
-             FROM active_customers
-             WHERE sold_date IS NOT NULL AND sold_date != ''
-               AND sold_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-             GROUP BY ym
-             ORDER BY ym"
-        );
+        $driver = DB::getDriverName();
+        if ($driver === 'sqlite') {
+            $trend = DB::select(
+                "SELECT strftime('%Y-%m', sold_date) AS ym, COUNT(*) AS cnt
+                 FROM active_customers
+                 WHERE sold_date IS NOT NULL AND sold_date != ''
+                   AND sold_date >= date('now', '-12 months')
+                 GROUP BY ym
+                 ORDER BY ym"
+            );
+        } else {
+            $trend = DB::select(
+                "SELECT DATE_FORMAT(sold_date, '%Y-%m') AS ym, COUNT(*) AS cnt
+                 FROM active_customers
+                 WHERE sold_date IS NOT NULL AND sold_date != ''
+                   AND sold_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                 GROUP BY ym
+                 ORDER BY ym"
+            );
+        }
 
         $totalCustomers = ActiveCustomer::whereIn('customer_status', ['Active', 'DC'])->count();
         $totalKebeles   = ActiveCustomer::whereNotNull('kebele')->where('kebele', '!=', '')->distinct()->count('kebele');
