@@ -10,7 +10,6 @@
 
 @fluxAppearance
 
-<link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +17,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
-<body class="min-h-screen bg-white dark:bg-zinc-800 antialiased">
+<body class="min-h-screen bg-white antialiased">
 
 <!-- Splash loader -->
 <div id="eosSplashScreen" class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
@@ -352,7 +351,6 @@
     setTimeout(finish, 900);
 })();
 </script>
-<script src="{{ $baseUrl }}/assets/js/app.js"></script>
 
 <flux:toast />
 
