@@ -462,7 +462,18 @@ new class extends Component
                             <td class="px-4 py-3"><span class="font-mono font-bold text-emerald-700">{{ $c->meter_serial }}</span></td>
                             <td class="px-4 py-3"><strong class="text-slate-900">{{ trim(($c->first_name ?? '').' '.($c->middle_name ?? '').' '.($c->last_name ?? '')) }}</strong></td>
                             <td class="px-4 py-3 text-slate-600">Kebele {{ $c->kebele ?? '—' }}</td>
-                            <td class="px-4 py-3 text-slate-600">{{ $c->customer_type }}</td>
+                            <td class="px-4 py-3 text-slate-600">
+                                @php
+                                    $typeColor = match(strtolower($c->customer_type ?? '')) {
+                                        'commercial' => 'indigo',
+                                        'residential', 'domestic' => 'sky',
+                                        'institutional', 'government' => 'purple',
+                                        'public tap', 'public' => 'amber',
+                                        default => 'zinc',
+                                    };
+                                @endphp
+                                <flux:badge color="{{ $typeColor }}" size="sm">{{ $c->customer_type ?? 'Standard' }}</flux:badge>
+                            </td>
                             <td class="px-4 py-3 text-slate-600">{{ $c->phone_number ?? '—' }}</td>
                             <td class="px-4 py-3">
                                 @if ($c->customer_status === 'Active')

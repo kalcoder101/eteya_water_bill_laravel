@@ -9,8 +9,11 @@
             <span class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 inline-flex items-center justify-center shrink-0">{!! icon('dashboard', 20) !!}</span>
             <span>{{ t('Dashboard Overview') }}</span>
         </h2>
-        <p class="mt-2 text-[13px] text-slate-500">
-            <strong class="font-bold text-slate-900">{{ t('Welcome back') }}, {{ auth()->user()?->fullName() }}</strong> &mdash; {{ t('real-time utility statistics, consumption trends and revenue metrics.') }}
+        <p class="mt-2 text-[13px] text-slate-500 flex flex-wrap items-center gap-2">
+            <strong class="font-bold text-slate-900">{{ t('Welcome back') }}, {{ auth()->user()?->fullName() }}</strong>
+            <flux:badge color="indigo" size="sm" class="font-semibold">{{ get_role_display(auth()->user()?->job_role ?? 'Staff') }}</flux:badge>
+            <flux:badge color="emerald" icon="check" size="sm">{{ t('System Active') }}</flux:badge>
+            <span>&mdash; {{ t('real-time utility statistics, consumption trends and revenue metrics.') }}</span>
         </p>
     </div>
     <div class="flex items-center gap-2.5">
