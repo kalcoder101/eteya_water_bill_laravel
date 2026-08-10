@@ -10,7 +10,7 @@
 
 @fluxAppearance
 
-<link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css?v={{ time() }}">
+<link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -277,34 +277,6 @@
             <kbd class="absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-400">Ctrl K</kbd>
         </div>
 
-        <!-- Flux Options Dropdown with trailing chevron -->
-        <flux:dropdown>
-            <flux:button icon:trailing="chevron-down">Options</flux:button>
-
-            <flux:menu>
-                <flux:menu.item icon="plus">New Entry</flux:menu.item>
-
-                <flux:menu.separator />
-
-                <flux:menu.submenu heading="Sort by">
-                    <flux:menu.radio.group>
-                        <flux:menu.radio checked>Name</flux:menu.radio>
-                        <flux:menu.radio>Date</flux:menu.radio>
-                        <flux:menu.radio>Status</flux:menu.radio>
-                    </flux:menu.radio.group>
-                </flux:menu.submenu>
-
-                <flux:menu.submenu heading="Filter">
-                    <flux:menu.checkbox checked>Active</flux:menu.checkbox>
-                    <flux:menu.checkbox checked>Pending</flux:menu.checkbox>
-                    <flux:menu.checkbox>Disconnected</flux:menu.checkbox>
-                </flux:menu.submenu>
-
-                <flux:menu.separator />
-
-                <flux:menu.item variant="danger" icon="trash">Delete Selected</flux:menu.item>
-            </flux:menu>
-        </flux:dropdown>
 
         <!-- User → Flux dropdown -->
         <flux:dropdown position="bottom" align="end" class="shrink-0">
@@ -350,6 +322,7 @@
         }
         </script>
 
+        {{ $slot ?? '' }}
         @yield('content')
     </main>
 </div>
@@ -379,7 +352,7 @@
     setTimeout(finish, 900);
 })();
 </script>
-<script src="{{ $baseUrl }}/assets/js/app.js?v={{ time() }}"></script>
+<script src="{{ $baseUrl }}/assets/js/app.js"></script>
 
 <flux:toast />
 

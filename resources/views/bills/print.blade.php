@@ -5,30 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bill — {{ $bill->meter_serial }} — {{ $bill->bill_month }} {{ $bill->bill_year }}</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<style type="text/tailwindcss">
-@theme {
-    --color-primary: #059669;
-    --color-primary-600: #059669;
-    --color-primary-700: #047857;
-    --color-primary-800: #065F46;
-    --color-primary-50: #ECFDF5;
-    --color-primary-100: #D1FAE5;
-    --color-surface-base: #F8FAF8;
-    --color-surface-card: #FFFFFF;
-    --color-text-main: #0F172A;
-    --color-text-muted: #64748B;
-    --color-accent-warm: #E11D48;
-    --color-border-subtle: #E2E8F0;
-
-    --shadow-card: 0 4px 20px rgba(16, 185, 129, 0.05);
-    --shadow-hover: 0 10px 25px rgba(16, 185, 129, 0.12);
-
-    --font-sans: "Inter", "Noto Sans Ethiopic", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    --font-serif: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
-}
-</style>
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">

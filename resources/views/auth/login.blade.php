@@ -5,12 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ t('Sign In') }} — {{ config('app.name') }}</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<style type="text/tailwindcss">
-@theme {
-    --color-primary: #059669;
-    --font-sans: "Inter", "Noto Sans Ethiopic", ui-sans-serif, system-ui, -apple-system, sans-serif;
-}
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+<style>
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-4px); }

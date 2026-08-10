@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\ActiveCustomer;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -10,22 +12,42 @@ class CustomerSearch extends Component
 {
     use WithPagination;
 
+    #[Url(except: '')]
     public string $search = '';
+
+    #[Url(except: 'all')]
     public string $status = 'all';
+
+    #[Url(except: 'all')]
     public string $kebele = 'all';
+
+    #[Url(except: 'all')]
     public string $customerType = 'all';
+
+    #[Url(except: 'all')]
     public string $readerBlock = 'all';
+
+    #[Url(except: 'meter_serial')]
     public string $sortBy = 'meter_serial';
+
+    #[Url(except: 'asc')]
     public string $sortDir = 'asc';
 
-    protected $queryString = [
-        'search'       => ['except' => ''],
-        'status'       => ['except' => 'all'],
-        'kebele'       => ['except' => 'all'],
-        'customerType' => ['except' => 'all'],
-        'readerBlock'  => ['except' => 'all'],
-        'sortBy'       => ['except' => 'meter_serial'],
-        'sortDir'      => ['except' => 'asc'],
+    /**
+     * Whitelist of sortable columns to prevent SQL injection / invalid column errors.
+     */
+    protected array $allowedSortColumns = [
+        'meter_serial',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'phone_number',
+        'bill_num',
+        'kebele',
+        'customer_type',
+        'reader_block',
+        'customer_status',
+        'created_at',
     ];
 
     public function updatingSearch()
@@ -67,8 +89,12 @@ class CustomerSearch extends Component
 
     public function sortByField(string $field)
     {
+        if (!in_array($field, $this->allowedSortColumns, true)) {
+            return;
+        }
+
         if ($this->sortBy === $field) {
-            $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
+            $this->sortDir = strtolower($this->sortDir) === 'asc' ? 'desc' : 'asc';
         } else {
             $this->sortBy = $field;
             $this->sortDir = 'asc';
@@ -107,19 +133,32 @@ class CustomerSearch extends Component
             $query->where('reader_block', $this->readerBlock);
         }
 
-        $customers = $query->orderBy($this->sortBy, $this->sortDir)->paginate(15);
+        $sortColumn = in_array($this->sortBy, $this->allowedSortColumns, true) ? $this->sortBy : 'meter_serial';
+        $sortDirection = in_array(strtolower($this->sortDir), ['asc', 'desc'], true) ? strtolower($this->sortDir) : 'asc';
 
-        $kebeles = ActiveCustomer::distinct()->whereNotNull('kebele')->where('kebele', '!=', '')->pluck('kebele')->sort();
-        $types   = ActiveCustomer::distinct()->whereNotNull('customer_type')->where('customer_type', '!=', '')->pluck('customer_type')->sort();
-        $blocks  = ActiveCustomer::distinct()->whereNotNull('reader_block')->where('reader_block', '!=', '')->pluck('reader_block')->sort();
+        $customers = $query->orderBy($sortColumn, $sortDirection)->paginate(15);
 
-        $counts = [
-            'total'   => ActiveCustomer::count(),
-            'active'  => ActiveCustomer::where('customer_status', 'Active')->count(),
-            'dc'      => ActiveCustomer::where('customer_status', 'DC')->count(),
-            'updated' => ActiveCustomer::where('customer_status', 'Updated')->count(),
-            'deleted' => ActiveCustomer::where('customer_status', 'Deleted')->count(),
-        ];
+        $kebeles = Cache::remember('customer_search_kebeles', 300, function () {
+            return ActiveCustomer::distinct()->whereNotNull('kebele')->where('kebele', '!=', '')->pluck('kebele')->sort()->values();
+        });
+
+        $types = Cache::remember('customer_search_types', 300, function () {
+            return ActiveCustomer::distinct()->whereNotNull('customer_type')->where('customer_type', '!=', '')->pluck('customer_type')->sort()->values();
+        });
+
+        $blocks = Cache::remember('customer_search_blocks', 300, function () {
+            return ActiveCustomer::distinct()->whereNotNull('reader_block')->where('reader_block', '!=', '')->pluck('reader_block')->sort()->values();
+        });
+
+        $counts = Cache::remember('customer_search_counts', 60, function () {
+            return [
+                'total'   => ActiveCustomer::count(),
+                'active'  => ActiveCustomer::where('customer_status', 'Active')->count(),
+                'dc'      => ActiveCustomer::where('customer_status', 'DC')->count(),
+                'updated' => ActiveCustomer::where('customer_status', 'Updated')->count(),
+                'deleted' => ActiveCustomer::where('customer_status', 'Deleted')->count(),
+            ];
+        });
 
         $hasActiveFilters = !empty($this->search) || $this->status !== 'all' || $this->kebele !== 'all' || $this->customerType !== 'all' || $this->readerBlock !== 'all';
 
