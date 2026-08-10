@@ -233,10 +233,6 @@
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
             />
         </div>
-        <div class="footer-meta mt-3 pt-2.5 border-t border-dashed border-slate-200 text-[10px] text-slate-500 flex flex-col gap-0.5">
-            <span class="font-semibold text-slate-600">{{ $appVersion }}</span>
-            <span class="opacity-90">{{ $devCredit }}</span>
-        </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
