@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('page.access:customer-statistics')
         ->name('customer-statistics.index');
 
-    Route::get('reading-correction', [ReadingCorrectionController::class, 'index'])
+    Route::livewire('reading-correction', 'pages::reading-correction')
         ->middleware('page.access:reading-correction')
         ->name('reading-correction.index');
 
