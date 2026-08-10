@@ -286,6 +286,39 @@
         min-width: 20px !important;
         min-height: 20px !important;
     }
+
+    /* Precision Sidebar Header & Collapsed Alignment */
+    [data-flux-sidebar] [data-flux-sidebar-header] {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-header],
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-header] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.75rem !important;
+        padding: 0.5rem 0 !important;
+    }
+
+    [data-flux-sidebar-collapsed-desktop] [data-flux-brand],
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-brand] {
+        margin: 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    [data-flux-sidebar-collapsed-desktop] button[data-flux-sidebar-collapse],
+    .in-data-flux-sidebar-collapsed-desktop button[data-flux-sidebar-collapse] {
+        margin: 0 auto !important;
+    }
 }
 
 @layer utilities {
