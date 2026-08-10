@@ -72,30 +72,30 @@
     $allGroups = [
         [
             'title'   => t('Operations'),
-            'icon'    => 'dashboard',
+            'icon'    => 'home',
             'accent'  => 'emerald',
             'items' => [
-                ['page' => 'dashboard',        'label' => t('Dashboard'),        'desc' => 'Overview stats, charts & recent activity logs',  'icon' => 'dashboard', 'route' => 'dashboard'],
-                ['page' => 'customer-service', 'label' => t('Customer Service'), 'desc' => 'Register, update & search active customers',    'icon' => 'customers', 'route' => 'customer-service.index'],
-                ['page' => 'bills',             'label' => t('Bills & Printing'), 'desc' => 'Calculate monthly bills & print receipts',     'icon' => 'receipt',   'route' => 'bills.index'],
+                ['page' => 'dashboard',        'label' => t('Dashboard'),        'desc' => 'Overview stats, charts & recent activity logs',  'icon' => 'home',     'route' => 'dashboard'],
+                ['page' => 'customer-service', 'label' => t('Customer Service'), 'desc' => 'Register, update & search active customers',    'icon' => 'users',    'route' => 'customer-service.index'],
+                ['page' => 'bills',             'label' => t('Bills & Printing'), 'desc' => 'Calculate monthly bills & print receipts',     'icon' => 'receipt-percent',   'route' => 'bills.index'],
             ]
         ],
         [
             'title'   => t('Reports & Ledger'),
-            'icon'    => 'ledger',
+            'icon'    => 'book-open',
             'accent'  => 'indigo',
             'items' => [
-                ['page' => 'customer-ledger',      'label' => t('Customers Ledger'),   'desc' => 'Customer billing history & printable ledger',    'icon' => 'ledger',     'route' => 'customer-ledger.index'],
-                ['page' => 'customer-statistics', 'label' => t('Detail Statistics'),  'desc' => 'Pivot reports: kebele × type × status',        'icon' => 'statistics', 'route' => 'customer-statistics.index'],
-                ['page' => 'reading-correction',   'label' => t('Reading Correction'), 'desc' => 'Manage meter reading complaint approvals',    'icon' => 'wrench',     'route' => 'reading-correction.index'],
+                ['page' => 'customer-ledger',      'label' => t('Customers Ledger'),   'desc' => 'Customer billing history & printable ledger',    'icon' => 'book-open',   'route' => 'customer-ledger.index'],
+                ['page' => 'customer-statistics', 'label' => t('Detail Statistics'),  'desc' => 'Pivot reports: kebele × type × status',        'icon' => 'chart-bar',   'route' => 'customer-statistics.index'],
+                ['page' => 'reading-correction',   'label' => t('Reading Correction'), 'desc' => 'Manage meter reading complaint approvals',    'icon' => 'wrench-screwdriver',     'route' => 'reading-correction.index'],
             ]
         ],
         [
             'title'   => t('Administration'),
-            'icon'    => 'shield',
+            'icon'    => 'shield-check',
             'accent'  => 'gold',
             'items' => [
-                ['page' => 'account-register', 'label' => t('Account Register'), 'desc' => 'Register staff accounts & manage job roles', 'icon' => 'lock', 'route' => 'account-register.index'],
+                ['page' => 'account-register', 'label' => t('Account Register'), 'desc' => 'Register staff accounts & manage job roles', 'icon' => 'user-plus', 'route' => 'account-register.index'],
             ]
         ]
     ];
@@ -125,7 +125,7 @@
     $currentLang = current_lang();
     $pageAction = $pageAction ?? null;
 
-    // Active nav item (for the topbar page-identity cluster)
+    // Active nav item (for topbar page identity)
     $activeNavItem = null;
     foreach ($navGroups as $group) {
         foreach ($group['items'] as $it) {
@@ -138,106 +138,70 @@
 @endphp
 
 <!-- ============================================================
-     SIDEBAR — Floating light utility card (EOS Modern Steward)
-     THESIS / OWN-WORLD / STORY: see DESIGN.md.
+     FLUX NATIVE SIDEBAR — EOS Modern Steward Redesign
      ============================================================ -->
-<aside id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
+<flux:sidebar id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
 
     <!-- 1. Brand header -->
-    <div class="sidebar-brand shrink-0 flex items-center gap-3 px-5 py-4 border-b border-slate-200 bg-white">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 p-1.5 flex items-center justify-center shrink-0">
-            <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-full h-full object-contain">
-        </div>
-        <div class="brand-text min-w-0 flex-1">
-            <div class="name font-extrabold text-[15px] tracking-tight text-slate-900 truncate">{{ $brandShort ?? t('WaterSteward') }}</div>
-            <div class="tag text-[10px] text-slate-500 truncate">Water Supply & Sewerage Enterprise</div>
-        </div>
-        <x-icon-button
-            variant="emerald"
-            icon="panel-left"
-            class="sidebar-collapse-toggle"
-            onclick="toggleSidebar(event)"
-            :title="t('Collapse / Expand Sidebar')"
-        />
+    <div class="sidebar-brand shrink-0 flex items-center gap-3 px-4 py-4 border-b border-slate-200 bg-white">
+        <flux:brand href="{{ route('dashboard') }}" logo="{{ $baseUrl }}/assets/images/Owater-logo.png" name="{{ $brandShort ?? t('WaterSteward') }}" class="flex-1">
+            <span class="tag text-[10px] text-slate-500 truncate block">Water Supply & Sewerage Enterprise</span>
+        </flux:brand>
+        <flux:button size="sm" variant="subtle" icon="panel-left" class="sidebar-collapse-toggle" onclick="toggleSidebar(event)" title="{{ t('Collapse / Expand Sidebar') }}" />
     </div>
 
-    <!-- 2. Category navigation -->
-    <div class="sidebar-categories-container flex-1 p-3 space-y-2">
-    @foreach ($navGroups as $idx => $group)
-        <div class="sidebar-category-group relative {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
-            <div class="sidebar-category-header flex items-center gap-2.5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer select-none transition {{ $group['hasActive'] ? $group['accent']['soft'].' '.$group['accent']['icon'] : '' }}"
-                 onclick="toggleCategoryGroup(this)"
-                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCategoryGroup(this);}"
-                 role="button" tabindex="0"
-                 aria-expanded="{{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'true' : 'false' }}">
-                <span class="cat-icon shrink-0 {{ $group['accent']['icon'] }}">{!! icon($group['icon'], 16) !!}</span>
-                <span class="cat-title flex-1 min-w-0 truncate">{{ $group['title'] }}</span>
-                <span class="chevron shrink-0 opacity-60 transition-transform duration-300">{!! icon('chevron-down', 12) !!}</span>
-            </div>
-
-            <div class="sidebar-category-body pt-1">
-                <ul class="sidebar-nav space-y-1">
+    <!-- 2. Category Navigation via Flux Navlist -->
+    <div class="sidebar-categories-container flex-1 p-3 space-y-3">
+        <flux:navlist>
+            @foreach ($navGroups as $idx => $group)
+                <flux:navlist.group heading="{{ $group['title'] }}" expandable class="sidebar-category-group {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
                     @foreach ($group['items'] as $item)
-                        <x-nav-link
+                        <flux:navlist.item
                             :href="route($item['route'])"
+                            wire:navigate
                             :icon="$item['icon']"
-                            :active="$currentPage === $item['page']"
-                            :accent="$group['accent']"
-                            class="{{ $currentPage === $item['page'] ? '' : 'text-slate-600' }}"
+                            :current="$currentPage === $item['page']"
                         >
                             {{ $item['label'] }}
-                        </x-nav-link>
+                        </flux:navlist.item>
                     @endforeach
-                </ul>
-            </div>
+                </flux:navlist.group>
 
-            <!-- Category flyout panel (collapsed hover) -->
-            <div class="category-flyout-panel">
-                <div class="bg-white border border-slate-200 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] p-3">
-                    <div class="flex items-center gap-2 pb-2.5 mb-2 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        <span class="{{ $group['accent']['icon'] }}">{!! icon($group['icon'], 14) !!}</span>
-                        <span>{{ $group['title'] }}</span>
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        @foreach ($group['items'] as $item)
-                            <a href="{{ route($item['route']) }}" wire:navigate class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
-                                <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
-                                <span class="min-w-0">
-                                    <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
-                                    <span class="block text-[11px] text-slate-500 leading-snug mt-0.5">{{ $item['desc'] }}</span>
-                                </span>
-                            </a>
-                        @endforeach
+                <!-- Category flyout panel (collapsed hover) -->
+                <div class="category-flyout-panel">
+                    <div class="bg-white border border-slate-200 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] p-3">
+                        <div class="flex items-center gap-2 pb-2.5 mb-2 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <span class="{{ $group['accent']['icon'] }}">{!! icon($group['icon'], 14) !!}</span>
+                            <span>{{ $group['title'] }}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            @foreach ($group['items'] as $item)
+                                <a href="{{ route($item['route']) }}" wire:navigate class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
+                                    <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
+                                        <span class="block text-[11px] text-slate-500 leading-snug mt-0.5">{{ $item['desc'] }}</span>
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    @endforeach
+            @endforeach
+        </flux:navlist>
     </div>
 
-    <!-- 3. User footer -->
+    <!-- 3. User Profile Footer -->
     <div class="sidebar-footer shrink-0 px-4 py-3.5 border-t border-slate-200 bg-white">
         <div class="sidebar-user flex items-center gap-2.5 min-w-0">
-            <div class="user-avatar w-9 h-9 rounded-full overflow-hidden shrink-0 ring-2 ring-emerald-100">
-                <img src="{{ $photoUrl }}" alt="{{ $fullName }}" class="w-full h-full object-cover block">
-            </div>
-            <div class="user-meta flex-1 min-w-0">
-                <div class="user-name text-[13px] font-bold text-slate-900 truncate">{{ $fullName }}</div>
-                <div class="user-role mt-0.5 truncate"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
-            </div>
-            <x-icon-button
-                variant="danger"
-                icon="logout"
-                class="logout-link"
-                :title="t('Logout')"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-            />
+            <flux:profile :avatar="$photoUrl" :name="$fullName" :extra="get_role_display($user?->job_role ?? '')" class="flex-1" />
+            <flux:button variant="subtle" size="sm" icon="arrow-right-on-rectangle" class="logout-link" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" />
         </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
     </div>
-</aside>
+</flux:sidebar>
 
 <!-- ============================================================
      MAIN AREA
@@ -298,7 +262,7 @@
                 <flux:menu.separator />
 
                 <form method="POST" action="{{ route('logout') }}" id="flux-logout-form" style="display:none">@csrf</form>
-                <flux:menu.item icon="log-out" variant="danger" x-data x-on:click="document.getElementById('flux-logout-form').submit()">
+                <flux:menu.item icon="arrow-right-on-rectangle" variant="danger" x-data x-on:click="document.getElementById('flux-logout-form').submit()">
                     {{ t('Logout') }}
                 </flux:menu.item>
             </flux:menu>
