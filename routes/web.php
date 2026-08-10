@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('page.access:customer-service')
         ->name('customer-service.index');
 
-    Route::get('customer-ledger', [CustomerLedgerController::class, 'index'])
+    Route::livewire('customer-ledger', 'pages::customer-ledger')
         ->middleware('page.access:customer-ledger')
         ->name('customer-ledger.index');
 
