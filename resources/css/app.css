@@ -120,37 +120,7 @@
 
 
 
-    /* Mobile Shell */
-    @media (max-width: 767px) {
-        .main-area,
-        .app-shell.sidebar-collapsed .main-area { margin-left: 0; }
-        #mainSidebar, .app-shell.sidebar-collapsed #mainSidebar {
-            position: relative;
-            top: auto;
-            left: auto;
-            bottom: auto;
-            width: auto;
-            margin: 12px 12px 0;
-            height: auto;
-            max-height: none;
-            border-radius: 16px;
-            overflow: visible;
-            z-index: 50;
-        }
-        .sidebar-categories-container { overflow: visible; }
-        .app-shell.sidebar-collapsed .sidebar-brand { flex-direction: row; }
-        .app-shell.sidebar-collapsed .sidebar-brand .brand-text { display: block; }
-        .app-shell.sidebar-collapsed .sidebar-category-header {
-            width: 100%; height: auto; justify-content: flex-start; gap: 10px; padding: 8px 12px;
-        }
-        .app-shell.sidebar-collapsed .sidebar-category-header .cat-title { display: block !important; }
-        .app-shell.sidebar-collapsed .sidebar-category-header .chevron { display: inline-flex !important; }
-        .app-shell.sidebar-collapsed .sidebar-category-body { display: none !important; }
-        .app-shell.sidebar-collapsed .sidebar-category-group:hover .category-flyout-panel { display: none; }
-        .app-shell.sidebar-collapsed .sidebar-user { flex-direction: row; }
-        .app-shell.sidebar-collapsed .sidebar-user .user-meta { display: block; }
-        .app-shell.sidebar-collapsed .sidebar-footer .footer-meta { display: flex; }
-    }
+
 
     /* Modal Backdrop */
     .modal-backdrop {
