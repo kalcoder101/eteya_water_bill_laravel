@@ -22,86 +22,70 @@
 
 <!-- KPI Stat Cards Bar -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">{{ t('Total Registered') }}</div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums" data-gsap-counter data-target-val="{{ $totalCustomers }}">{{ number_format($totalCustomers) }}</div>
-        <div class="text-[11px] text-slate-500">{{ t('Customer accounts') }}</div>
-    </div>
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-sky-800">{{ t('Active Accounts') }}</div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $byStatus['Active'] ?? 0 }}">{{ number_format($byStatus['Active'] ?? 0) }}</div>
-        <div class="text-[11px] text-slate-500">{{ $totalCustomers > 0 ? number_format((($byStatus['Active'] ?? 0)/$totalCustomers)*100, 1) : 0 }}% {{ t('connected') }}</div>
-    </div>
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-rose-800">Disconnected (DC)</div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-rose-600" data-gsap-counter data-target-val="{{ $byStatus['DC'] ?? 0 }}">{{ number_format($byStatus['DC'] ?? 0) }}</div>
-        <div class="text-[11px] text-slate-500">{{ t('Cut off accounts') }}</div>
-    </div>
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-amber-800">{{ t('Total Kebeles') }}</div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-amber-600" data-gsap-counter data-target-val="{{ $totalKebeles }}">{{ number_format($totalKebeles) }}</div>
-        <div class="text-[11px] text-slate-500">{{ t('Municipal kebeles') }}</div>
-    </div>
+    <x-kpi :label="t('Total Registered')" :value="number_format($totalCustomers)" :subvalue="t('Customer accounts')" icon="users" color="emerald" />
+    <x-kpi :label="t('Active Accounts')" :value="number_format($byStatus['Active'] ?? 0)" :subvalue="($totalCustomers > 0 ? number_format((($byStatus['Active'] ?? 0)/$totalCustomers)*100, 1) : 0).'% '.t('connected')" icon="check" color="emerald" :active="true" />
+    <x-kpi label="Disconnected (DC)" :value="number_format($byStatus['DC'] ?? 0)" :subvalue="t('Cut off accounts')" icon="x" color="rose" />
+    <x-kpi :label="t('Total Kebeles')" :value="number_format($totalKebeles)" :subvalue="t('Municipal kebeles')" icon="map-pin" color="amber" />
 </div>
 
 <!-- Chart.js Analytics Grid Section 1 -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex items-center justify-between gap-3 mb-4">
             <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
                 <span class="text-emerald-600">{!! icon('pie-chart', 16) !!}</span> {{ t('Customers by Category Type') }}
             </span>
-            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ count($byType) }} {{ t('Categories') }}</span>
+            <flux:badge color="zinc" size="sm">{{ count($byType) }} {{ t('Categories') }}</flux:badge>
         </div>
         <div class="chart-wrapper-md h-[220px] relative flex items-center justify-center" style="min-height: 220px;">
             <canvas id="typeChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex items-center justify-between gap-3 mb-4">
             <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
                 <span class="text-emerald-600">{!! icon('bar-chart', 16) !!}</span> {{ t('Customers by Account Status') }}
             </span>
-            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $totalCustomers }} {{ t('Total') }}</span>
+            <flux:badge color="emerald" size="sm">{{ $totalCustomers }} {{ t('Total') }}</flux:badge>
         </div>
         <div class="chart-wrapper-md h-[220px] relative flex items-center justify-center" style="min-height: 220px;">
             <canvas id="statusChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 </div>
 
 <!-- Chart.js Analytics Grid Section 2 -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex items-center justify-between gap-3 mb-4">
             <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
                 <span class="text-emerald-600">{!! icon('map-pin', 16) !!}</span> {{ t('Kebele Customer Density Overview') }}
             </span>
-            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">Top Kebeles</span>
+            <flux:badge color="zinc" size="sm">Top Kebeles</flux:badge>
         </div>
         <div class="chart-wrapper-lg h-[240px] relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="kebeleChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex items-center justify-between gap-3 mb-4">
             <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
                 <span class="text-emerald-600">{!! icon('line-chart', 16) !!}</span> {{ t('Monthly Registration Trend (Last 12 Months)') }}
             </span>
-            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">Growth Trend</span>
+            <flux:badge color="emerald" size="sm">Growth Trend</flux:badge>
         </div>
         <div class="chart-wrapper-lg h-[240px] relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="trendChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 </div>
 
 <!-- Detailed Data Breakdown Table -->
-<div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden mb-5">
+<flux:card class="overflow-hidden p-0 mb-5">
     <div class="h-1 bg-emerald-600"></div>
-    <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+    <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100 bg-slate-50/50">
         <span class="font-bold text-sm text-slate-900">{{ $title }}</span>
         <span class="text-xs text-slate-500">{{ count($rows) }} {{ t('Kebele rows') }}</span>
     </div>
@@ -174,10 +158,10 @@
                         @endphp
                         <tr class="border-b border-slate-100 odd:bg-white even:bg-slate-50/40 hover:bg-emerald-50/60 transition-colors">
                             <td class="px-4 py-2.5"><strong class="text-emerald-700">Kebele {{ $r->kebele }}</strong></td>
-                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->activeCount }}</span></td>
-                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->dcCount }}</span></td>
-                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->updatedCount }}</span></td>
-                            <td class="px-4 py-2.5"><span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $r->deletedCount }}</span></td>
+                            <td class="px-4 py-2.5"><flux:badge color="emerald" size="sm">{{ $r->activeCount }}</flux:badge></td>
+                            <td class="px-4 py-2.5"><flux:badge color="rose" size="sm">{{ $r->dcCount }}</flux:badge></td>
+                            <td class="px-4 py-2.5"><flux:badge color="amber" size="sm">{{ $r->updatedCount }}</flux:badge></td>
+                            <td class="px-4 py-2.5"><flux:badge color="zinc" size="sm">{{ $r->deletedCount }}</flux:badge></td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -223,7 +207,7 @@
             @endif
         </div>
     </div>
-</div>
+</flux:card>
 
 <!-- Collapsible Floating Quick Action Menu (FAB) -->
 <div class="fab-wrapper">

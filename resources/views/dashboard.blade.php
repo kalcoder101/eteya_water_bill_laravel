@@ -14,65 +14,25 @@
         </p>
     </div>
     <div class="flex items-center gap-2.5">
-        <button type="button" onclick="openModal('quickCmdModal')"
-                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-[0_4px_14px_rgba(5,150,105,0.35)]">
-            {!! icon('search', 14) !!} <span>{{ t('Quick Command') }}</span>
+        <flux:button icon="magnifying-glass" variant="primary" onclick="openModal('quickCmdModal')">
+            {{ t('Quick Command') }}
             <kbd class="ml-1 px-1.5 py-0.5 rounded bg-white/25 font-mono text-[10px]">Ctrl+K</kbd>
-        </button>
+        </flux:button>
     </div>
 </div>
 
-<!-- KPI Stat Cards -->
+<!-- KPI Stat Cards Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">{{ t('Total Registered Customers') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('users', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums" data-gsap-counter data-target-val="{{ $totalCustomers }}">{{ number_format($totalCustomers) }}</div>
-        <div class="text-[11px] text-slate-500">{{ t('Active') }} + {{ t('Disconnected') }}</div>
-    </div>
-
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-sky-800">{{ t('Active Connected Accounts') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('check', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $activeCount }}">{{ number_format($activeCount) }}</div>
-        <div class="text-[11px] text-slate-500">{{ $activePct }}% {{ t('connected rate') }}</div>
-    </div>
-
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-rose-800">{{ t('Disconnected Accounts (DC)') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('x', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-rose-600" data-gsap-counter data-target-val="{{ $dcCount }}">{{ number_format($dcCount) }}</div>
-        <div class="text-[11px] text-slate-500">{{ $totalCustomers - $activeCount - $dcCount }} {{ t('pending verification') }}</div>
-    </div>
-
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-amber-800">{{ t('Unpaid Billing Invoices') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('receipt', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-amber-600" data-gsap-counter data-target-val="{{ $unpaidBills }}">{{ number_format($unpaidBills) }}</div>
-        <div class="text-[11px] text-slate-500">{{ $paidBills }} {{ t('paid invoices') }}</div>
-    </div>
+    <x-kpi :label="t('Total Registered Customers')" :value="number_format($totalCustomers)" :subvalue="t('Active').' + '.t('Disconnected')" icon="users" color="emerald" />
+    <x-kpi :label="t('Active Connected Accounts')" :value="number_format($activeCount)" :subvalue="$activePct.'% '.t('connected rate')" icon="check" color="emerald" :active="true" />
+    <x-kpi :label="t('Disconnected Accounts (DC)')" :value="number_format($dcCount)" :subvalue="($totalCustomers - $activeCount - $dcCount).' '.t('pending verification')" icon="x" color="rose" />
+    <x-kpi :label="t('Unpaid Billing Invoices')" :value="number_format($unpaidBills)" :subvalue="$paidBills.' '.t('paid invoices')" icon="receipt" color="amber" />
 </div>
 
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-[2.2fr_1fr] gap-5 mb-6">
     <!-- Consumption & Revenue Trend -->
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div>
                 <h3 class="m-0 text-[15px] font-serif font-bold text-slate-900 flex items-center gap-2">
@@ -88,10 +48,10 @@
         <div class="chart-wrapper-lg h-60 relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="dashboardTrendChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 
     <!-- Operational Status -->
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="mb-4">
             <h3 class="m-0 text-[15px] font-serif font-bold text-slate-900 flex items-center gap-2">
                 <span class="text-emerald-600">{!! icon('pie-chart', 18) !!}</span> {{ t('Operational Status Breakdown') }}
@@ -101,20 +61,20 @@
         <div class="chart-wrapper-lg h-60 relative flex items-center justify-center" style="min-height: 240px;">
             <canvas id="dashboardStatusChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 </div>
 
 <!-- Recent Customers + Quick Ops -->
 <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
     <!-- Recently Registered Customers -->
-    <div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden self-start">
-        <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+    <flux:card class="overflow-hidden p-0 self-start">
+        <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100 bg-slate-50/50">
             <span class="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <span class="text-emerald-600">{!! icon('users', 16) !!}</span> {{ t('Recently Registered Customers') }}
             </span>
-            <a href="{{ route('customer-service.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">
-                {!! icon('arrow-right', 13) !!} {{ t('View All Registry') }}
-            </a>
+            <flux:button size="sm" icon="arrow-right" icon:trailing="arrow-right" :href="route('customer-service.index')">
+                {{ t('View All Registry') }}
+            </flux:button>
         </div>
         <div class="scrollable-table border-0 rounded-none">
             <div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
@@ -140,11 +100,11 @@
                             <td class="px-4 py-3 text-slate-600">{{ $c->phone_number }}</td>
                             <td class="px-4 py-3">
                                 @if ($c->customer_status === 'Active')
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('check', 11) !!} Active</span>
+                                    <flux:badge color="emerald" icon="check" size="sm">Active</flux:badge>
                                 @elseif ($c->customer_status === 'DC')
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('x', 11) !!} DC</span>
+                                    <flux:badge color="rose" icon="x-mark" size="sm">DC</flux:badge>
                                 @else
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $c->customer_status }}</span>
+                                    <flux:badge color="amber" size="sm">{{ $c->customer_status }}</flux:badge>
                                 @endif
                             </td>
                         </tr>
@@ -153,34 +113,34 @@
                 </table>
             </div>
         </div>
-    </div>
+    </flux:card>
 
     <!-- Right column -->
     <div class="flex flex-col gap-4 self-start">
         <!-- Quick Navigation -->
-        <div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2">
+        <flux:card class="overflow-hidden p-0">
+            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2 bg-slate-50/50">
                 <span class="text-amber-600">{!! icon('zap', 15) !!}</span> {{ t('Quick Navigation') }}
             </div>
             <div class="p-3.5 flex flex-col gap-2">
-                <a href="{{ route('customer-service.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:text-emerald-900 text-[13px] font-semibold text-slate-700 transition">
-                    {!! icon('plus', 15) !!} <span>{{ t('Register Customer') }}</span>
-                </a>
-                <a href="{{ route('bills.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-semibold transition shadow-sm">
-                    {!! icon('receipt', 15) !!} <span>{{ t('Calculate & Print Bills') }}</span>
-                </a>
-                <a href="{{ route('customer-ledger.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-900 text-[13px] font-semibold text-slate-700 transition">
-                    {!! icon('book-open', 15) !!} <span>{{ t('Customer Ledger Reports') }}</span>
-                </a>
-                <a href="{{ route('reading-correction.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-slate-50 hover:bg-amber-50 hover:text-amber-900 text-[13px] font-semibold text-slate-700 transition">
-                    {!! icon('wrench', 15) !!} <span>{{ t('Reading Correction') }}</span>
-                </a>
+                <flux:button href="{{ route('customer-service.index') }}" icon="plus" class="justify-start">
+                    {{ t('Register Customer') }}
+                </flux:button>
+                <flux:button href="{{ route('bills.index') }}" variant="primary" icon="receipt-percent" class="justify-start">
+                    {{ t('Calculate & Print Bills') }}
+                </flux:button>
+                <flux:button href="{{ route('customer-ledger.index') }}" icon="book-open" class="justify-start">
+                    {{ t('Customer Ledger Reports') }}
+                </flux:button>
+                <flux:button href="{{ route('reading-correction.index') }}" icon="wrench" class="justify-start">
+                    {{ t('Reading Correction') }}
+                </flux:button>
             </div>
-        </div>
+        </flux:card>
 
         <!-- Recent System Audit -->
-        <div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2">
+        <flux:card class="overflow-hidden p-0">
+            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2 bg-slate-50/50">
                 <span class="text-emerald-600">{!! icon('clock', 15) !!}</span> {{ t('Recent System Audit') }}
             </div>
             <div class="px-4 py-2.5 max-h-52 overflow-y-auto">
@@ -195,7 +155,7 @@
                     @endforeach
                 @endif
             </div>
-        </div>
+        </flux:card>
     </div>
 </div>
 
@@ -215,7 +175,7 @@
         <div class="p-5 overflow-y-auto">
             <div class="mb-4">
                 <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Search Customer Code or Module</label>
-                <input type="text" id="cmdSearchInput" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" placeholder="Type ETY-0001, ledger, or customer..." oninput="runQuickCmdSearch(this.value)">
+                <flux:input id="cmdSearchInput" placeholder="Type ETY-0001, ledger, or customer..." icon="magnifying-glass" oninput="runQuickCmdSearch(this.value)" />
             </div>
             <div id="cmdSearchResults" class="max-h-60 overflow-y-auto flex flex-col gap-1.5">
                 <a href="{{ route('customer-service.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:text-emerald-900 text-[13px] font-semibold text-slate-700 transition">
@@ -296,7 +256,6 @@ function initDashboardTrendChart(type) {
         const trendCanvas = document.getElementById('dashboardTrendChart');
         if (!trendCanvas || typeof Chart === 'undefined') return;
 
-        // If parent layout is not ready yet (0px height), retry up to 10 times (every 50ms)
         if (trendCanvas.parentElement && trendCanvas.parentElement.clientHeight === 0 && retries < 10) {
             retries++;
             setTimeout(run, 50);

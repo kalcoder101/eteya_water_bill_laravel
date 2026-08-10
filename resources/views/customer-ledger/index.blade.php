@@ -12,27 +12,26 @@
         <p class="mt-2 text-[13px] text-slate-500">
             {{ t('View comprehensive water consumption and billing history by customer and year') }}
             @if ($customer)
-                &mdash; <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ $customer->meter_serial }} — {{ trim(($customer->first_name ?? '').' '.($customer->middle_name ?? '').' '.($customer->last_name ?? '')) }}</span>
+                &mdash; <flux:badge color="emerald" size="sm">{{ $customer->meter_serial }} — {{ trim(($customer->first_name ?? '').' '.($customer->middle_name ?? '').' '.($customer->last_name ?? '')) }}</flux:badge>
             @endif
         </p>
     </div>
     <div class="flex items-center gap-2.5">
         @if (! empty($customer))
-            <x-button variant="secondary" icon="print" type="button" onclick="window.print()">
+            <flux:button icon="printer" variant="subtle" onclick="window.print()">
                 {{ t('Print Statement') }}
-            </x-button>
+            </flux:button>
         @endif
     </div>
 </div>
 
 <!-- Customer Selection & Search Toolbar -->
-<div class="bg-white border border-slate-200 rounded-xl shadow-card p-4 mb-5">
+<flux:card class="p-4 mb-5">
     <form method="get" action="{{ route('customer-ledger.index') }}" class="flex flex-wrap gap-3.5 items-end">
         <div class="flex-1 min-w-[280px]">
             <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Select Customer') }}</label>
-            <input id="customerSearch" type="text" placeholder="{{ t('Type code, name, phone to filter...') }}" oninput="filterCustomerOptions()"
-                   class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400 mb-1.5">
-            <select id="customerSelect" name="meterSerial" class="fancy" onchange="this.form.submit()" style="width:100%;">
+            <flux:input id="customerSearch" placeholder="{{ t('Type code, name, phone to filter...') }}" icon="magnifying-glass" oninput="filterCustomerOptions()" class="mb-1.5" />
+            <select id="customerSelect" name="meterSerial" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" onchange="this.form.submit()">
                 <option value="">— {{ t('Choose a customer account') }} —</option>
                 @foreach ($customers as $c)
                     <option value="{{ $c->meter_serial }}" @if($meterSerial===$c->meter_serial) selected @endif>
@@ -44,115 +43,76 @@
 
         <div class="min-w-[140px]">
             <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Billing Year') }}</label>
-            <select name="year" class="fancy" onchange="this.form.submit()" style="width:100%;">
+            <select name="year" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" onchange="this.form.submit()">
                 @foreach ($availableYears as $y)
                     <option value="{{ $y }}" @if((string)$y === (string)$year) selected @endif>{{ $y }}</option>
                 @endforeach
             </select>
         </div>
 
-        <x-button type="submit" variant="primary" icon="search">
+        <flux:button type="submit" variant="primary" icon="magnifying-glass">
             {{ t('Load Ledger') }}
-        </x-button>
+        </flux:button>
     </form>
-</div>
+</flux:card>
 
 @if (empty($customer))
-<div class="bg-white border border-slate-200 rounded-xl shadow-card py-14 px-5 text-center">
-    <div class="text-slate-300 mb-3">{!! icon('book-open', 54) !!}</div>
+<flux:card class="py-14 px-5 text-center">
+    <div class="text-slate-300 mb-3 flex justify-center">{!! icon('book-open', 54) !!}</div>
     <h3 class="m-0 text-[15px] font-semibold text-slate-700">{{ t('No Customer Account Selected') }}</h3>
     <p class="text-xs text-slate-500 mt-1.5">{{ t('Search and select a customer account from the dropdown above to load their ledger history.') }}</p>
-</div>
+</flux:card>
 @else
 
 <!-- KPI Stat Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">{{ t('Total Billed') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('receipt', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums" data-gsap-counter data-target-val="{{ $grandTotal }}">{{ number_format($grandTotal, 0) }} <span class="text-[13px] text-slate-500">ETB</span></div>
-        <div class="text-[11px] text-slate-500">{{ count($ledger) }} {{ t('Bills in') }} {{ $year }}</div>
-    </div>
-
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-sky-800">{{ t('Water Consumption') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('water', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $totalConsumption }}">{{ number_format($totalConsumption, 1) }} <span class="text-[13px] text-slate-500">m³</span></div>
-        <div class="text-[11px] text-slate-500">{{ count($ledger) > 0 ? number_format($totalConsumption / count($ledger), 1) : 0 }} m³ {{ t('Avg / Month') }}</div>
-    </div>
-
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-emerald-800">{{ t('Paid Revenue') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('check', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-emerald-600" data-gsap-counter data-target-val="{{ $paidTotal }}">{{ number_format($paidTotal, 0) }} <span class="text-[13px] text-slate-500">ETB</span></div>
-        <div class="text-[11px] text-slate-500">{{ $paidBills }} {{ t('Paid Bills') }}</div>
-    </div>
-
-    <div class="gsap-stat-card gsap-hover-card p-5 rounded-xl bg-white border border-slate-200 shadow-card space-y-2">
-        <div class="flex items-center justify-between text-xs">
-            <span class="font-bold uppercase tracking-wider text-[11px] text-rose-800">{{ t('Unpaid Balance') }}</span>
-            <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
-                <span class="[&>svg]:text-[16px]">{!! icon('x', 16) !!}</span>
-            </div>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 font-mono tabular-nums text-rose-600" data-gsap-counter data-target-val="{{ $unpaidTotal }}">{{ number_format($unpaidTotal, 0) }} <span class="text-[13px] text-slate-500">ETB</span></div>
-        <div class="text-[11px] text-slate-500">{{ $unpaidBills }} {{ t('Unpaid Bills') }}</div>
-    </div>
+    <x-kpi :label="t('Total Billed')" :value="number_format($grandTotal, 0).' ETB'" :subvalue="count($ledger).' '.t('Bills in').' '.$year" icon="receipt" color="emerald" />
+    <x-kpi :label="t('Water Consumption')" :value="number_format($totalConsumption, 1).' m³'" :subvalue="(count($ledger) > 0 ? number_format($totalConsumption / count($ledger), 1) : 0).' m³ '.t('Avg / Month')" icon="water" color="sky" />
+    <x-kpi :label="t('Paid Revenue')" :value="number_format($paidTotal, 0).' ETB'" :subvalue="$paidBills.' '.t('Paid Bills')" icon="check" color="emerald" :active="true" />
+    <x-kpi :label="t('Unpaid Balance')" :value="number_format($unpaidTotal, 0).' ETB'" :subvalue="$unpaidBills.' '.t('Unpaid Bills')" icon="x" color="rose" />
 </div>
 
 <!-- Chart.js Consumption & Monthly Cost Trends -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex items-center justify-between gap-3 mb-4">
             <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
                 <span class="text-emerald-600">{!! icon('water', 16) !!}</span> {{ t('Monthly Consumption Trend (m³)') }}
             </span>
-            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ number_format($totalConsumption, 1) }} m³ Total</span>
+            <flux:badge color="emerald" size="sm">{{ number_format($totalConsumption, 1) }} m³ Total</flux:badge>
         </div>
         <div class="chart-wrapper-md h-[190px] relative flex items-center justify-center" style="min-height: 190px;">
             <canvas id="ledgerConsChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 
-    <div class="gsap-chart-card p-5 rounded-xl bg-white border border-slate-200 shadow-card">
+    <flux:card class="p-5">
         <div class="flex items-center justify-between gap-3 mb-4">
             <span class="flex items-center gap-2 font-serif font-bold text-sm text-slate-900">
                 <span class="text-emerald-600">{!! icon('bar-chart', 16) !!}</span> {{ t('Monthly Billed Cost Trend (ETB)') }}
             </span>
-            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{{ number_format($grandTotal, 0) }} ETB Total</span>
+            <flux:badge color="zinc" size="sm">{{ number_format($grandTotal, 0) }} ETB Total</flux:badge>
         </div>
         <div class="chart-wrapper-md h-[190px] relative flex items-center justify-center" style="min-height: 190px;">
             <canvas id="ledgerCostChart"></canvas>
         </div>
-    </div>
+    </flux:card>
 </div>
 
 <!-- Two Column: Ledger History Table & Customer Profile Side Card -->
 <div class="grid grid-cols-1 lg:grid-cols-[2.2fr_1fr] gap-5 mb-5 items-start">
     <!-- Main Billing Ledger History Table -->
-    <div class="gsap-section-card bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
+    <flux:card class="overflow-hidden p-0">
         <div class="h-1 bg-emerald-600"></div>
-        <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100">
+        <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-100 bg-slate-50/50">
             <span class="font-bold text-sm text-slate-900">{{ t('Billing & Meter Reading History') }} — {{ $year }}</span>
             <span class="text-xs text-slate-500">{{ count($ledger) }} {{ t('entries') }}</span>
         </div>
 
         @if ($ledger->isEmpty())
             <div class="py-10 text-center text-slate-500">
-                {!! icon('file-text', 40) !!}
-                <div class="mt-2 text-sm font-semibold text-slate-700">{{ t('No billing history found for this customer in') }} {{ $year }}</div>
+                <div class="flex justify-center mb-2">{!! icon('file-text', 40) !!}</div>
+                <div class="text-sm font-semibold text-slate-700">{{ t('No billing history found for this customer in') }} {{ $year }}</div>
             </div>
         @else
             <div class="scrollable-table border-0 rounded-none">
@@ -200,9 +160,9 @@
                                 <td class="px-4 py-2.5"><strong class="text-slate-900 font-mono tabular-nums">{{ number_format($row->total_monthly_cost, 0) }} ETB</strong></td>
                                 <td class="px-4 py-2.5">
                                     @if ($row->payment_status === 'Paid')
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('check', 11) !!} {{ t('Paid') }}</span>
+                                        <flux:badge color="emerald" icon="check" size="sm">Paid</flux:badge>
                                     @else
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('x', 11) !!} {{ t('Unpaid') }}</span>
+                                        <flux:badge color="rose" icon="x-mark" size="sm">Unpaid</flux:badge>
                                     @endif
                                 </td>
                             </tr>
@@ -220,13 +180,13 @@
                 </div>
             </div>
         @endif
-    </div>
+    </flux:card>
 
     <!-- Customer Details & Quick Actions -->
     <div class="flex flex-col gap-4">
         <!-- Customer Profile Card -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2">
+        <flux:card class="overflow-hidden p-0">
+            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2 bg-slate-50/50">
                 <span class="text-emerald-600">{!! icon('user', 15) !!}</span> {{ t('Customer Profile') }}
             </div>
             <div class="p-4">
@@ -256,35 +216,35 @@
                             <div class="text-[11px] text-slate-500 font-semibold">{{ t('Status') }}</div>
                             <div class="mt-0.5">
                                 @if ($customer->customer_status === 'Active')
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('check', 11) !!} {{ t('Active') }}</span>
+                                    <flux:badge color="emerald" icon="check" size="sm">Active</flux:badge>
                                 @else
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider">{!! icon('x', 11) !!} {{ $customer->customer_status }}</span>
+                                    <flux:badge color="rose" icon="x-mark" size="sm">{{ $customer->customer_status }}</flux:badge>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </flux:card>
 
         <!-- Operational Quick Actions -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden">
-            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2">
+        <flux:card class="overflow-hidden p-0">
+            <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2 bg-slate-50/50">
                 <span class="text-amber-600">{!! icon('wrench', 15) !!}</span> {{ t('Operational Quick Actions') }}
             </div>
-            <div class="p-4">
-                <div class="mb-2.5">
+            <div class="p-4 space-y-3">
+                <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Update Start Reading (m³)') }}</label>
                     <div class="flex gap-1.5">
-                        <input type="number" step="0.01" id="startReading" value="{{ $customer->start_value }}" class="flex-1 px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
-                        <x-icon-button variant="emerald" icon="check" type="button" onclick="updateStartReading()" :title="t('Save Start Reading')" />
+                        <flux:input type="number" step="0.01" id="startReading" value="{{ $customer->start_value }}" class="flex-1" />
+                        <flux:button variant="primary" icon="check" type="button" onclick="updateStartReading()" title="{{ t('Save Start Reading') }}" />
                     </div>
                 </div>
-                <x-button type="button" onclick="disconnectCustomer()" class="w-full justify-center mt-2" icon="x" variant="soft">
+                <flux:button type="button" onclick="disconnectCustomer()" variant="danger" icon="x-mark" class="w-full justify-center">
                     {{ t('Disconnect Customer (DC)') }}
-                </x-button>
+                </flux:button>
             </div>
-        </div>
+        </flux:card>
     </div>
 </div>
 
