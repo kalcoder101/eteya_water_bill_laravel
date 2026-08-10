@@ -324,37 +324,45 @@
 </div>
 
 <script>
-// Splash loader (bulletproof auto-dismiss & SPA navigation handler)
+// Splash loader (smooth initial presentation & SPA navigation handler)
 (function() {
-    function killSplash() {
-        var splash = document.getElementById('eosSplashScreen');
-        var bar = document.getElementById('splashProgressBar');
-        if (!splash) return;
-        if (bar) bar.style.width = '100%';
+    var splash = document.getElementById('eosSplashScreen');
+    var bar = document.getElementById('splashProgressBar');
+    if (!splash) return;
+
+    var done = false;
+    function finish() {
+        if (done) return;
+        done = true;
         splash.style.opacity = '0';
         splash.style.pointerEvents = 'none';
-        splash.style.transition = 'opacity 0.3s ease';
+        splash.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         setTimeout(function() {
             if (splash && splash.parentNode) {
                 splash.parentNode.removeChild(splash);
             }
-        }, 350);
+        }, 450);
     }
+
+    // Dismiss instantly on Livewire SPA navigation (wire:navigate)
+    document.addEventListener('livewire:navigated', finish);
 
     if (typeof gsap !== 'undefined') {
-        var bar = document.getElementById('splashProgressBar');
+        gsap.fromTo('#splashLogo',
+            { scale: 0.88, opacity: 0.8 },
+            { scale: 1.05, opacity: 1, duration: 0.5, yoyo: true, repeat: 1, ease: 'power1.inOut' }
+        );
         if (bar) {
-            gsap.to(bar, { width: '100%', duration: 0.4, ease: 'power2.out', onComplete: killSplash });
+            gsap.to(bar, { width: '100%', duration: 0.75, ease: 'power2.out', onComplete: finish });
         } else {
-            killSplash();
+            setTimeout(finish, 800);
         }
     } else {
-        killSplash();
+        if (bar) bar.style.width = '100%';
+        setTimeout(finish, 800);
     }
 
-    document.addEventListener('DOMContentLoaded', killSplash);
-    document.addEventListener('livewire:navigated', killSplash);
-    setTimeout(killSplash, 500);
+    setTimeout(finish, 1100);
 })();
 </script>
 
