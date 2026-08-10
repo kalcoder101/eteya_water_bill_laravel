@@ -259,6 +259,33 @@
         min-width: 26px !important;
         min-height: 26px !important;
     }
+
+    /* Sidebar Brand Logo & Collapse Toggle Button Scaling */
+    [data-flux-sidebar] [data-flux-brand] img,
+    [data-flux-brand] img {
+        width: 38px !important;
+        height: 38px !important;
+        object-fit: contain !important;
+    }
+
+    [data-flux-sidebar] [data-flux-sidebar-collapse],
+    button[data-flux-sidebar-collapse] {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    [data-flux-sidebar] [data-flux-sidebar-collapse] svg,
+    button[data-flux-sidebar-collapse] svg {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+    }
 }
 
 @layer utilities {
