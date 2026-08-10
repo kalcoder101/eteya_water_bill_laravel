@@ -60,6 +60,18 @@
     --color-accent-foreground: #ffffff !important;
 }
 
+/* Bulletproof Splash Screen Auto-Dismiss Safeguard */
+#eosSplashScreen {
+    animation: splashFadeOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.4s;
+}
+
+@keyframes splashFadeOut {
+    0% { opacity: 1; visibility: visible; pointer-events: auto; }
+    90% { opacity: 0; visibility: visible; pointer-events: none; }
+    100% { opacity: 0; visibility: hidden; pointer-events: none; display: none !important; }
+}
+
 @layer base {
     html, body {
         margin: 0;

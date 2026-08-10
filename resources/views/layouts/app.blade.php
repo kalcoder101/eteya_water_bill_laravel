@@ -20,7 +20,7 @@
 <body class="min-h-screen bg-white antialiased">
 
 <!-- Splash loader -->
-<div id="eosSplashScreen" data-navigate-once class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
+<div id="eosSplashScreen" class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
     <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-card mb-5" id="splashLogo">
         <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-10 h-10 object-contain">
     </div>
@@ -323,28 +323,38 @@
 </div>
 </div>
 
-<script data-navigate-once>
-// Splash loader (guarded, always-has-fallback)
+<script>
+// Splash loader (bulletproof auto-dismiss & SPA navigation handler)
 (function() {
-    var splash = document.getElementById('eosSplashScreen');
-    var bar = document.getElementById('splashProgressBar');
-    if (!splash) return;
-    var done = false;
-    function finish() {
-        if (done) return;
-        done = true;
+    function killSplash() {
+        var splash = document.getElementById('eosSplashScreen');
+        var bar = document.getElementById('splashProgressBar');
+        if (!splash) return;
+        if (bar) bar.style.width = '100%';
         splash.style.opacity = '0';
-        splash.style.transition = 'opacity 0.45s ease';
-        setTimeout(function() { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 500);
+        splash.style.pointerEvents = 'none';
+        splash.style.transition = 'opacity 0.3s ease';
+        setTimeout(function() {
+            if (splash && splash.parentNode) {
+                splash.parentNode.removeChild(splash);
+            }
+        }, 350);
     }
+
     if (typeof gsap !== 'undefined') {
-        gsap.fromTo('#splashLogo', { scale: 0.85 }, { scale: 1.05, duration: 0.6, yoyo: true, repeat: 1, ease: 'power1.inOut', clearProps: 'all' });
-        gsap.to(bar, { width: '100%', duration: 0.7, ease: 'power2.out', onComplete: finish });
+        var bar = document.getElementById('splashProgressBar');
+        if (bar) {
+            gsap.to(bar, { width: '100%', duration: 0.4, ease: 'power2.out', onComplete: killSplash });
+        } else {
+            killSplash();
+        }
     } else {
-        bar.style.width = '100%';
-        setTimeout(finish, 700);
+        killSplash();
     }
-    setTimeout(finish, 900);
+
+    document.addEventListener('DOMContentLoaded', killSplash);
+    document.addEventListener('livewire:navigated', killSplash);
+    setTimeout(killSplash, 500);
 })();
 </script>
 
