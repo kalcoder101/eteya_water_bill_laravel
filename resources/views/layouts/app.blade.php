@@ -213,12 +213,12 @@
 </flux:header>
 
 <!-- ============================================================
-     MAIN AREA
+     MAIN AREA — OFFICIAL FLUX MAIN CONTAINER
      ============================================================ -->
-<div class="main-area flex flex-col min-w-0 flex-1">
+<flux:main class="flex flex-col min-w-0 flex-1">
 
     <!-- Topbar — floating card (EOS Modern Steward) -->
-    <header class="topbar sticky top-3 z-[40] flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 mx-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-slate-200/90 shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
+    <header class="topbar sticky top-3 z-[40] flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 rounded-2xl bg-white/80 backdrop-blur-xl border border-slate-200/90 shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)] mb-6">
         <!-- Page identity cluster -->
         <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center">
@@ -277,7 +277,7 @@
         </flux:dropdown>
     </header>
 
-    <main class="content p-6 flex-1 max-w-[1600px] w-full mx-auto">
+    <main class="content flex-1 max-w-[1600px] w-full mx-auto">
         <script>
         window.API_BASE = '{{ $baseUrl }}/api';
         window.apiUrl = function(path) { return window.API_BASE + '/' + path; };
@@ -292,7 +292,7 @@
         {{ $slot ?? '' }}
         @yield('content')
     </main>
-</div>
+</flux:main>
 </div>
 
 <script>
