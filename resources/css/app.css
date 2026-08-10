@@ -319,40 +319,6 @@
     .in-data-flux-sidebar-collapsed-desktop button[data-flux-sidebar-collapse] {
         margin: 0 auto !important;
     }
-
-    /* Straight Vertical Centerline Alignment for Collapsed Sidebar */
-    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-header],
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-header],
-    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-nav],
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-nav],
-    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-group],
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-group] {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        width: 100% !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    [data-flux-sidebar-collapsed-desktop] [data-flux-brand],
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-brand],
-    [data-flux-sidebar-collapsed-desktop] button[data-flux-sidebar-collapse],
-    .in-data-flux-sidebar-collapsed-desktop button[data-flux-sidebar-collapse],
-    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *),
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *),
-    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-group-dropdown] > button,
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-group-dropdown] > button,
-    [data-flux-sidebar-collapsed-desktop] [data-flux-profile],
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-profile] {
-        margin-left: auto !important;
-        margin-right: auto !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-    }
 }
 
 @layer utilities {
