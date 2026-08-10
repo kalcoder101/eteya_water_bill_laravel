@@ -20,7 +20,7 @@
 <body class="min-h-screen bg-white antialiased">
 
 <!-- Splash loader -->
-<div id="eosSplashScreen" class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
+<div id="eosSplashScreen" data-navigate-once class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
     <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-card mb-5" id="splashLogo">
         <img src="{{ $baseUrl }}/assets/images/Owater-logo.png" alt="Logo" class="w-10 h-10 object-contain">
     </div>
@@ -200,7 +200,7 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         @foreach ($group['items'] as $item)
-                            <a href="{{ route($item['route']) }}" class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
+                            <a href="{{ route($item['route']) }}" wire:navigate class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
                                 <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
                                 <span class="min-w-0">
                                     <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
@@ -323,7 +323,7 @@
 </div>
 </div>
 
-<script>
+<script data-navigate-once>
 // Splash loader (guarded, always-has-fallback)
 (function() {
     var splash = document.getElementById('eosSplashScreen');
