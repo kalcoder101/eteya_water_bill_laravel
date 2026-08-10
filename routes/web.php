@@ -49,11 +49,11 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('page.access:bills.print')
         ->name('bills.print');
 
-    Route::get('bills/calculate', [BillController::class, 'calculate'])
+    Route::post('bills/calculate', [BillController::class, 'calculate'])
         ->middleware('page.access:bills.calculate')
         ->name('bills.calculate');
 
-    Route::get('bills/mark-paid/{id}', [BillController::class, 'markPaid'])
+    Route::post('bills/mark-paid/{id}', [BillController::class, 'markPaid'])
         ->middleware('page.access:bills.mark-paid')
         ->name('bills.mark-paid');
 

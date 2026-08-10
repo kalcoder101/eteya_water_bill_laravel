@@ -16,13 +16,6 @@ Route::prefix('user_account_data')->group(function (): void {
     Route::get('get-photo/{userId?}', [UserAccountDataController::class, 'getPhoto']);
 });
 
-Route::get('user/photo/{userId}', function ($userId) {
-    $user = \App\Models\User::where('user_id', $userId)->first();
-    if (! $user || ! $user->photo) {
-        return response('', 404);
-    }
-    return response($user->photo, 200, ['Content-Type' => 'image/jpeg']);
-})->name('user.photo');
 
 
 // ============= Protected API Routes (Sanctum / Shared Secret) =============

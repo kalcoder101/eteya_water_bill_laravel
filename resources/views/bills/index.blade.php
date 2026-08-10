@@ -198,9 +198,12 @@
                                     {{ t('Print') }}
                                 </x-button>
                                 @if ($b->payment_status !== 'Paid')
-                                    <x-button variant="primary" size="sm" icon="check" :href="route('bills.mark-paid', ['id' => $b->bill_finance_id])" :title="t('Mark Paid')">
-                                        {{ t('Pay') }}
-                                    </x-button>
+                                    <form method="POST" action="{{ route('bills.mark-paid', ['id' => $b->bill_finance_id]) }}" class="inline">
+                                        @csrf
+                                        <x-button variant="primary" size="sm" icon="check" type="submit" :title="t('Mark Paid')">
+                                            {{ t('Pay') }}
+                                        </x-button>
+                                    </form>
                                 @endif
                                 <x-button variant="secondary" size="sm" icon="book-open" :href="route('customer-ledger.index').'?meterSerial='.urlencode($b->meter_serial)" :title="t('View Financial Ledger')" />
                             </div>
@@ -323,7 +326,14 @@ function calculateBills() {
         'warning'
     ).then(ok => {
         if (!ok) return;
-        fetch(`{{ route('bills.calculate') }}?year=${encodeURIComponent('{{ $year }}')}&month=${encodeURIComponent('{{ $month }}')}`)
+        fetch(`{{ route('bills.calculate') }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ year: '{{ $year }}', month: '{{ $month }}' })
+        })
           .then(r => r.json())
           .then(d => {
               if (d.error) { showToast(d.error, 'error'); return; }

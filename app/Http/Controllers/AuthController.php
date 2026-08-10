@@ -7,7 +7,9 @@ use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -30,10 +32,17 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Manually verify the password because the original app stored plain-text
-        // passwords for legacy users (later re-hashed on first successful login).
+        $throttleKey = Str::transliterate(Str::lower($credentials['username']).'|'.$request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withErrors(['username' => "Too many login attempts. Please try again in {$seconds} seconds."])
+                         ->withInput($request->except('password'));
+        }
+
         $user = User::where('user_name', $credentials['username'])->first();
         if (! $user) {
+            RateLimiter::hit($throttleKey, 60);
             return back()->withErrors(['username' => 'Incorrect username and password.'])
                          ->withInput($request->except('password'));
         }
@@ -52,11 +61,15 @@ class AuthController extends Controller
         }
 
         if (! $ok) {
+            RateLimiter::hit($throttleKey, 60);
             return back()->withErrors(['username' => 'Incorrect username and password.'])
                          ->withInput($request->except('password'));
         }
 
-        Auth::login($user, true);
+        RateLimiter::clear($throttleKey);
+
+        $remember = $request->boolean('remember');
+        Auth::login($user, $remember);
         Session::regenerate(true);
         Session::put([
             'session_started' => time(),

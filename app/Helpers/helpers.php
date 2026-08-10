@@ -125,7 +125,7 @@ if (! function_exists('is_allowed_page')) {
     {
         $permissions = page_role_permissions();
         if (! isset($permissions[$page])) {
-            return true;
+            return false;
         }
 
         return in_array($role, $permissions[$page], true);

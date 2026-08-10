@@ -309,6 +309,14 @@ identical to the original PHP files for easy cross-reference.
 
 ---
 
+## 🔒 Deployment & Production Security
+
+- **`APP_DEBUG` Configuration:** Always set `APP_DEBUG=false` in `.env` outside local development environments to prevent sensitive tracebacks and environment details from being exposed.
+- **Environment Variables:** Ensure `APP_ENV=production` and generate a unique key using `php artisan key:generate`.
+- **API Secret:** Configure `API_SHARED_SECRET` in `.env` when connecting legacy clients via shared secret header.
+
+---
+
 ## 📜 Credits
 
 - **Original desktop app:** GITAN ICT Work PLC, +251-967-67-1810 / +251-907-60-6050

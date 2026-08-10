@@ -45,6 +45,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     */
+    protected $hidden = [
+        'user_password',
+        'remember_token',
+        'photo',
+    ];
+
+    /**
      * Override the password field name — this app uses `user_password`
      * rather than the default `password`.
      */
