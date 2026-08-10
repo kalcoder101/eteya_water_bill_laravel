@@ -245,35 +245,52 @@
             <kbd class="absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-400">Ctrl K</kbd>
         </div>
 
-        <!-- User → Flux dropdown -->
+        <!-- User → Flux dropdown with navmenu -->
         <flux:dropdown position="bottom" align="end" class="shrink-0">
             <flux:profile :avatar="$photoUrl" :name="$fullName" />
 
-            <flux:menu>
-                <div class="px-3 py-2 text-xs">
-                    <div class="font-bold text-slate-900 truncate">{{ $fullName }}</div>
-                    <div class="text-slate-500 truncate">{{ get_role_display($user?->job_role ?? '') }}</div>
+            <flux:navmenu class="w-64">
+                <div class="px-2.5 py-2">
+                    <flux:text size="sm">{{ t('Signed in as') }}</flux:text>
+                    <flux:heading class="mt-0.5 truncate font-bold text-slate-900">{{ $user?->email_id ?? $user?->user_name ?? 'User' }}</flux:heading>
+                    <div class="text-[11px] text-slate-500 mt-0.5 font-medium truncate">{{ $fullName }} &bull; {{ get_role_display($user?->job_role ?? '') }}</div>
                 </div>
 
-                <flux:menu.separator />
+                <flux:navmenu.separator />
 
-                <flux:menu.group heading="Language">
-                    @foreach ($languages as $code => $info)
-                        @php $isActive = $code === $currentLang; @endphp
-                        <flux:menu.item
-                            :href="request()->fullUrlWithQuery(['lang' => $code])"
-                            :active="$isActive"
-                        >{{ $info[0] }} ({{ $info[2] }})</flux:menu.item>
-                    @endforeach
-                </flux:menu.group>
+                <div class="px-2.5 py-1">
+                    <flux:text size="sm" class="font-semibold text-slate-400 uppercase tracking-wider text-[10px]">{{ t('Languages') }}</flux:text>
+                </div>
 
-                <flux:menu.separator />
+                @foreach ($languages as $code => $info)
+                    @php $isActive = $code === $currentLang; @endphp
+                    <flux:navmenu.item
+                        :href="request()->fullUrlWithQuery(['lang' => $code])"
+                        :icon="$isActive ? 'check' : null"
+                        :indent="!$isActive"
+                        class="text-zinc-800 dark:text-white truncate"
+                    >
+                        {{ $info[0] }} ({{ $info[2] }})
+                    </flux:navmenu.item>
+                @endforeach
 
-                <form method="POST" action="{{ route('logout') }}" id="flux-logout-form" style="display:none">@csrf</form>
-                <flux:menu.item icon="arrow-right-start-on-rectangle" variant="danger" x-data x-on:click="document.getElementById('flux-logout-form').submit()">
+                <flux:navmenu.separator />
+
+                <flux:navmenu.item href="/dashboard" icon="key" class="text-zinc-800 dark:text-white">{{ t('Dashboard') }}</flux:navmenu.item>
+                <flux:navmenu.item href="/account-register" icon="user" class="text-zinc-800 dark:text-white">{{ t('Account Management') }}</flux:navmenu.item>
+
+                <flux:navmenu.separator />
+
+                <form method="POST" action="{{ route('logout') }}" id="topbar-flux-logout" style="display:none">@csrf</form>
+                <flux:navmenu.item
+                    href="#"
+                    icon="arrow-right-start-on-rectangle"
+                    class="text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer"
+                    onclick="event.preventDefault(); document.getElementById('topbar-flux-logout').submit();"
+                >
                     {{ t('Logout') }}
-                </flux:menu.item>
-            </flux:menu>
+                </flux:navmenu.item>
+            </flux:navmenu>
         </flux:dropdown>
     </header>
 
