@@ -386,49 +386,96 @@ new class extends Component
     </div>
 
     <!-- Livewire Reactive Table & Search Registry Section -->
-    <flux:card class="p-0 overflow-hidden mb-6">
+    <flux:card class="p-0 overflow-visible relative z-[30] mb-6">
         <!-- Toolbar & Filter Header -->
-        <div class="p-4 border-b border-slate-100 bg-slate-50/50 space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="relative flex-1 min-w-[260px] max-w-[420px]">
+        <div class="p-4 border-b border-slate-200/80 bg-slate-50/60 dark:bg-zinc-800/40 rounded-t-2xl space-y-4.5 overflow-visible">
+
+            <!-- Primary Action Bar (Search + Dropdown Filters + Export Actions) -->
+            <div class="flex flex-wrap items-center justify-between gap-3 overflow-visible">
+                <!-- Search Input -->
+                <div class="relative flex-1 min-w-[280px] max-w-[440px]">
                     <flux:input wire:model.live.debounce.300ms="search" placeholder="{{ t('Search customer code, name, phone, serial...') }}" icon="magnifying-glass" />
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    @if ($hasActiveFilters)
-                        <flux:button size="sm" variant="subtle" icon="x-mark" wire:click="resetFilters">
-                            {{ t('Reset Filters') }}
+
+                <!-- Dropdowns & Action Buttons Group -->
+                <div class="flex flex-wrap items-center gap-3 overflow-visible">
+                    <!-- Kebele Flux Select -->
+                    <div class="w-44 min-w-[170px] overflow-visible">
+                        <flux:select wire:model.live="kebele" size="sm" placeholder="{{ t('Kebele (All)') }}">
+                            <flux:select.option value="all">— {{ t('Kebele (All)') }} —</flux:select.option>
+                            @foreach ($kebeles as $k)
+                                <flux:select.option value="{{ $k }}">Kebele {{ $k }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                    </div>
+
+                    <!-- Customer Type Flux Select -->
+                    <div class="w-48 min-w-[190px] overflow-visible">
+                        <flux:select wire:model.live="customerType" size="sm" placeholder="{{ t('Type (All)') }}">
+                            <flux:select.option value="all">— {{ t('Type (All)') }} —</flux:select.option>
+                            @foreach ($types as $t)
+                                <flux:select.option value="{{ $t }}">{{ $t }}</flux:select.option>
+                            @endforeach
+                        </flux:select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 shrink-0">
+                        @if ($hasActiveFilters)
+                            <flux:button size="sm" variant="subtle" icon="x-mark" wire:click="resetFilters">
+                                {{ t('Reset') }}
+                            </flux:button>
+                        @endif
+                        <flux:button size="sm" variant="subtle" icon="arrow-down-tray" href="{{ route('export.customers') }}">
+                            {{ t('Export CSV') }}
                         </flux:button>
-                    @endif
-                    <flux:button size="sm" variant="subtle" icon="arrow-down-tray" href="{{ route('export.customers') }}">
-                        {{ t('Export CSV') }}
-                    </flux:button>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-2.5 items-center">
-                <!-- Status Filter Badges -->
-                <div class="segmented bg-white border border-slate-200 p-1">
-                    <button type="button" class="{{ $status==='all'?'active':'' }}" wire:click="$set('status', 'all')">All ({{ $counts['total'] }})</button>
-                    <button type="button" class="{{ $status==='Active'?'active':'' }}" wire:click="$set('status', 'Active')">Active ({{ $counts['active'] }})</button>
-                    <button type="button" class="{{ $status==='DC'?'active':'' }}" wire:click="$set('status', 'DC')">DC ({{ $counts['dc'] }})</button>
-                    <button type="button" class="{{ $status==='Updated'?'active':'' }}" wire:click="$set('status', 'Updated')">Updated ({{ $counts['updated'] }})</button>
+            <!-- Status Filter Pills -->
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200/60 pt-3">
+                <div class="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200/80 dark:border-zinc-700">
+                    <flux:button
+                        size="sm"
+                        variant="{{ $status === 'all' ? 'primary' : 'subtle' }}"
+                        wire:click="$set('status', 'all')"
+                        class="font-bold text-xs"
+                    >
+                        {{ t('All') }} <flux:badge size="sm" color="{{ $status === 'all' ? 'zinc' : 'emerald' }}" class="ml-1 font-extrabold">{{ $counts['total'] }}</flux:badge>
+                    </flux:button>
+
+                    <flux:button
+                        size="sm"
+                        variant="{{ $status === 'Active' ? 'primary' : 'subtle' }}"
+                        wire:click="$set('status', 'Active')"
+                        class="font-bold text-xs"
+                    >
+                        {{ t('Active') }} <flux:badge size="sm" color="{{ $status === 'Active' ? 'zinc' : 'emerald' }}" class="ml-1 font-extrabold">{{ $counts['active'] }}</flux:badge>
+                    </flux:button>
+
+                    <flux:button
+                        size="sm"
+                        variant="{{ $status === 'DC' ? 'primary' : 'subtle' }}"
+                        wire:click="$set('status', 'DC')"
+                        class="font-bold text-xs"
+                    >
+                        {{ t('DC') }} <flux:badge size="sm" color="{{ $status === 'DC' ? 'zinc' : 'rose' }}" class="ml-1 font-extrabold">{{ $counts['dc'] }}</flux:badge>
+                    </flux:button>
+
+                    <flux:button
+                        size="sm"
+                        variant="{{ $status === 'Updated' ? 'primary' : 'subtle' }}"
+                        wire:click="$set('status', 'Updated')"
+                        class="font-bold text-xs"
+                    >
+                        {{ t('Updated') }} <flux:badge size="sm" color="{{ $status === 'Updated' ? 'zinc' : 'amber' }}" class="ml-1 font-extrabold">{{ $counts['updated'] }}</flux:badge>
+                    </flux:button>
                 </div>
 
-                <!-- Kebele Dropdown -->
-                <select wire:model.live="kebele" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
-                    <option value="all">— Kebele (All) —</option>
-                    @foreach ($kebeles as $k)
-                        <option value="{{ $k }}">Kebele {{ $k }}</option>
-                    @endforeach
-                </select>
-
-                <!-- Customer Type Dropdown -->
-                <select wire:model.live="customerType" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
-                    <option value="all">— Type (All) —</option>
-                    @foreach ($types as $t)
-                        <option value="{{ $t }}">{{ $t }}</option>
-                    @endforeach
-                </select>
+                <div class="text-xs text-slate-500 font-medium">
+                    Showing <strong class="text-slate-900 font-bold">{{ $customers->total() }}</strong> customer accounts
+                </div>
             </div>
         </div>
 
