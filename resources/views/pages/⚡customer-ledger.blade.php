@@ -248,6 +248,59 @@ new class extends Component
             </div>
         </flux:card>
 
+        <!-- Customer Account Lifecycle & Billing Horizontal Timeline -->
+        <flux:card class="p-5 mb-5 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <div class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    {!! icon('clock', 18) !!}
+                    <span>{{ t('Account Lifecycle & Billing Progression') }}</span>
+                </div>
+                <flux:badge color="emerald" size="sm">{{ $year }} {{ t('Timeline') }}</flux:badge>
+            </div>
+
+            <flux:timeline horizontal>
+                <flux:timeline.item>
+                    <flux:timeline.indicator color="emerald">
+                        {!! icon('check', 14) !!}
+                    </flux:timeline.indicator>
+                    <flux:timeline.content>
+                        <flux:heading class="text-xs font-bold text-slate-900">{{ t('Account Registered') }}</flux:heading>
+                        <div class="text-[11px] text-slate-500">{{ $customer->created_at ? $customer->created_at->format('M Y') : 'Active User' }}</div>
+                    </flux:timeline.content>
+                </flux:timeline.item>
+
+                <flux:timeline.item>
+                    <flux:timeline.indicator color="sky">
+                        {!! icon('wrench', 14) !!}
+                    </flux:timeline.indicator>
+                    <flux:timeline.content>
+                        <flux:heading class="text-xs font-bold text-slate-900">{{ t('Meter Serial Assigned') }}</flux:heading>
+                        <div class="text-[11px] font-mono text-emerald-700 font-semibold">{{ $customer->meter_serial }}</div>
+                    </flux:timeline.content>
+                </flux:timeline.item>
+
+                <flux:timeline.item>
+                    <flux:timeline.indicator color="emerald">
+                        {!! icon('receipt', 14) !!}
+                    </flux:timeline.indicator>
+                    <flux:timeline.content>
+                        <flux:heading class="text-xs font-bold text-slate-900">{{ t('Monthly Invoices') }}</flux:heading>
+                        <div class="text-[11px] text-slate-500">{{ count($ledger) }} {{ t('Records in') }} {{ $year }}</div>
+                    </flux:timeline.content>
+                </flux:timeline.item>
+
+                <flux:timeline.item>
+                    <flux:timeline.indicator color="{{ $unpaidBills == 0 ? 'emerald' : 'amber' }}">
+                        {!! icon($unpaidBills == 0 ? 'check' : 'credit-card', 14) !!}
+                    </flux:timeline.indicator>
+                    <flux:timeline.content>
+                        <flux:heading class="text-xs font-bold text-slate-900">{{ $unpaidBills == 0 ? t('Account Current') : t('Payment Pending') }}</flux:heading>
+                        <div class="text-[11px] text-slate-500">{{ $paidBills }}/{{ count($ledger) }} {{ t('Paid') }}</div>
+                    </flux:timeline.content>
+                </flux:timeline.item>
+            </flux:timeline>
+        </flux:card>
+
         <!-- KPI Stat Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
             <x-kpi :label="t('Total Billed')" :value="number_format($grandTotal, 0).' ETB'" :subvalue="count($ledger).' '.t('Bills in').' '.$year" icon="receipt" color="emerald" />

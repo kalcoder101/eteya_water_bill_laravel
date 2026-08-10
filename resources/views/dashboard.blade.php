@@ -138,16 +138,23 @@
             <div class="px-4 py-3 border-b border-slate-100 font-bold text-[13px] text-slate-900 flex items-center gap-2 bg-slate-50/50">
                 <span class="text-emerald-600">{!! icon('clock', 15) !!}</span> {{ t('Recent System Audit') }}
             </div>
-            <div class="px-4 py-2.5 max-h-52 overflow-y-auto">
+            <div class="px-4 py-3 max-h-60 overflow-y-auto">
                 @if ($recentAudit->isEmpty())
                     <p class="text-slate-500 text-xs text-center py-5">{{ t('No recent audit activity.') }}</p>
                 @else
-                    @foreach ($recentAudit as $a)
-                        <div class="py-2 border-b border-slate-100 last:border-0 text-xs">
-                            <div class="font-semibold text-slate-900">{{ $a->log_reason }}</div>
-                            <div class="text-[11px] text-slate-500 mt-0.5">{{ $a->done_by }} &bull; {{ substr($a->log_date, 5) }}</div>
-                        </div>
-                    @endforeach
+                    <flux:timeline>
+                        @foreach ($recentAudit as $a)
+                            <flux:timeline.item>
+                                <flux:timeline.indicator color="emerald">
+                                    {!! icon('check', 12) !!}
+                                </flux:timeline.indicator>
+                                <flux:timeline.content>
+                                    <flux:heading class="text-xs font-bold text-slate-900 leading-tight">{{ $a->log_reason }}</flux:heading>
+                                    <div class="text-[11px] text-slate-500 mt-0.5">{{ $a->done_by }} &bull; {{ substr($a->log_date, 5) }}</div>
+                                </flux:timeline.content>
+                            </flux:timeline.item>
+                        @endforeach
+                    </flux:timeline>
                 @endif
             </div>
         </flux:card>
