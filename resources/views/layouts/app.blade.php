@@ -150,17 +150,26 @@
         <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
     </flux:sidebar.header>
 
-    <flux:sidebar.nav>
+    <flux:sidebar.nav class="space-y-4">
         @foreach ($navGroups as $idx => $group)
-            <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid">
+            @if ($idx > 0)
+                <flux:separator class="my-2" />
+            @endif
+            <flux:sidebar.group :heading="$group['title']" class="grid gap-1">
                 @foreach ($group['items'] as $item)
                     <flux:sidebar.item
                         :icon="$item['icon']"
                         :href="route($item['route'])"
                         wire:navigate
                         :current="$currentPage === $item['page']"
+                        class="text-xs font-semibold rounded-lg"
                     >
-                        {{ $item['label'] }}
+                        <span>{{ $item['label'] }}</span>
+                        @if ($currentPage === $item['page'])
+                            <x-slot name="badge">
+                                <flux:badge color="emerald" size="sm" icon="check" />
+                            </x-slot>
+                        @endif
                     </flux:sidebar.item>
                 @endforeach
             </flux:sidebar.group>

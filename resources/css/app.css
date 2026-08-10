@@ -346,3 +346,17 @@
         body { background: #fff; }
     }
 }
+
+/* ── Field Edit Button Pop Animation ─────────────────────────────────────── */
+@keyframes btn-pop-anim {
+    0%   { transform: scale(1);    box-shadow: none; }
+    25%  { transform: scale(0.75); box-shadow: none; }
+    60%  { transform: scale(1.20); }
+    80%  { transform: scale(0.95); }
+    100% { transform: scale(1);    }
+}
+
+.btn-edit-field.btn-pop {
+    animation: btn-pop-anim 0.30s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+

@@ -510,123 +510,194 @@ new class extends Component
     </flux:card>
 
     <!-- Registration Multi-Step Wizard Modal -->
-    <flux:modal name="register-modal" class="md:w-[720px]">
+    <flux:modal name="register-modal" class="md:w-[760px]">
         <div class="space-y-4">
             <div>
                 <flux:heading size="lg">{{ t('Customer Registration Form') }}</flux:heading>
                 <flux:subheading>{{ t('Register a new water meter customer in the system') }}</flux:subheading>
             </div>
 
-            <!-- Step Tabs -->
+            <!-- Step Progress Indicator -->
             <div class="grid grid-cols-3 gap-2">
-                <button type="button" wire:click="setRegStep(1)" class="px-3 py-2 rounded-lg text-xs font-bold border {{ $regStep===1?'bg-emerald-600 text-white border-emerald-600':'bg-slate-50 text-slate-600 border-slate-200' }}">1. Identity</button>
-                <button type="button" wire:click="setRegStep(2)" class="px-3 py-2 rounded-lg text-xs font-bold border {{ $regStep===2?'bg-emerald-600 text-white border-emerald-600':'bg-slate-50 text-slate-600 border-slate-200' }}">2. Meter & Reading</button>
-                <button type="button" wire:click="setRegStep(3)" class="px-3 py-2 rounded-lg text-xs font-bold border {{ $regStep===3?'bg-emerald-600 text-white border-emerald-600':'bg-slate-50 text-slate-600 border-slate-200' }}">3. Tariff & Branch</button>
+                <button type="button" wire:click="setRegStep(1)" class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer {{ $regStep===1 ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100' }}">
+                    <span class="text-xs font-bold">1. {{ t('Customer Identity') }}</span>
+                    @if ($regStep > 1)
+                        <flux:badge color="emerald" size="sm" icon="check" />
+                    @endif
+                </button>
+
+                <button type="button" wire:click="setRegStep(2)" class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer {{ $regStep===2 ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100' }}">
+                    <span class="text-xs font-bold">2. {{ t('Meter & Reading') }}</span>
+                    @if ($regStep > 2)
+                        <flux:badge color="emerald" size="sm" icon="check" />
+                    @endif
+                </button>
+
+                <button type="button" wire:click="setRegStep(3)" class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer {{ $regStep===3 ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100' }}">
+                    <span class="text-xs font-bold">3. {{ t('Tariff & Branch') }}</span>
+                </button>
             </div>
 
             <form wire:submit.prevent="registerCustomer" class="space-y-4">
-                @if ($regStep === 1)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Customer Code *</label>
-                            <div class="flex gap-2">
-                                <flux:input wire:model="regForm.meterSerial" placeholder="ETY-0001" required class="flex-1" />
-                                <flux:button type="button" variant="subtle" size="sm" wire:click="generateNextCode">Auto</flux:button>
+                <flux:card class="p-5 bg-slate-50/50 border border-slate-200">
+                    @if ($regStep === 1)
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Customer Code') }} *</flux:label>
+                                    <div class="flex gap-2">
+                                        <flux:input wire:model="regForm.meterSerial" placeholder="ETY-0001" required class="flex-1" />
+                                        <flux:button type="button" variant="subtle" size="sm" icon="sparkles" wire:click="generateNextCode">Auto</flux:button>
+                                    </div>
+                                    @error('regForm.meterSerial') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
+                                </flux:field>
                             </div>
-                            @error('regForm.meterSerial') <span class="text-xs text-rose-600">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Kebele *</label>
-                            <flux:input wire:model="regForm.kebele" placeholder="01" required />
-                            @error('regForm.kebele') <span class="text-xs text-rose-600">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">First Name *</label>
-                            <flux:input wire:model="regForm.firstName" placeholder="Abebe" required />
-                            @error('regForm.firstName') <span class="text-xs text-rose-600">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Middle Name</label>
-                            <flux:input wire:model="regForm.middleName" placeholder="Kebede" />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Last Name</label>
-                            <flux:input wire:model="regForm.lastName" placeholder="Tadesse" />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Phone Number</label>
-                            <flux:input wire:model="regForm.phoneNumber" placeholder="+251911223344" />
-                        </div>
-                    </div>
-                @elseif ($regStep === 2)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Meter Size</label>
-                            <select wire:model="regForm.meterSize" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
-                                @foreach ($meterSizes as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Meter Number</label>
-                            <flux:input type="number" wire:model="regForm.meterNum" />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Bill Serial Number</label>
-                            <flux:input wire:model="regForm.billNum" placeholder="SN-0001" />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Start Reading (m³)</label>
-                            <flux:input type="number" step="0.01" wire:model="regForm.startValue" />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Sold Date</label>
-                            <flux:input type="date" wire:model="regForm.soldDate" />
-                        </div>
-                    </div>
-                @else
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Customer Type</label>
-                            <select wire:model="regForm.customerType" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
-                                @foreach ($customerTypes as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Payment Way</label>
-                            <select wire:model="regForm.paymentWay" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
-                                @foreach ($paymentWays as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Customer Branch</label>
-                            <select wire:model="regForm.customerBranch" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
-                                @foreach ($branches as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Status</label>
-                            <select wire:model="regForm.customerStatus" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
-                                @foreach ($customerStatuses as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Reader Block</label>
-                            <flux:input wire:model="regForm.readerBlock" placeholder="Block-A" />
-                        </div>
-                    </div>
-                @endif
 
-                <div class="flex items-center justify-between pt-3">
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Kebele / Zone') }} *</flux:label>
+                                    <flux:input wire:model="regForm.kebele" placeholder="01" required />
+                                    @error('regForm.kebele') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('First Name') }} *</flux:label>
+                                    <flux:input wire:model="regForm.firstName" placeholder="Abebe" required />
+                                    @error('regForm.firstName') <span class="text-xs text-rose-600 mt-1 block">{{ $message }}</span> @enderror
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Middle Name') }}</flux:label>
+                                    <flux:input wire:model="regForm.middleName" placeholder="Kebede" />
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Last Name') }}</flux:label>
+                                    <flux:input wire:model="regForm.lastName" placeholder="Tadesse" />
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Phone Number') }}</flux:label>
+                                    <flux:input wire:model="regForm.phoneNumber" placeholder="+251911223344" />
+                                </flux:field>
+                            </div>
+                        </div>
+                    @elseif ($regStep === 2)
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Meter Size') }}</flux:label>
+                                    <flux:select wire:model="regForm.meterSize">
+                                        @foreach ($meterSizes as $v)
+                                            <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Meter Number') }}</flux:label>
+                                    <flux:input type="number" wire:model="regForm.meterNum" placeholder="10001" />
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Bill Serial Number') }}</flux:label>
+                                    <flux:input wire:model="regForm.billNum" placeholder="SN-0001" />
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Start Reading (m³)') }}</flux:label>
+                                    <flux:input type="number" step="0.01" wire:model="regForm.startValue" placeholder="0.00" />
+                                </flux:field>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Sold Date') }}</flux:label>
+                                    <flux:input type="date" wire:model="regForm.soldDate" />
+                                </flux:field>
+                            </div>
+                        </div>
+                    @else
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Customer Type') }}</flux:label>
+                                    <flux:select wire:model="regForm.customerType">
+                                        @foreach ($customerTypes as $v)
+                                            <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Payment Way') }}</flux:label>
+                                    <flux:select wire:model="regForm.paymentWay">
+                                        @foreach ($paymentWays as $v)
+                                            <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Customer Branch') }}</flux:label>
+                                    <flux:select wire:model="regForm.customerBranch">
+                                        @foreach ($branches as $v)
+                                            <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </flux:field>
+                            </div>
+
+                            <div>
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Customer Status') }}</flux:label>
+                                    <flux:select wire:model="regForm.customerStatus">
+                                        @foreach ($customerStatuses as $v)
+                                            <flux:select.option value="{{ $v }}">{{ $v }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                </flux:field>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <flux:field>
+                                    <flux:label class="text-xs font-bold text-slate-700 mb-1">{{ t('Reader Block') }}</flux:label>
+                                    <flux:input wire:model="regForm.readerBlock" placeholder="Block-A" />
+                                </flux:field>
+                            </div>
+                        </div>
+                    @endif
+                </flux:card>
+
+                <div class="flex items-center justify-between pt-2">
                     @if ($regStep > 1)
-                        <flux:button type="button" variant="subtle" wire:click="setRegStep({{ $regStep - 1 }})">Back</flux:button>
+                        <flux:button type="button" variant="subtle" icon="arrow-left" wire:click="setRegStep({{ $regStep - 1 }})">{{ t('Back') }}</flux:button>
                     @else
                         <div></div>
                     @endif
 
                     @if ($regStep < 3)
-                        <flux:button type="button" variant="primary" wire:click="setRegStep({{ $regStep + 1 }})">Next Step</flux:button>
+                        <flux:button type="button" variant="primary" icon="arrow-right" wire:click="setRegStep({{ $regStep + 1 }})">{{ t('Next Step') }}</flux:button>
                     @else
-                        <flux:button type="submit" variant="primary" icon="check">Complete Registration</flux:button>
+                        <flux:button type="submit" variant="primary" icon="check">{{ t('Complete Registration') }}</flux:button>
                     @endif
                 </div>
             </form>
@@ -634,98 +705,384 @@ new class extends Component
     </flux:modal>
 
     <!-- Comprehensive Customer Operations & 22-Field Edit Modal -->
-    <flux:modal name="edit-modal" class="md:w-[780px]">
+    <flux:modal name="edit-modal" class="!max-w-5xl !w-full">
         @if ($editingCustomer)
-            <div class="space-y-5">
+            <div x-data="{ activeTab: 'overview' }" class="space-y-4">
+                <!-- Modal Header -->
                 <div>
-                    <flux:heading size="lg">Customer Account Record — {{ $editingCustomer->meter_serial }}</flux:heading>
-                    <flux:subheading>{{ trim(($editingCustomer->first_name ?? '').' '.($editingCustomer->middle_name ?? '').' '.($editingCustomer->last_name ?? '')) }} &bull; Kebele: {{ $editingCustomer->kebele }} &bull; Status: {{ $editingCustomer->customer_status }}</flux:subheading>
+                    <flux:heading size="lg" class="flex items-center gap-3">
+                        <span>{{ t('Customer Account Record') }}</span>
+                        <span class="font-mono text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-300 text-sm font-bold">{{ $editingCustomer->meter_serial }}</span>
+                    </flux:heading>
+                    <flux:subheading class="mt-1">
+                        {{ trim(($editingCustomer->first_name ?? '').' '.($editingCustomer->middle_name ?? '').' '.($editingCustomer->last_name ?? '')) }}
+                        &bull; Kebele {{ $editingCustomer->kebele }}
+                        &bull;
+                        @if ($editingCustomer->customer_status === 'Active')
+                            <flux:badge color="emerald" icon="check" size="sm">{{ t('Active') }}</flux:badge>
+                        @elseif ($editingCustomer->customer_status === 'DC')
+                            <flux:badge color="rose" icon="x-mark" size="sm">{{ t('Disconnected') }}</flux:badge>
+                        @else
+                            <flux:badge color="amber" size="sm">{{ $editingCustomer->customer_status }}</flux:badge>
+                        @endif
+                        @php
+                            $typeColor = match(strtolower($editingCustomer->customer_type ?? '')) {
+                                'commercial' => 'indigo',
+                                'residential', 'domestic' => 'sky',
+                                'institutional', 'government' => 'purple',
+                                'public tap', 'public' => 'amber',
+                                default => 'zinc',
+                            };
+                        @endphp
+                        <flux:badge color="{{ $typeColor }}" size="sm">{{ $editingCustomer->customer_type }}</flux:badge>
+                    </flux:subheading>
                 </div>
 
-                <!-- Customer Account Details Card -->
-                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                    <div>
-                        <span class="text-slate-500 block">Phone:</span>
-                        <strong class="text-slate-900">{{ $editingCustomer->phone_number ?? '—' }}</strong>
+                <!-- Step / Tab Navigation — same style as register-modal step buttons -->
+                <div class="grid grid-cols-4 gap-2">
+                    <button type="button" x-on:click="activeTab = 'overview'"
+                        class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer"
+                        :class="activeTab === 'overview' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'">
+                        <span class="text-xs font-bold">1. {{ t('Account Overview') }}</span>
+                        <span x-show="activeTab !== 'overview'" class="opacity-40 text-[10px]">{!! icon('user', 12) !!}</span>
+                        <flux:badge x-show="activeTab === 'overview'" color="lime" size="sm" icon="check" />
+                    </button>
+
+                    <button type="button" x-on:click="activeTab = 'status'"
+                        class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer"
+                        :class="activeTab === 'status' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'">
+                        <span class="text-xs font-bold">2. {{ t('Status & Sync') }}</span>
+                        <span x-show="activeTab !== 'status'" class="opacity-40">{!! icon('shield', 12) !!}</span>
+                        <flux:badge x-show="activeTab === 'status'" color="lime" size="sm" icon="check" />
+                    </button>
+
+                    <button type="button" x-on:click="activeTab = 'fields'"
+                        class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer"
+                        :class="activeTab === 'fields' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'">
+                        <span class="text-xs font-bold">3. {{ t('Field Edits') }}</span>
+                        <span x-show="activeTab !== 'fields'" class="opacity-40">{!! icon('pencil-square', 12) !!}</span>
+                        <flux:badge x-show="activeTab === 'fields'" color="lime" size="sm" icon="check" />
+                    </button>
+
+                    <button type="button" x-on:click="activeTab = 'workflows'"
+                        class="p-2.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer"
+                        :class="activeTab === 'workflows' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'">
+                        <span class="text-xs font-bold">4. {{ t('Workflows') }}</span>
+                        <span x-show="activeTab !== 'workflows'" class="opacity-40">{!! icon('wrench', 12) !!}</span>
+                        <flux:badge x-show="activeTab === 'workflows'" color="lime" size="sm" icon="check" />
+                    </button>
+                </div>
+
+                <!-- Tab 1: Account Overview — two stacked wide cards like register-modal -->
+                <div x-show="activeTab === 'overview'" x-transition class="space-y-4">
+                    <flux:card class="p-5 bg-slate-50/50 border border-slate-200">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                            {!! icon('user', 13) !!}
+                            <span>{{ t('Customer Identity & Contact') }}</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('First Name') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->first_name ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Middle Name') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->middle_name ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Last Name') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->last_name ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Phone Number') }}</span>
+                                <strong class="text-slate-900 text-sm block font-mono">{{ $editingCustomer->phone_number ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Kebele / Zone') }}</span>
+                                <strong class="text-slate-900 text-sm block">Kebele {{ $editingCustomer->kebele ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Branch Office') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->customer_branch ?? 'Main' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Customer Type') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->customer_type }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Status') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->customer_status }}</strong>
+                            </div>
+                        </div>
+                    </flux:card>
+
+                    <flux:card class="p-5 bg-slate-50/50 border border-slate-200">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                            {!! icon('wrench', 13) !!}
+                            <span>{{ t('Meter & Billing Specifications') }}</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Meter Code') }}</span>
+                                <strong class="text-emerald-700 font-mono text-sm block">{{ $editingCustomer->meter_serial }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Meter Size') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->meter_size }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Meter Number') }}</span>
+                                <strong class="text-slate-900 font-mono text-sm block">{{ $editingCustomer->meter_num }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Bill Serial Num') }}</span>
+                                <strong class="text-emerald-700 font-mono text-sm block">{{ $editingCustomer->bill_num ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Start Reading (m³)') }}</span>
+                                <strong class="text-slate-900 font-mono text-sm block">{{ number_format($editingCustomer->start_value, 2) }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Payment Method') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->payment_way }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Reader Block') }}</span>
+                                <strong class="text-slate-900 font-mono text-sm block">{{ $editingCustomer->reader_block ?? '—' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ t('Registration Date') }}</span>
+                                <strong class="text-slate-900 text-sm block">{{ $editingCustomer->sold_date ?? '—' }}</strong>
+                            </div>
+                        </div>
+                    </flux:card>
+                </div>
+
+                <!-- Tab 2: Status & Sync Operations -->
+                <div x-show="activeTab === 'status'" x-transition>
+                    <flux:card class="p-5 bg-slate-50/50 border border-slate-200 space-y-4">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-slate-200">
+                            {!! icon('shield', 13) !!}
+                            <span>{{ t('Quick Status & Sync Operations') }}</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            <div class="p-3 rounded-xl border border-emerald-200 bg-white space-y-2">
+                                <div class="text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider">{{ t('Activate Service') }}</div>
+                                <p class="text-xs text-slate-500">{{ t('Mark this customer account as Active and restore service.') }}</p>
+                                <flux:button size="sm" variant="primary" icon="check" wire:click="updateCustomerStatus('Active')" class="w-full justify-center">{{ t('Re-Activate') }}</flux:button>
+                            </div>
+                            <div class="p-3 rounded-xl border border-rose-200 bg-white space-y-2">
+                                <div class="text-[10.5px] font-bold text-rose-700 uppercase tracking-wider">{{ t('Disconnect Service') }}</div>
+                                <p class="text-xs text-slate-500">{{ t('Mark this customer as Disconnected (DC) and halt service.') }}</p>
+                                <flux:button size="sm" variant="danger" icon="x-mark" wire:click="updateCustomerStatus('DC')" class="w-full justify-center">{{ t('Disconnect (DC)') }}</flux:button>
+                            </div>
+                            <div class="p-3 rounded-xl border border-slate-200 bg-white space-y-2">
+                                <div class="text-[10.5px] font-bold text-slate-600 uppercase tracking-wider">{{ t('Sync & Update') }}</div>
+                                <p class="text-xs text-slate-500">{{ t('Mark record as Updated or sync it to the central database.') }}</p>
+                                <div class="flex gap-2">
+                                    <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="updateCustomerStatus('Updated')">{{ t('Updated') }}</flux:button>
+                                    <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="syncCustomer">{{ t('Sync') }}</flux:button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200/80">
+                            <flux:button size="sm" variant="subtle" icon="trash" wire:click="updateCustomerStatus('Deleted')" wire:confirm="Mark this customer record as Deleted?">{{ t('Mark Record as Deleted') }}</flux:button>
+                        </div>
+                    </flux:card>
+                </div>
+
+                <!-- Tab 3: Field Modifications -->
+                <div x-show="activeTab === 'fields'" x-transition class="space-y-4">
+
+                    {{-- Header --}}
+                    <div class="flex items-center justify-between gap-3 pb-2 border-b border-slate-200">
+                        <div>
+                            <flux:heading size="md" class="flex items-center gap-2 font-bold text-slate-900">
+                                <flux:icon.pencil-square class="size-4 text-emerald-600" />
+                                <span>{{ t('Individual Field Modification Controls') }}</span>
+                            </flux:heading>
+                            <flux:subheading class="mt-0.5 text-xs text-slate-500">
+                                {{ t('Categorized record modifications matching Customer Registration Form schema') }}
+                            </flux:subheading>
+                        </div>
+                        <flux:badge color="emerald" size="sm" class="font-bold">12 {{ t('Fields') }}</flux:badge>
                     </div>
-                    <div>
-                        <span class="text-slate-500 block">Customer Type:</span>
-                        <strong class="text-slate-900">{{ $editingCustomer->customer_type }}</strong>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block">Meter Size:</span>
-                        <strong class="text-slate-900">{{ $editingCustomer->meter_size }} ({{ $editingCustomer->meter_num }})</strong>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block">Bill Serial Num:</span>
-                        <strong class="text-emerald-700 font-mono">{{ $editingCustomer->bill_num ?? '—' }}</strong>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block">Start Reading:</span>
-                        <strong class="text-slate-900 font-mono">{{ number_format($editingCustomer->start_value, 2) }} m³</strong>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block">Payment Way:</span>
-                        <strong class="text-slate-900">{{ $editingCustomer->payment_way }}</strong>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block">Branch:</span>
-                        <strong class="text-slate-900">{{ $editingCustomer->customer_branch }}</strong>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block">Reader Block:</span>
-                        <strong class="text-slate-900">{{ $editingCustomer->reader_block ?? '—' }}</strong>
+
+                    {{-- 3 Category Flux Cards --}}
+                    <div class="space-y-4">
+
+                        {{-- ── Card 1: Customer Identity ──────────────────────────── --}}
+                        <flux:card class="p-5 bg-white border border-slate-200/90 shadow-2xs rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="inline-flex items-center justify-center size-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <flux:icon.user class="size-4" />
+                                    </span>
+                                    <div>
+                                        <flux:heading size="sm" class="!font-bold text-slate-800">{{ t('Customer Identity & Personal Contact') }}</flux:heading>
+                                        <flux:subheading class="!text-[11px] text-slate-400">{{ t('Modify legal customer names and primary phone contact') }}</flux:subheading>
+                                    </div>
+                                </div>
+                                <flux:badge color="emerald" size="sm">4 {{ t('Fields') }}</flux:badge>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach([
+                                    ['first_name',   'First Name',   $editingCustomer->first_name   ?? null],
+                                    ['middle_name',  'Middle Name',  $editingCustomer->middle_name  ?? null],
+                                    ['last_name',    'Last Name',    $editingCustomer->last_name    ?? null],
+                                    ['phone_number', 'Phone Number', $editingCustomer->phone_number ?? null],
+                                ] as [$field, $label, $value])
+                                <div 
+                                    wire:click="openFieldUpdateModal('{{ $field }}', '{{ $label }}')"
+                                    class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 hover:border-emerald-400 hover:bg-emerald-50/30 transition-all duration-150 flex items-center justify-between gap-3 group cursor-pointer"
+                                >
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] font-extrabold text-slate-400 group-hover:text-emerald-700 uppercase tracking-wider block mb-0.5 transition-colors">{{ t($label) }}</span>
+                                        <strong class="text-sm font-bold text-slate-900 block truncate">{{ $value ?: '—' }}</strong>
+                                    </div>
+                                    <flux:button 
+                                        size="xs" 
+                                        variant="filled" 
+                                        icon="pencil"
+                                        x-on:click.stop="$el.classList.add('btn-pop'); setTimeout(() => $el.classList.remove('btn-pop'), 300)"
+                                        wire:click.stop="openFieldUpdateModal('{{ $field }}', '{{ $label }}')"
+                                        class="btn-edit-field shrink-0 !bg-emerald-600 !text-white hover:!bg-emerald-700 active:scale-95 transition-all"
+                                    >
+                                        {{ t('Edit') }}
+                                    </flux:button>
+                                </div>
+                                @endforeach
+                            </div>
+                        </flux:card>
+
+                        {{-- ── Card 2: Meter & Location ───────────────────────────── --}}
+                        <flux:card class="p-5 bg-white border border-slate-200/90 shadow-2xs rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="inline-flex items-center justify-center size-8 rounded-xl bg-sky-50 text-sky-700 border border-sky-200">
+                                        <flux:icon.map-pin class="size-4" />
+                                    </span>
+                                    <div>
+                                        <flux:heading size="sm" class="!font-bold text-slate-800">{{ t('Meter & Physical Location') }}</flux:heading>
+                                        <flux:subheading class="!text-[11px] text-slate-400">{{ t('Kebele location, customer type, meter size, and serial number') }}</flux:subheading>
+                                    </div>
+                                </div>
+                                <flux:badge color="sky" size="sm">4 {{ t('Fields') }}</flux:badge>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach([
+                                    ['kebele',        'Kebele',        $editingCustomer->kebele        ? 'Kebele '.$editingCustomer->kebele : null],
+                                    ['customer_type', 'Customer Type', $editingCustomer->customer_type ?? null],
+                                    ['meter_size',    'Meter Size',    $editingCustomer->meter_size    ?? null],
+                                    ['meter_num',     'Meter Number',  $editingCustomer->meter_num     ?? null],
+                                ] as [$field, $label, $value])
+                                <div 
+                                    wire:click="openFieldUpdateModal('{{ $field }}', '{{ $label }}')"
+                                    class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 hover:border-sky-400 hover:bg-sky-50/30 transition-all duration-150 flex items-center justify-between gap-3 group cursor-pointer"
+                                >
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] font-extrabold text-slate-400 group-hover:text-sky-700 uppercase tracking-wider block mb-0.5 transition-colors">{{ t($label) }}</span>
+                                        <strong class="text-sm font-bold text-slate-900 block truncate">{{ $value ?: '—' }}</strong>
+                                    </div>
+                                    <flux:button 
+                                        size="xs" 
+                                        variant="filled" 
+                                        icon="pencil"
+                                        x-on:click.stop="$el.classList.add('btn-pop'); setTimeout(() => $el.classList.remove('btn-pop'), 300)"
+                                        wire:click.stop="openFieldUpdateModal('{{ $field }}', '{{ $label }}')"
+                                        class="btn-edit-field shrink-0 !bg-sky-600 !text-white hover:!bg-sky-700 active:scale-95 transition-all"
+                                    >
+                                        {{ t('Edit') }}
+                                    </flux:button>
+                                </div>
+                                @endforeach
+                            </div>
+                        </flux:card>
+
+                        {{-- ── Card 3: Billing Parameters ─────────────────────────── --}}
+                        <flux:card class="p-5 bg-white border border-slate-200/90 shadow-2xs rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="inline-flex items-center justify-center size-8 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                        <flux:icon.receipt-percent class="size-4" />
+                                    </span>
+                                    <div>
+                                        <flux:heading size="sm" class="!font-bold text-slate-800">{{ t('Tariff & Billing Parameters') }}</flux:heading>
+                                        <flux:subheading class="!text-[11px] text-slate-400">{{ t('Payment channel, utility branch, bill serial number, and reader block') }}</flux:subheading>
+                                    </div>
+                                </div>
+                                <flux:badge color="indigo" size="sm">4 {{ t('Fields') }}</flux:badge>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach([
+                                    ['payment_way',     'Payment Way',     $editingCustomer->payment_way     ?? null],
+                                    ['customer_branch', 'Branch Office',   $editingCustomer->customer_branch ?? null],
+                                    ['bill_num',        'Bill Serial Num', $editingCustomer->bill_num        ?? null],
+                                    ['reader_block',    'Reader Block',    $editingCustomer->reader_block    ?? null],
+                                ] as [$field, $label, $value])
+                                <div 
+                                    wire:click="openFieldUpdateModal('{{ $field }}', '{{ $label }}')"
+                                    class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all duration-150 flex items-center justify-between gap-3 group cursor-pointer"
+                                >
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[10px] font-extrabold text-slate-400 group-hover:text-indigo-700 uppercase tracking-wider block mb-0.5 transition-colors">{{ t($label) }}</span>
+                                        <strong class="text-sm font-bold text-slate-900 block truncate">{{ $value ?: '—' }}</strong>
+                                    </div>
+                                    <flux:button 
+                                        size="xs" 
+                                        variant="filled" 
+                                        icon="pencil"
+                                        x-on:click.stop="$el.classList.add('btn-pop'); setTimeout(() => $el.classList.remove('btn-pop'), 300)"
+                                        wire:click.stop="openFieldUpdateModal('{{ $field }}', '{{ $label }}')"
+                                        class="btn-edit-field shrink-0 !bg-indigo-600 !text-white hover:!bg-indigo-700 active:scale-95 transition-all"
+                                    >
+                                        {{ t('Edit') }}
+                                    </flux:button>
+                                </div>
+                                @endforeach
+                            </div>
+                        </flux:card>
+
                     </div>
                 </div>
 
-                <!-- Quick Status Actions -->
-                <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status & Sync Controls</div>
-                    <div class="flex flex-wrap gap-2">
-                        <flux:button size="sm" variant="primary" icon="check" wire:click="updateCustomerStatus('Active')">Re-Activate</flux:button>
-                        <flux:button size="sm" variant="danger" icon="x-mark" wire:click="updateCustomerStatus('DC')">Disconnect (DC)</flux:button>
-                        <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="updateCustomerStatus('Updated')">Mark Updated</flux:button>
-                        <flux:button size="sm" variant="subtle" icon="trash" wire:click="updateCustomerStatus('Deleted')" wire:confirm="Mark this customer as Deleted?">Mark Deleted</flux:button>
-                        <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="syncCustomer">Sync Customer</flux:button>
-                    </div>
+
+
+
+
+                <!-- Tab 4: Special Workflows -->
+                <div x-show="activeTab === 'workflows'" x-transition>
+                    <flux:card class="p-5 bg-emerald-50/40 border border-emerald-200 space-y-4">
+                        <div class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-emerald-200/60">
+                            {!! icon('wrench', 13) !!}
+                            <span>{{ t('Special Enterprise Workflows') }}</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl border border-emerald-200 bg-white space-y-2">
+                                <div class="text-xs font-bold text-emerald-700">{{ t('Meter Owner Transfer') }}</div>
+                                <p class="text-xs text-slate-500">{{ t('Transfer the water meter account to a new owner with full name and details.') }}</p>
+                                <flux:button size="sm" variant="primary" icon="user" wire:click="openOwnerTransferModal" class="mt-1">{{ t('Start Owner Transfer') }}</flux:button>
+                            </div>
+                            <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                <div class="text-xs font-bold text-slate-700">{{ t('Install Replacement Meter') }}</div>
+                                <p class="text-xs text-slate-500">{{ t('Record a new meter serial and size to replace the existing meter on this account.') }}</p>
+                                <flux:button size="sm" variant="subtle" icon="wrench" wire:click="openInstallNewMeterModal" class="mt-1">{{ t('Install New Meter') }}</flux:button>
+                            </div>
+                        </div>
+                    </flux:card>
                 </div>
 
-                <!-- 22 Field Updates Grid -->
-                <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Individual Field Updates</div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('first_name', 'First Name')">First Name</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('middle_name', 'Middle Name')">Middle Name</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('last_name', 'Last Name')">Last Name</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('phone_number', 'Phone Number')">Phone Number</flux:button>
-
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('kebele', 'Kebele')">Kebele</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('customer_type', 'Customer Type')">Customer Type</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('meter_size', 'Meter Size')">Meter Size</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('meter_num', 'Meter Number')">Meter Number</flux:button>
-
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('payment_way', 'Payment Way')">Payment Way</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('customer_branch', 'Branch')">Branch</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('bill_num', 'Bill Serial Num')">Bill Number</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('reader_block', 'Reader Block')">Reader Block</flux:button>
-
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('start_value', 'Start Reading')">Start Reading</flux:button>
-                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('sold_date', 'Sold Date')">Sold Date</flux:button>
+                <!-- Bottom Action Row -->
+                <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div class="flex items-center gap-2 text-xs text-slate-400">
+                        {!! icon('clock', 13) !!}
+                        <span>{{ t('Account') }} #{{ $editingCustomer->id }} &bull; {{ $editingCustomer->meter_serial }}</span>
                     </div>
-                </div>
-
-                <!-- Special Workflow Operations -->
-                <div>
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Special Operations</div>
-                    <div class="flex flex-wrap gap-2">
-                        <flux:button size="sm" variant="subtle" icon="user" wire:click="openOwnerTransferModal">Meter Owner Transfer</flux:button>
-                        <flux:button size="sm" variant="subtle" icon="wrench" wire:click="openInstallNewMeterModal">Install New Meter</flux:button>
-                    </div>
-                </div>
-
-                <div class="flex justify-end pt-3">
                     <flux:modal.close>
-                        <flux:button variant="subtle">Close</flux:button>
+                        <flux:button variant="subtle">{{ t('Close Record') }}</flux:button>
                     </flux:modal.close>
                 </div>
             </div>
