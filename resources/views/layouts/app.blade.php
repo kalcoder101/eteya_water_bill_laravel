@@ -140,7 +140,7 @@
 <!-- ============================================================
      FLUX NATIVE SIDEBAR — EOS Modern Steward Redesign
      ============================================================ -->
-<flux:sidebar id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
+<aside id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
 
     <!-- 1. Brand header -->
     <div class="sidebar-brand shrink-0 flex items-center gap-3 px-4 py-4 border-b border-slate-200 bg-white">
@@ -201,7 +201,7 @@
             @csrf
         </form>
     </div>
-</flux:sidebar>
+</aside>
 
 <!-- ============================================================
      MAIN AREA

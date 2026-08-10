@@ -112,23 +112,27 @@
     .app-shell {
         display: block;
         min-height: 100vh;
+        overflow-x: hidden;
     }
 
     #mainSidebar {
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        bottom: 12px;
-        width: 264px;
-        min-width: 0;
-        z-index: 50;
-        border-radius: 18px;
-        transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: fixed !important;
+        top: 12px !important;
+        left: 12px !important;
+        bottom: 12px !important;
+        width: 264px !important;
+        min-width: 264px !important;
+        max-width: 264px !important;
+        z-index: 50 !important;
+        border-radius: 18px !important;
+        transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
         overflow: hidden;
     }
 
     .app-shell.sidebar-collapsed #mainSidebar {
-        width: 72px;
+        width: 72px !important;
+        min-width: 72px !important;
+        max-width: 72px !important;
         overflow: visible !important;
     }
 
@@ -143,10 +147,13 @@
 
     .main-area {
         min-height: 100vh;
-        margin-left: 288px;
-        transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-left: 288px !important;
+        transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        min-width: 0;
     }
-    .app-shell.sidebar-collapsed .main-area { margin-left: 96px; }
+    .app-shell.sidebar-collapsed .main-area {
+        margin-left: 96px !important;
+    }
 
     /* Category Accordion */
     .sidebar-category-body { display: none; }
