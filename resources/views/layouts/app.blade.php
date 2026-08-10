@@ -5,32 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $pageTitle ?? config('app.name') }} — {{ config('app.name') }}</title>
 
-<!-- Tailwind CSS 4 (browser CDN) + EOS Modern Steward theme tokens -->
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<style type="text/tailwindcss">
-@theme {
-    --color-primary: #059669;
-    --color-primary-600: #059669;
-    --color-primary-700: #047857;
-    --color-primary-800: #065F46;
-    --color-primary-50: #ECFDF5;
-    --color-primary-100: #D1FAE5;
-    --color-on-primary-container: #065F46;
-    --color-surface-base: #F8FAF8;
-    --color-surface-card: #FFFFFF;
-    --color-text-main: #0F172A;
-    --color-text-muted: #64748B;
-    --color-accent-warm: #E11D48;
-    --color-border-subtle: #E2E8F0;
+<!-- Tailwind CSS 4 + Flux UI (compiled via Vite) -->
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    --shadow-card: 0 4px 20px rgba(16, 185, 129, 0.05);
-    --shadow-hover: 0 10px 25px rgba(16, 185, 129, 0.12);
-
-    --font-sans: "Inter", "Noto Sans Ethiopic", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    --font-serif: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
-}
-</style>
+@fluxAppearance
 
 <link rel="stylesheet" href="{{ $baseUrl }}/assets/css/app.css?v={{ time() }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +18,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
-<body class="antialiased">
+<body class="min-h-screen bg-white dark:bg-zinc-800 antialiased">
 
 <!-- Splash loader -->
 <div id="eosSplashScreen" class="fixed inset-0 z-[300] bg-white flex flex-col items-center justify-center">
@@ -299,40 +277,65 @@
             <kbd class="absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-400">Ctrl K</kbd>
         </div>
 
-        @if (! empty($pageAction))
-        <x-button
-            variant="primary"
-            size="md"
-            :href="$pageAction['href'] ?? '#'"
-            :icon="$pageAction['icon'] ?? 'plus'"
-            :onclick="$pageAction['onclick'] ?? ''"
-            class="shrink-0 shadow-[0_4px_14px_rgba(5,150,105,0.35)] active:scale-[0.98]"
-        >
-            <span class="hidden sm:inline">{{ $pageAction['label'] ?? 'Action' }}</span>
-        </x-button>
-        @endif
+        <!-- Flux Options Dropdown with trailing chevron -->
+        <flux:dropdown>
+            <flux:button icon:trailing="chevron-down">Options</flux:button>
 
-        <!-- Language switcher (segmented) -->
-        <div class="hidden md:inline-flex items-center bg-slate-100 border border-slate-200 rounded-lg p-1 gap-0.5 shrink-0">
-            @foreach ($languages as $code => $info)
-                @php $isActive = $code === $currentLang; @endphp
-                <a href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
-                   class="px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition {{ $isActive ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}"
-                   title="{{ $info[0] }}">{{ $info[2] }}</a>
-            @endforeach
-        </div>
+            <flux:menu>
+                <flux:menu.item icon="plus">New Entry</flux:menu.item>
 
-        <!-- User chip -->
-        <div class="flex items-center gap-2.5 pl-2.5 pr-3 py-1.5 rounded-full bg-slate-50/80 border border-slate-200/80 shrink-0">
-            <div class="relative flex items-center">
-                <img src="{{ $photoUrl }}" alt="User photo" class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm">
-                <span class="absolute right-0 bottom-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
-            </div>
-            <div class="hidden sm:block">
-                <div class="text-[13px] font-bold text-slate-900 leading-tight max-w-[140px] truncate">{{ $fullName }}</div>
-                <div class="mt-0.5"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
-            </div>
-        </div>
+                <flux:menu.separator />
+
+                <flux:menu.submenu heading="Sort by">
+                    <flux:menu.radio.group>
+                        <flux:menu.radio checked>Name</flux:menu.radio>
+                        <flux:menu.radio>Date</flux:menu.radio>
+                        <flux:menu.radio>Status</flux:menu.radio>
+                    </flux:menu.radio.group>
+                </flux:menu.submenu>
+
+                <flux:menu.submenu heading="Filter">
+                    <flux:menu.checkbox checked>Active</flux:menu.checkbox>
+                    <flux:menu.checkbox checked>Pending</flux:menu.checkbox>
+                    <flux:menu.checkbox>Disconnected</flux:menu.checkbox>
+                </flux:menu.submenu>
+
+                <flux:menu.separator />
+
+                <flux:menu.item variant="danger" icon="trash">Delete Selected</flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
+
+        <!-- User → Flux dropdown -->
+        <flux:dropdown position="bottom" align="end" class="shrink-0">
+            <flux:profile :avatar="$photoUrl" :name="$fullName" />
+
+            <flux:menu>
+                <div class="px-3 py-2 text-xs">
+                    <div class="font-bold text-slate-900 truncate">{{ $fullName }}</div>
+                    <div class="text-slate-500 truncate">{{ get_role_display($user?->job_role ?? '') }}</div>
+                </div>
+
+                <flux:menu.separator />
+
+                <flux:menu.group heading="Language">
+                    @foreach ($languages as $code => $info)
+                        @php $isActive = $code === $currentLang; @endphp
+                        <flux:menu.item
+                            :href="request()->fullUrlWithQuery(['lang' => $code])"
+                            :active="$isActive"
+                        >{{ $info[0] }} ({{ $info[2] }})</flux:menu.item>
+                    @endforeach
+                </flux:menu.group>
+
+                <flux:menu.separator />
+
+                <form method="POST" action="{{ route('logout') }}" id="flux-logout-form" style="display:none">@csrf</form>
+                <flux:menu.item icon="log-out" variant="danger" x-data x-on:click="document.getElementById('flux-logout-form').submit()">
+                    {{ t('Logout') }}
+                </flux:menu.item>
+            </flux:menu>
+        </flux:dropdown>
     </header>
 
     <main class="content p-6 flex-1 max-w-[1600px] w-full mx-auto">
@@ -377,5 +380,9 @@
 })();
 </script>
 <script src="{{ $baseUrl }}/assets/js/app.js?v={{ time() }}"></script>
+
+<flux:toast />
+
+@fluxScripts
 </body>
 </html>

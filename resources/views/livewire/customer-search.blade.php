@@ -68,7 +68,7 @@
             <!-- Kebele Filter Dropdown -->
             <div class="shrink-0">
                 <x-select wire:model.live="kebele">
-                    <option value="all">📍 {{ t('All Kebeles') }}</option>
+                    <option value="all">{{ t('All Kebeles') }}</option>
                     @foreach ($kebeles as $k)
                         <option value="{{ $k }}">Kebele {{ $k }}</option>
                     @endforeach
@@ -78,7 +78,7 @@
             <!-- Customer Type Filter -->
             <div class="shrink-0">
                 <x-select wire:model.live="customerType">
-                    <option value="all">🏢 {{ t('All Customer Types') }}</option>
+                    <option value="all">{{ t('All Customer Types') }}</option>
                     @foreach ($types as $t)
                         <option value="{{ $t }}">{{ $t }}</option>
                     @endforeach
@@ -89,7 +89,7 @@
             @if(count($blocks) > 0)
             <div class="shrink-0">
                 <x-select wire:model.live="readerBlock">
-                    <option value="all">📦 {{ t('All Blocks') }}</option>
+                    <option value="all">{{ t('All Blocks') }}</option>
                     @foreach ($blocks as $b)
                         <option value="{{ $b }}">Block {{ $b }}</option>
                     @endforeach
