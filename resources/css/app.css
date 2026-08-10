@@ -108,98 +108,19 @@
     .chart-wrapper-md { min-height: 220px; height: 220px; position: relative; width: 100%; }
     canvas { max-width: 100%; }
 
-    /* App Shell + Sidebar layout */
+    /* App Shell layout */
     .app-shell {
-        display: block;
+        display: flex;
         min-height: 100vh;
-        overflow-x: hidden;
-    }
-
-    #mainSidebar {
-        position: fixed !important;
-        top: 12px !important;
-        left: 12px !important;
-        bottom: 12px !important;
-        width: 264px !important;
-        min-width: 264px !important;
-        max-width: 264px !important;
-        z-index: 50 !important;
-        border-radius: 18px !important;
-        transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        overflow: hidden;
-    }
-
-    .app-shell.sidebar-collapsed #mainSidebar {
-        width: 72px !important;
-        min-width: 72px !important;
-        max-width: 72px !important;
-        overflow: visible !important;
-    }
-
-    .sidebar-categories-container {
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    .app-shell.sidebar-collapsed .sidebar-categories-container {
-        overflow: visible !important;
+        width: 100%;
+        background-color: #F8FAF8;
     }
 
     .main-area {
         min-height: 100vh;
-        margin-left: 288px !important;
-        transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        flex: 1;
         min-width: 0;
     }
-    .app-shell.sidebar-collapsed .main-area {
-        margin-left: 96px !important;
-    }
-
-    /* Category Accordion */
-    .sidebar-category-body { display: none; }
-    .sidebar-category-group.open .sidebar-category-body { display: block; }
-    .sidebar-category-group.open .sidebar-category-header .chevron { transform: rotate(180deg); }
-
-    /* Collapsed sidebar adjustments */
-    .app-shell.sidebar-collapsed .sidebar-category-group { position: relative; display: flex; justify-content: center; margin-bottom: 10px; }
-    .app-shell.sidebar-collapsed .sidebar-category-header { width: 44px; height: 44px; padding: 0; margin: 0; justify-content: center; }
-    .app-shell.sidebar-collapsed .sidebar-category-header .cat-title,
-    .app-shell.sidebar-collapsed .sidebar-category-header .chevron,
-    .app-shell.sidebar-collapsed .sidebar-category-body { display: none !important; }
-
-    /* Category Flyout Panel on hover */
-    .category-flyout-panel { display: none; }
-    .app-shell.sidebar-collapsed .sidebar-category-group:hover .category-flyout-panel {
-        display: block !important;
-        position: absolute !important;
-        left: 100% !important;
-        top: -6px !important;
-        width: 280px !important;
-        padding-left: 12px !important;
-        z-index: 99999 !important;
-    }
-
-    .app-shell.sidebar-collapsed .sidebar-collapse-toggle svg { transform: scaleX(-1); }
-    .app-shell.sidebar-collapsed .sidebar-brand { flex-direction: column; gap: 12px; padding: 18px 10px 14px; }
-    .app-shell.sidebar-collapsed .sidebar-brand .brand-text { display: none; }
-    .app-shell.sidebar-collapsed .sidebar-nav a { justify-content: center; padding: 10px; }
-    .app-shell.sidebar-collapsed .sidebar-nav a .nav-label { display: none; }
-    .app-shell.sidebar-collapsed .sidebar-category-header .cat-icon { margin: 0; }
-    .app-shell.sidebar-collapsed .sidebar-footer { padding: 12px 0 14px; display: flex; flex-direction: column; align-items: center; }
-    .app-shell.sidebar-collapsed .sidebar-user { flex-direction: column; gap: 10px; }
-    .app-shell.sidebar-collapsed .sidebar-user .user-meta,
-    .app-shell.sidebar-collapsed .sidebar-footer .footer-meta { display: none; }
-
-    /* Flux UI Sidebar Collapsed Enhancements */
-    .app-shell.sidebar-collapsed [data-flux-brand] span:not(:first-child) { display: none !important; }
-    .app-shell.sidebar-collapsed [data-flux-navlist-group-heading] { display: none !important; }
-    .app-shell.sidebar-collapsed [data-flux-navlist-item] {
-        justify-content: center !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-    .app-shell.sidebar-collapsed [data-flux-navlist-item] span:not([data-flux-icon]) { display: none !important; }
-    .app-shell.sidebar-collapsed [data-flux-profile] > div:not(:first-child) { display: none !important; }
 
     /* Mobile Shell */
     @media (max-width: 767px) {

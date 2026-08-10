@@ -138,75 +138,84 @@
 @endphp
 
 <!-- ============================================================
-     FLUX NATIVE SIDEBAR — EOS Modern Steward Redesign
+     OFFICIAL FLUX COLLAPSIBLE SIDEBAR
      ============================================================ -->
-<aside id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
+<flux:sidebar sticky collapsible class="bg-white border-r border-slate-200">
+    <flux:sidebar.header>
+        <flux:sidebar.brand
+            href="{{ route('dashboard') }}"
+            logo="{{ $baseUrl }}/assets/images/Owater-logo.png"
+            name="{{ $brandShort ?? t('WaterSteward') }}"
+        />
+        <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
+    </flux:sidebar.header>
 
-    <!-- 1. Brand header -->
-    <div class="sidebar-brand shrink-0 flex items-center gap-3 px-4 py-4 border-b border-slate-200 bg-white">
-        <flux:brand href="{{ route('dashboard') }}" logo="{{ $baseUrl }}/assets/images/Owater-logo.png" name="{{ $brandShort ?? t('WaterSteward') }}" class="flex-1">
-            <span class="tag text-[10px] text-slate-500 truncate block">Water Supply & Sewerage Enterprise</span>
-        </flux:brand>
-        <flux:button size="sm" variant="subtle" icon="panel-left" class="sidebar-collapse-toggle" onclick="toggleSidebar(event)" title="{{ t('Collapse / Expand Sidebar') }}" />
-    </div>
+    <flux:sidebar.nav>
+        @foreach ($navGroups as $idx => $group)
+            <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid">
+                @foreach ($group['items'] as $item)
+                    <flux:sidebar.item
+                        :icon="$item['icon']"
+                        :href="route($item['route'])"
+                        wire:navigate
+                        :current="$currentPage === $item['page']"
+                    >
+                        {{ $item['label'] }}
+                    </flux:sidebar.item>
+                @endforeach
+            </flux:sidebar.group>
+        @endforeach
+    </flux:sidebar.nav>
 
-    <!-- 2. Category Navigation via Flux Navlist -->
-    <div class="sidebar-categories-container flex-1 p-3 space-y-3">
-        <flux:navlist>
-            @foreach ($navGroups as $idx => $group)
-                <flux:navlist.group heading="{{ $group['title'] }}" expandable class="sidebar-category-group {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
-                    @foreach ($group['items'] as $item)
-                        <flux:navlist.item
-                            :href="route($item['route'])"
-                            wire:navigate
-                            :icon="$item['icon']"
-                            :current="$currentPage === $item['page']"
-                        >
-                            {{ $item['label'] }}
-                        </flux:navlist.item>
-                    @endforeach
-                </flux:navlist.group>
+    <flux:sidebar.spacer />
 
-                <!-- Category flyout panel (collapsed hover) -->
-                <div class="category-flyout-panel">
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] p-3">
-                        <div class="flex items-center gap-2 pb-2.5 mb-2 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                            <span class="{{ $group['accent']['icon'] }}">{!! icon($group['icon'], 14) !!}</span>
-                            <span>{{ $group['title'] }}</span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            @foreach ($group['items'] as $item)
-                                <a href="{{ route($item['route']) }}" wire:navigate class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
-                                    <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
-                                        <span class="block text-[11px] text-slate-500 leading-snug mt-0.5">{{ $item['desc'] }}</span>
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </flux:navlist>
-    </div>
+    <flux:dropdown position="top" align="start" class="max-lg:hidden">
+        <flux:sidebar.profile :avatar="$photoUrl" :name="$fullName" />
 
-    <!-- 3. User Profile Footer -->
-    <div class="sidebar-footer shrink-0 px-4 py-3.5 border-t border-slate-200 bg-white">
-        <div class="sidebar-user flex items-center gap-2.5 min-w-0">
-            <flux:profile :avatar="$photoUrl" :name="$fullName" :extra="get_role_display($user?->job_role ?? '')" class="flex-1" />
-            <flux:button variant="subtle" size="sm" icon="arrow-right-start-on-rectangle" class="logout-link" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" />
-        </div>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-            @csrf
-        </form>
-    </div>
-</aside>
+        <flux:menu>
+            <div class="px-3 py-2 text-xs font-semibold text-slate-700">
+                <div>{{ $fullName }}</div>
+                <div class="text-[11px] text-slate-400 font-normal">{{ get_role_display($user?->job_role ?? '') }}</div>
+            </div>
+
+            <flux:menu.separator />
+
+            <form method="POST" action="{{ route('logout') }}" id="flux-sidebar-logout" style="display:none">@csrf</form>
+            <flux:menu.item icon="arrow-right-start-on-rectangle" variant="danger" onclick="document.getElementById('flux-sidebar-logout').submit()">
+                {{ t('Logout') }}
+            </flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+</flux:sidebar>
+
+<flux:header class="lg:hidden">
+    <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+
+    <flux:spacer />
+
+    <flux:dropdown position="top" align="start">
+        <flux:profile :avatar="$photoUrl" />
+
+        <flux:menu>
+            <div class="px-3 py-2 text-xs font-semibold text-slate-700">
+                <div>{{ $fullName }}</div>
+                <div class="text-[11px] text-slate-400 font-normal">{{ get_role_display($user?->job_role ?? '') }}</div>
+            </div>
+
+            <flux:menu.separator />
+
+            <form method="POST" action="{{ route('logout') }}" id="mobile-logout-form" style="display:none">@csrf</form>
+            <flux:menu.item icon="arrow-right-start-on-rectangle" variant="danger" onclick="document.getElementById('mobile-logout-form').submit()">
+                {{ t('Logout') }}
+            </flux:menu.item>
+        </flux:menu>
+    </flux:dropdown>
+</flux:header>
 
 <!-- ============================================================
      MAIN AREA
      ============================================================ -->
-<div class="main-area flex flex-col min-w-0">
+<div class="main-area flex flex-col min-w-0 flex-1">
 
     <!-- Topbar — floating card (EOS Modern Steward) -->
     <header class="topbar sticky top-3 z-[40] flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 mx-3 rounded-2xl bg-white/80 backdrop-blur-xl border border-slate-200/90 shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
@@ -235,7 +244,6 @@
             />
             <kbd class="absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-400">Ctrl K</kbd>
         </div>
-
 
         <!-- User → Flux dropdown -->
         <flux:dropdown position="bottom" align="end" class="shrink-0">
