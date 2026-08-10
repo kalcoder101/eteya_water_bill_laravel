@@ -23,6 +23,8 @@ new class extends Component
     #[Url(except: '')]
     public string $search = '';
 
+    public ?BillFinance $selectedBill = null;
+
     public function mount(): void
     {
         if (empty($this->year)) {
@@ -148,6 +150,16 @@ new class extends Component
         }
     }
 
+    public function previewReceipt(string $billFinanceId): void
+    {
+        $this->selectedBill = BillFinance::with('customer')->where('bill_finance_id', $billFinanceId)->first();
+        if ($this->selectedBill) {
+            $this->modal('receipt-modal')->show();
+        } else {
+            Flux::toast('Bill record not found.', variant: 'danger');
+        }
+    }
+
     public function render(): mixed
     {
         $months = faan_oromo_months();
@@ -215,25 +227,29 @@ new class extends Component
                 <flux:badge color="emerald" size="sm" class="ml-1">{{ $year }} {{ $month }}</flux:badge>
             </p>
         </div>
-        <div class="flex flex-wrap items-end gap-3">
-            <div class="period-picker flex flex-wrap gap-3 items-end bg-white p-3 border border-slate-200 rounded-lg">
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ t('Year') }}:</label>
-                    <select wire:model.live="year" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+
+        <!-- Period Picker Toolbar -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 bg-white p-2.5 border border-slate-200 rounded-xl shadow-xs">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('Year') }}:</span>
+                    <select wire:model.live="year" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
                         @foreach ($years as $y)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ t('Month') }}:</label>
-                    <select wire:model.live="month" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ t('Month') }}:</span>
+                    <select wire:model.live="month" class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
                         @foreach ($months as $m)
                             <option value="{{ $m }}">{{ $m }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
+
             <flux:button variant="primary" icon="bolt" wire:click="calculateBills" wire:confirm="Calculate and generate bills for {{ $year }} {{ $month }}?">
                 {{ t('Calculate Bills') }}
             </flux:button>
@@ -244,7 +260,7 @@ new class extends Component
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <x-kpi :label="t('Total Bills Generated')" :value="number_format($allCount)" :subvalue="number_format($totalAmount, 0).' ETB Total'" icon="receipt" color="emerald" />
         <x-kpi :label="t('Paid Revenue')" :value="number_format($paidAmount, 0).' ETB'" :subvalue="$paidCount.' Paid ('.($allCount > 0 ? number_format(($paidCount/$allCount)*100, 1) : 0).'%)'" icon="check" color="emerald" :active="true" />
-        <x-kpi :label="t('Unpaid Balance')" :value="number_format($unpaidAmount, 0).' ETB'" :subvalue="$unpaidCount.' Pending Accounts'" icon="alert" color="rose" />
+        <x-kpi :label="t('Unpaid Balance')" :value="number_format($unpaidAmount, 0).' ETB'" :subvalue="$unpaidCount.' Pending Accounts'" icon="x-mark" color="rose" />
         <x-kpi :label="t('Average Bill')" :value="number_format($allCount > 0 ? $totalAmount / $allCount : 0, 0).' ETB'" :subvalue="t('Per customer account')" icon="water" color="sky" />
     </div>
 
@@ -253,7 +269,7 @@ new class extends Component
         <div class="segmented bg-slate-100 p-1">
             <button type="button" class="{{ $filterStatus==='all'?'active':'' }}" wire:click="setFilterStatus('all')">{{ t('All Bills') }} ({{ $allCount }})</button>
             <button type="button" class="{{ $filterStatus==='Paid'?'active':'' }}" wire:click="setFilterStatus('Paid')">{!! icon('check', 12) !!} {{ t('Paid') }} ({{ $paidCount }})</button>
-            <button type="button" class="{{ $filterStatus==='Unpaid'?'active':'' }}" wire:click="setFilterStatus('Unpaid')">{!! icon('alert', 12) !!} {{ t('Unpaid') }} ({{ $unpaidCount }})</button>
+            <button type="button" class="{{ $filterStatus==='Unpaid'?'active':'' }}" wire:click="setFilterStatus('Unpaid')">{!! icon('x-mark', 12) !!} {{ t('Unpaid') }} ({{ $unpaidCount }})</button>
         </div>
 
         <div class="relative flex-1 min-w-[220px] max-w-[360px]">
@@ -326,11 +342,14 @@ new class extends Component
                             </td>
                             <td class="px-4 py-2.5 text-slate-700 align-middle">
                                 <div class="flex items-center justify-end gap-2">
+                                    <flux:button variant="subtle" size="sm" icon="eye" wire:click="previewReceipt('{{ $b->bill_finance_id }}')" title="{{ t('Preview Receipt') }}">
+                                        {{ t('Preview') }}
+                                    </flux:button>
                                     <flux:button variant="subtle" size="sm" icon="printer" href="{{ route('bills.print', $b->bill_finance_id) }}" target="_blank" title="{{ t('Print Receipt') }}">
                                         {{ t('Print') }}
                                     </flux:button>
                                     @if ($b->payment_status !== 'Paid')
-                                        <flux:button variant="primary" size="sm" icon="check" wire:click="markPaid('{{ $b->bill_finance_id }}')" title="{{ t('Mark Paid') }}">
+                                        <flux:button variant="primary" size="sm" icon="check" wire:click="markPaid('{{ $b->bill_finance_id }}')" wire:confirm="Mark bill for {{ $b->meter_serial }} as Paid?" title="{{ t('Mark Paid') }}">
                                             {{ t('Pay') }}
                                         </flux:button>
                                     @endif
@@ -356,4 +375,60 @@ new class extends Component
             </div>
         </div>
     </flux:card>
+
+    <!-- Quick Receipt Preview Modal -->
+    <flux:modal name="receipt-modal" class="md:w-[540px]">
+        @if ($selectedBill)
+            <div class="space-y-4">
+                <div>
+                    <flux:heading size="lg">Water Utility Receipt Voucher</flux:heading>
+                    <flux:subheading>Meter Serial: {{ $selectedBill->meter_serial }} &bull; Period: {{ $selectedBill->bill_period }}</flux:subheading>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs space-y-2">
+                    <div class="flex justify-between border-b border-slate-200 pb-2">
+                        <span>Customer Name:</span>
+                        <strong class="text-slate-900">{{ $selectedBill->customer ? trim(($selectedBill->customer->first_name ?? '').' '.($selectedBill->customer->middle_name ?? '').' '.($selectedBill->customer->last_name ?? '')) : $selectedBill->full_name }}</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Water Consumption:</span>
+                        <span>{{ number_format($selectedBill->consumption, 1) }} m³</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Consumption Cost:</span>
+                        <span>{{ number_format($selectedBill->consumption_cost, 0) }} ETB</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Meter Rent Fee:</span>
+                        <span>{{ number_format($selectedBill->meter_price, 0) }} ETB</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Service Fee:</span>
+                        <span>{{ number_format($selectedBill->service_price, 0) }} ETB</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Penalty Cost:</span>
+                        <span>{{ number_format($selectedBill->penalty_cost, 0) }} ETB</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Community Water Fund:</span>
+                        <span>{{ number_format($selectedBill->state_price, 0) }} ETB</span>
+                    </div>
+                    <div class="flex justify-between border-t-2 border-slate-800 pt-2 text-sm font-extrabold text-emerald-800">
+                        <span>TOTAL MONTHLY COST:</span>
+                        <span>{{ number_format($selectedBill->total_monthly_cost, 0) }} ETB</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 justify-end pt-2">
+                    <flux:modal.close>
+                        <flux:button variant="subtle">Close</flux:button>
+                    </flux:modal.close>
+                    <flux:button variant="primary" icon="printer" href="{{ route('bills.print', $selectedBill->bill_finance_id) }}" target="_blank">
+                        Print Official Receipt
+                    </flux:button>
+                </div>
+            </div>
+        @endif
+    </flux:modal>
 </div>
