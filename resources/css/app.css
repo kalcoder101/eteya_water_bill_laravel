@@ -320,7 +320,14 @@
         margin: 0 auto !important;
     }
 
-    /* Straight Vertical Centerline Alignment for Collapsed Sidebar */
+    /* Precision X-Center Alignment for Collapsed Sidebar Elements */
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar],
+    .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
     [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-header],
     .in-data-flux-sidebar-collapsed-desktop [data-flux-sidebar-header],
     [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-nav],
@@ -348,6 +355,7 @@
     .in-data-flux-sidebar-collapsed-desktop [data-flux-profile] {
         margin-left: auto !important;
         margin-right: auto !important;
+        align-self: center !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
