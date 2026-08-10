@@ -541,7 +541,7 @@ new class extends Component
                 <div class="flex flex-wrap gap-2">
                     <flux:button size="sm" variant="primary" icon="check" wire:click="updateCustomerStatus('Active')">Re-Activate</flux:button>
                     <flux:button size="sm" variant="danger" icon="x-mark" wire:click="updateCustomerStatus('DC')">Disconnect (DC)</flux:button>
-                    <flux:button size="sm" variant="subtle" icon="refresh" wire:click="updateCustomerStatus('Updated')">Mark Updated</flux:button>
+                    <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="updateCustomerStatus('Updated')">Mark Updated</flux:button>
                 </div>
 
                 <div class="text-xs font-bold text-slate-500 uppercase tracking-wider pt-2">Field Updates</div>
