@@ -57,9 +57,11 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Auto-apply saved sidebar state
-document.addEventListener('DOMContentLoaded', function() {
+function applySavedSidebarState() {
     if (localStorage.getItem('watersteward_sidebar_collapsed') === 'true') {
         var shell = document.querySelector('.app-shell');
         if (shell) shell.classList.add('sidebar-collapsed');
     }
-});
+}
+document.addEventListener('DOMContentLoaded', applySavedSidebarState);
+document.addEventListener('livewire:navigated', applySavedSidebarState);

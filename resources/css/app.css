@@ -183,6 +183,17 @@
     .app-shell.sidebar-collapsed .sidebar-user .user-meta,
     .app-shell.sidebar-collapsed .sidebar-footer .footer-meta { display: none; }
 
+    /* Flux UI Sidebar Collapsed Enhancements */
+    .app-shell.sidebar-collapsed [data-flux-brand] span:not(:first-child) { display: none !important; }
+    .app-shell.sidebar-collapsed [data-flux-navlist-group-heading] { display: none !important; }
+    .app-shell.sidebar-collapsed [data-flux-navlist-item] {
+        justify-content: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .app-shell.sidebar-collapsed [data-flux-navlist-item] span:not([data-flux-icon]) { display: none !important; }
+    .app-shell.sidebar-collapsed [data-flux-profile] > div:not(:first-child) { display: none !important; }
+
     /* Mobile Shell */
     @media (max-width: 767px) {
         .main-area,
