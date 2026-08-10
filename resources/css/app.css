@@ -319,6 +319,23 @@
     .in-data-flux-sidebar-collapsed-desktop button[data-flux-sidebar-collapse] {
         margin: 0 auto !important;
     }
+
+    /* Strict Collapsed Sidebar 40px Container X-Center Alignment (Desktop Collapsed Only) */
+    [data-flux-sidebar-collapsed-desktop] [data-flux-brand],
+    [data-flux-sidebar-collapsed-desktop] button[data-flux-sidebar-collapse],
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-item]:not([data-flux-sidebar-group-dropdown] *),
+    [data-flux-sidebar-collapsed-desktop] [data-flux-sidebar-group-dropdown] > button,
+    [data-flux-sidebar-collapsed-desktop] [data-flux-profile] {
+        width: 2.5rem !important;
+        min-width: 2.5rem !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 }
 
 @layer utilities {
