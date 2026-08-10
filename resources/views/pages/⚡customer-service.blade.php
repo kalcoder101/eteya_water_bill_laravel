@@ -675,7 +675,7 @@ new class extends Component
                         <flux:button size="sm" variant="danger" icon="x-mark" wire:click="updateCustomerStatus('DC')">Disconnect (DC)</flux:button>
                         <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="updateCustomerStatus('Updated')">Mark Updated</flux:button>
                         <flux:button size="sm" variant="subtle" icon="trash" wire:click="updateCustomerStatus('Deleted')" wire:confirm="Mark this customer as Deleted?">Mark Deleted</flux:button>
-                        <flux:button size="sm" variant="subtle" icon="arrow-path-round-down" wire:click="syncCustomer">Sync Customer</flux:button>
+                        <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="syncCustomer">Sync Customer</flux:button>
                     </div>
                 </div>
 
