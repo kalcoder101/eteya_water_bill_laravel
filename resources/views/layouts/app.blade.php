@@ -141,7 +141,7 @@
      SIDEBAR — Floating light utility card (EOS Modern Steward)
      THESIS / OWN-WORLD / STORY: see DESIGN.md.
      ============================================================ -->
-<aside id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden">
+<aside id="mainSidebar" class="sidebar flex flex-col bg-white border border-slate-200 rounded-[18px] shadow-[0_8px_30px_rgba(15,23,42,0.06),0_2px_8px_rgba(15,23,42,0.04)]">
 
     <!-- 1. Brand header -->
     <div class="sidebar-brand shrink-0 flex items-center gap-3 px-5 py-4 border-b border-slate-200 bg-white">
@@ -162,7 +162,7 @@
     </div>
 
     <!-- 2. Category navigation -->
-    <div class="sidebar-categories-container flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-2">
+    <div class="sidebar-categories-container flex-1 p-3 space-y-2">
     @foreach ($navGroups as $idx => $group)
         <div class="sidebar-category-group relative {{ ($group['hasActive'] || ($currentPage === 'dashboard' && $idx === 0)) ? 'open' : '' }}">
             <div class="sidebar-category-header flex items-center gap-2.5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg cursor-pointer select-none transition {{ $group['hasActive'] ? $group['accent']['soft'].' '.$group['accent']['icon'] : '' }}"

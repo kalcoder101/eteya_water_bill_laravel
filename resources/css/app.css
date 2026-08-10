@@ -112,11 +112,21 @@
         z-index: 50;
         border-radius: 18px;
         transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
     }
 
     .app-shell.sidebar-collapsed #mainSidebar {
         width: 72px;
-        overflow: visible;
+        overflow: visible !important;
+    }
+
+    .sidebar-categories-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .app-shell.sidebar-collapsed .sidebar-categories-container {
+        overflow: visible !important;
     }
 
     .main-area {
@@ -131,10 +141,8 @@
     .sidebar-category-group.open .sidebar-category-body { display: block; }
     .sidebar-category-group.open .sidebar-category-header .chevron { transform: rotate(180deg); }
 
-    .app-shell.sidebar-collapsed .sidebar-categories-container { overflow: visible; }
-
     /* Collapsed sidebar adjustments */
-    .app-shell.sidebar-collapsed .sidebar-category-group { display: flex; justify-content: center; margin-bottom: 10px; }
+    .app-shell.sidebar-collapsed .sidebar-category-group { position: relative; display: flex; justify-content: center; margin-bottom: 10px; }
     .app-shell.sidebar-collapsed .sidebar-category-header { width: 44px; height: 44px; padding: 0; margin: 0; justify-content: center; }
     .app-shell.sidebar-collapsed .sidebar-category-header .cat-title,
     .app-shell.sidebar-collapsed .sidebar-category-header .chevron,
@@ -143,13 +151,13 @@
     /* Category Flyout Panel on hover */
     .category-flyout-panel { display: none; }
     .app-shell.sidebar-collapsed .sidebar-category-group:hover .category-flyout-panel {
-        display: block;
-        position: absolute;
-        left: 100%;
-        top: -6px;
-        width: 280px;
-        padding-left: 12px;
-        z-index: 9999;
+        display: block !important;
+        position: absolute !important;
+        left: 100% !important;
+        top: -6px !important;
+        width: 280px !important;
+        padding-left: 12px !important;
+        z-index: 99999 !important;
     }
 
     .app-shell.sidebar-collapsed .sidebar-collapse-toggle svg { transform: scaleX(-1); }
