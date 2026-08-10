@@ -215,23 +215,7 @@
         height: 20px !important;
     }
 
-    /* Category Flyout Panel on Hover (Collapsed Mode) */
-    .category-flyout-panel {
-        display: none;
-    }
 
-    [data-flux-sidebar][data-flux-sidebar-collapsed] [data-flux-navlist-group]:hover .category-flyout-panel,
-    [data-flux-sidebar-collapsed-desktop] [data-flux-navlist-group]:hover .category-flyout-panel,
-    .app-shell.sidebar-collapsed .sidebar-category-group:hover .category-flyout-panel,
-    .in-data-flux-sidebar-collapsed-desktop [data-flux-navlist-group]:hover .category-flyout-panel {
-        display: block !important;
-        position: absolute !important;
-        left: 100% !important;
-        top: 0 !important;
-        width: 280px !important;
-        padding-left: 12px !important;
-        z-index: 99999 !important;
-    }
 
     /* Mobile Shell */
     @media (max-width: 767px) {
