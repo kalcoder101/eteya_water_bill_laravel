@@ -18,7 +18,9 @@
     </div>
     <div class="flex items-center gap-2.5">
         @if (! empty($customer))
-            <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">{!! icon('print', 14) !!} {{ t('Print Statement') }}</button>
+            <x-button variant="secondary" icon="print" type="button" onclick="window.print()">
+                {{ t('Print Statement') }}
+            </x-button>
         @endif
     </div>
 </div>
@@ -49,7 +51,9 @@
             </select>
         </div>
 
-        <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('search', 15) !!} {{ t('Load Ledger') }}</button>
+        <x-button type="submit" variant="primary" icon="search">
+            {{ t('Load Ledger') }}
+        </x-button>
     </form>
 </div>
 
@@ -273,12 +277,12 @@
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Update Start Reading (m³)') }}</label>
                     <div class="flex gap-1.5">
                         <input type="number" step="0.01" id="startReading" value="{{ $customer->start_value }}" class="flex-1 px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
-                        <button type="button" onclick="updateStartReading()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('check', 14) !!}</button>
+                        <x-icon-button variant="emerald" icon="check" type="button" onclick="updateStartReading()" :title="t('Save Start Reading')" />
                     </div>
                 </div>
-                <button type="button" onclick="disconnectCustomer()" class="w-full mt-2 inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition">
-                    {!! icon('x', 14) !!} {{ t('Disconnect Customer (DC)') }}
-                </button>
+                <x-button type="button" onclick="disconnectCustomer()" class="w-full justify-center mt-2" icon="x" variant="soft">
+                    {{ t('Disconnect Customer (DC)') }}
+                </x-button>
             </div>
         </div>
     </div>

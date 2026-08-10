@@ -153,7 +153,9 @@
                                 <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">{{ t('Customer Code') }} <span class="text-rose-500">*</span></label>
                                 <div class="flex gap-2">
                                     <input type="text" name="meterSerial" required class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 placeholder:text-slate-400" placeholder="ETY-0001">
-                                    <button type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition shrink-0" onclick="generateCode()">{!! icon('refresh', 12) !!} {{ t('Auto') }}</button>
+                                    <x-button variant="secondary" size="md" icon="refresh" type="button" onclick="generateCode()" class="shrink-0">
+                                        {{ t('Auto') }}
+                                    </x-button>
                                 </div>
                             </div>
                             <div>
@@ -266,11 +268,17 @@
             </form>
         </div>
         <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end shrink-0">
-            <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" id="regPrevBtn" onclick="prevRegStep()" style="display:none;">&larr; {{ t('Previous') }}</button>
+            <x-button variant="secondary" type="button" id="regPrevBtn" onclick="prevRegStep()" style="display:none;">&larr; {{ t('Previous') }}</x-button>
             <span class="flex-1"></span>
-            <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="closeModal('registerModal')">{{ t('Cancel') }}</button>
-            <button type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" id="regNextBtn" onclick="nextRegStep()">{{ t('Next Step') }} &rarr;</button>
-            <button type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" id="regSubmitBtn" onclick="submitRegister()" style="display:none;">{!! icon('check', 16) !!} {{ t('Complete Registration') }}</button>
+            <x-button variant="secondary" type="button" onclick="closeModal('registerModal')">
+                {{ t('Cancel') }}
+            </x-button>
+            <x-button variant="primary" type="button" id="regNextBtn" onclick="nextRegStep()">
+                {{ t('Next Step') }} &rarr;
+            </x-button>
+            <x-button variant="primary" icon="check" type="button" id="regSubmitBtn" onclick="submitRegister()" style="display:none;">
+                {{ t('Complete Registration') }}
+            </x-button>
         </div>
     </div>
 </div>
@@ -297,28 +305,30 @@
                 <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-first-name', ['meterSerial','firstName'], 'Update First Name')">{!! icon('edit', 14) !!} Update First Name</button>
                 <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-middle-name', ['meterSerial','middleName'], 'Update Middle Name')">{!! icon('edit', 14) !!} Update Middle Name</button>
                 <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-last-name', ['meterSerial','lastName'], 'Update Last Name')">{!! icon('edit', 14) !!} Update Last Name</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-phone-number', ['meterSerial','phoneNumber'], 'Update Phone Number')">{!! icon('phone', 14) !!} Update Phone</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-kebele', ['meterSerial','kebele'], 'Update Kebele')">{!! icon('map-pin', 14) !!} Update Kebele</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-customer-type', ['meterSerial','customerType'], 'Update Customer Type', {customerType: {{ json_encode($customerTypes) }} })">{!! icon('tag', 14) !!} Customer Type</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-meter-size', ['meterSerial','meterSize','meterNum'], 'Update Meter Size', {meterSize: {{ json_encode($meterSizes) }} })">{!! icon('edit', 14) !!} Meter Size</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-payment-way', ['meterSerial','paymentWay'], 'Update Payment Way', {paymentWay: {{ json_encode($paymentWays) }} })">{!! icon('credit-card', 14) !!} Payment Way</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-customer-branch', ['meterSerial','customerBranch'], 'Update Branch', {customerBranch: {{ json_encode($branches) }} })">{!! icon('building', 14) !!} Branch</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-bill-num', ['meterSerial','billNum'], 'Update Bill Number')">{!! icon('receipt', 14) !!} Bill Number</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-reader-block', ['meterSerial','readerBlock'], 'Update Reader Block')">{!! icon('alert', 14) !!} Reader Block</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="promptUpdate('update-start-reading', ['meterSerial','startValue'], 'Update Start Reading')">{!! icon('clock', 14) !!} Start Reading</button>
+                <x-button variant="secondary" size="sm" icon="phone" type="button" onclick="promptUpdate('update-phone-number', ['meterSerial','phoneNumber'], 'Update Phone Number')">Update Phone</x-button>
+                <x-button variant="secondary" size="sm" icon="map-pin" type="button" onclick="promptUpdate('update-kebele', ['meterSerial','kebele'], 'Update Kebele')">Update Kebele</x-button>
+                <x-button variant="secondary" size="sm" icon="tag" type="button" onclick="promptUpdate('update-customer-type', ['meterSerial','customerType'], 'Update Customer Type', {customerType: {{ json_encode($customerTypes) }} })">Customer Type</x-button>
+                <x-button variant="secondary" size="sm" icon="edit" type="button" onclick="promptUpdate('update-meter-size', ['meterSerial','meterSize','meterNum'], 'Update Meter Size', {meterSize: {{ json_encode($meterSizes) }} })">Meter Size</x-button>
+                <x-button variant="secondary" size="sm" icon="credit-card" type="button" onclick="promptUpdate('update-payment-way', ['meterSerial','paymentWay'], 'Update Payment Way', {paymentWay: {{ json_encode($paymentWays) }} })">Payment Way</x-button>
+                <x-button variant="secondary" size="sm" icon="building" type="button" onclick="promptUpdate('update-customer-branch', ['meterSerial','customerBranch'], 'Update Branch', {customerBranch: {{ json_encode($branches) }} })">Branch</x-button>
+                <x-button variant="secondary" size="sm" icon="receipt" type="button" onclick="promptUpdate('update-bill-num', ['meterSerial','billNum'], 'Update Bill Number')">Bill Number</x-button>
+                <x-button variant="secondary" size="sm" icon="alert" type="button" onclick="promptUpdate('update-reader-block', ['meterSerial','readerBlock'], 'Update Reader Block')">Reader Block</x-button>
+                <x-button variant="secondary" size="sm" icon="clock" type="button" onclick="promptUpdate('update-start-reading', ['meterSerial','startValue'], 'Update Start Reading')">Start Reading</x-button>
 
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition" onclick="updateStatus('Updated')">{!! icon('tag', 14) !!} Mark Updated</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition" onclick="updateStatus('DC')">{!! icon('zap', 14) !!} Disconnect (DC)</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition" onclick="updateStatus('Active')">{!! icon('check', 14) !!} Re-Activate</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition" onclick="updateStatus('Deleted')">{!! icon('x', 14) !!} Mark Deleted</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition" onclick="syncOne()">{!! icon('sync', 14) !!} Sync Customer</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="submitLocation()">{!! icon('map-pin', 14) !!} GPS Location</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="meterOwnerTransfer()">{!! icon('sync', 14) !!} Owner Transfer</button>
-                <button type="button" class="inline-flex items-center justify-start gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="changeNewMeter()">{!! icon('wrench', 14) !!} Install New Meter</button>
+                <x-button variant="amber" size="sm" icon="tag" type="button" onclick="updateStatus('Updated')">Mark Updated</x-button>
+                <x-button variant="amber" size="sm" icon="zap" type="button" onclick="updateStatus('DC')">Disconnect (DC)</x-button>
+                <x-button variant="primary" size="sm" icon="check" type="button" onclick="updateStatus('Active')">Re-Activate</x-button>
+                <x-button variant="danger" size="sm" icon="x" type="button" onclick="updateStatus('Deleted')">Mark Deleted</x-button>
+                <x-button variant="primary" size="sm" icon="sync" type="button" onclick="syncOne()">Sync Customer</x-button>
+                <x-button variant="secondary" size="sm" icon="map-pin" type="button" onclick="submitLocation()">GPS Location</x-button>
+                <x-button variant="secondary" size="sm" icon="sync" type="button" onclick="meterOwnerTransfer()">Owner Transfer</x-button>
+                <x-button variant="secondary" size="sm" icon="wrench" type="button" onclick="changeNewMeter()">Install New Meter</x-button>
             </div>
         </div>
         <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end shrink-0">
-            <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="closeModal('editModal')">{{ t('Close') }}</button>
+            <x-button variant="secondary" type="button" onclick="closeModal('editModal')">
+                {{ t('Close') }}
+            </x-button>
         </div>
     </div>
 </div>
@@ -352,12 +362,18 @@
                 </div>
             </form>
             <div class="mt-3">
-                <a href="{{ $baseUrl }}/sample-customer-template.csv" download class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">{!! icon('download', 14) !!} {{ t('Download CSV template') }}</a>
+                <x-button variant="secondary" icon="download" :href="$baseUrl.'/sample-customer-template.csv'" download>
+                    {{ t('Download CSV template') }}
+                </x-button>
             </div>
         </div>
         <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end shrink-0">
-            <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="closeModal('excelModal')">{{ t('Cancel') }}</button>
-            <button type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="submitExcel()">{!! icon('upload', 16) !!} {{ t('Register From Excel') }}</button>
+            <x-button variant="secondary" type="button" onclick="closeModal('excelModal')">
+                {{ t('Cancel') }}
+            </x-button>
+            <x-button variant="primary" icon="upload" type="button" onclick="submitExcel()">
+                {{ t('Register From Excel') }}
+            </x-button>
         </div>
     </div>
 </div>
@@ -381,8 +397,12 @@
             </form>
         </div>
         <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end shrink-0">
-            <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="closeModal('promptModal')">{{ t('Cancel') }}</button>
-            <button type="button" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="submitPromptUpdate()">{!! icon('check', 16) !!} {{ t('Submit Update') }}</button>
+            <x-button variant="secondary" type="button" onclick="closeModal('promptModal')">
+                {{ t('Cancel') }}
+            </x-button>
+            <x-button variant="primary" icon="check" type="button" onclick="submitPromptUpdate()">
+                {{ t('Submit Update') }}
+            </x-button>
         </div>
     </div>
 </div>

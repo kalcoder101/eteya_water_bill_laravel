@@ -26,7 +26,9 @@
         <input type="hidden" name="view" value="personal">
         <input type="text" name="customerCode" placeholder="{{ t('Customer Code') }}" value="{{ request()->get('customerCode', '') }}"
                class="flex-1 min-w-[220px] px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
-        <button class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('search', 14) !!} {{ t('Search') }}</button>
+        <x-button type="submit" variant="primary" icon="search">
+            {{ t('Search') }}
+        </x-button>
     </form>
 </div>
 @endif
@@ -103,7 +105,9 @@
         </form>
     </div>
     <div class="px-5 py-4 bg-slate-50 border-t border-slate-100">
-        <button type="button" onclick="submitComplaint()" class="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition shadow-sm">{!! icon('send', 16) !!} {{ t('Send Complain') }}</button>
+        <x-button type="button" onclick="submitComplaint()" class="w-full justify-center" icon="send" variant="soft">
+            {{ t('Send Complain') }}
+        </x-button>
     </div>
 </div>
 
@@ -153,8 +157,12 @@
                         </div>
                         @if ($c->correction_status === 'Pending')
                         <div class="mt-3 flex gap-2">
-                            <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="approveComplaint({{ $c->id }}, '{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">{!! icon('check', 14) !!} {{ t('Approve') }}</button>
-                            <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition shadow-sm" onclick="rejectComplaint('{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">{!! icon('x', 14) !!} {{ t('Reject') }}</button>
+                            <x-button variant="primary" size="sm" icon="check" type="button" onclick="approveComplaint({{ $c->id }}, '{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">
+                                {{ t('Approve') }}
+                            </x-button>
+                            <x-button variant="danger" size="sm" icon="x" type="button" onclick="rejectComplaint('{{ e($c->customer_code) }}', '{{ e($c->complain_date_time) }}')">
+                                {{ t('Reject') }}
+                            </x-button>
                         </div>
                         @endif
                     </div>
@@ -188,8 +196,12 @@
             </div>
         </div>
         <div class="flex items-center justify-end gap-2 px-5 py-4 bg-slate-50 border-t border-slate-100">
-            <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition" onclick="closeModal('approveModal')">{{ t('Cancel') }}</button>
-            <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="confirmApprove()">{!! icon('check', 16) !!} {{ t('Approve') }}</button>
+            <x-button variant="secondary" type="button" onclick="closeModal('approveModal')">
+                {{ t('Cancel') }}
+            </x-button>
+            <x-button variant="primary" icon="check" type="button" onclick="confirmApprove()">
+                {{ t('Approve') }}
+            </x-button>
         </div>
     </div>
 </div>

@@ -70,7 +70,9 @@
                 </div>
             </div>
             <div class="mt-5 flex gap-3">
-                <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('check', 16) !!} {{ t('Update') }} / {{ t('Register') }}</button>
+                <x-button type="submit" variant="primary" icon="check">
+                    {{ t('Update') }} / {{ t('Register') }}
+                </x-button>
             </div>
         </form>
     </div>
@@ -116,11 +118,15 @@
                         </td>
                         <td class="px-4 py-2.5 text-slate-700 align-middle">
                             <div class="flex items-center justify-end gap-2">
-                                <button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" type="button" onclick="editUser('{{ e($u->user_id) }}')">{!! icon('edit', 14) !!} {{ t('Edit') }}</button>
+                                <x-button variant="secondary" size="sm" icon="edit" type="button" onclick="editUser('{{ e($u->user_id) }}')">
+                                    {{ t('Edit') }}
+                                </x-button>
                                 <form method="post" action="{{ route('account-register.delete') }}" class="inline m-0">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $u->user_id }}">
-                                    <button type="submit" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition" onclick="return confirm('Delete this user?')">{!! icon('trash', 14) !!} {{ t('Delete') }}</button>
+                                    <x-button type="submit" variant="danger" size="sm" icon="trash" onclick="return confirm('Delete this user?')">
+                                        {{ t('Delete') }}
+                                    </x-button>
                                 </form>
                             </div>
                         </td>

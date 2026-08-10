@@ -129,8 +129,12 @@
     </div>
 
     <div class="flex gap-2.5 items-center ml-auto">
-        <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="exportBillsCSV()">{!! icon('download', 14) !!} {{ t('Export CSV') }}</button>
-        <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="printAllBills()">{!! icon('print', 14) !!} {{ t('Batch Print Receipts') }}</button>
+        <x-button variant="secondary" icon="download" type="button" onclick="exportBillsCSV()">
+            {{ t('Export CSV') }}
+        </x-button>
+        <x-button variant="primary" icon="print" type="button" onclick="printAllBills()">
+            {{ t('Batch Print Receipts') }}
+        </x-button>
     </div>
 </div>
 
@@ -190,11 +194,15 @@
                         </td>
                         <td class="px-4 py-2.5 text-slate-700 align-middle">
                             <div class="flex items-center justify-end gap-2">
-                                <button type="button" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition shadow-sm" onclick='previewReceipt({{ json_encode($b) }})' title="{{ t('Print Receipt') }}">{!! icon('print', 14) !!} {{ t('Print') }}</button>
+                                <x-button variant="primary" size="sm" icon="print" type="button" onclick='previewReceipt({{ json_encode($b) }})' :title="t('Print Receipt')">
+                                    {{ t('Print') }}
+                                </x-button>
                                 @if ($b->payment_status !== 'Paid')
-                                    <a href="{{ route('bills.mark-paid', ['id' => $b->bill_finance_id]) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold transition shadow-sm" title="{{ t('Mark Paid') }}">{!! icon('check', 14) !!} {{ t('Pay') }}</a>
+                                    <x-button variant="primary" size="sm" icon="check" :href="route('bills.mark-paid', ['id' => $b->bill_finance_id])" :title="t('Mark Paid')">
+                                        {{ t('Pay') }}
+                                    </x-button>
                                 @endif
-                                <a href="{{ route('customer-ledger.index') }}?meterSerial={{ urlencode($b->meter_serial) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold transition" title="View Financial Ledger">{!! icon('book-open', 14) !!}</a>
+                                <x-button variant="secondary" size="sm" icon="book-open" :href="route('customer-ledger.index').'?meterSerial='.urlencode($b->meter_serial)" :title="t('View Financial Ledger')" />
                             </div>
                         </td>
                     </tr>
@@ -287,8 +295,12 @@
             </div>
         </div>
         <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end">
-            <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition" onclick="closeModal('receiptModal')">{{ t('Close') }}</button>
-            <button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm" onclick="printSingleReceipt()">{!! icon('print', 16) !!} {{ t('Print Receipt') }}</button>
+            <x-button variant="secondary" type="button" onclick="closeModal('receiptModal')">
+                {{ t('Close') }}
+            </x-button>
+            <x-button variant="primary" icon="print" type="button" onclick="printSingleReceipt()">
+                {{ t('Print Receipt') }}
+            </x-button>
         </div>
     </div>
 </div>

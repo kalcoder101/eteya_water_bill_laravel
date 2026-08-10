@@ -175,9 +175,13 @@
             <div class="name font-extrabold text-[15px] tracking-tight text-slate-900 truncate">{{ $brandShort ?? t('WaterSteward') }}</div>
             <div class="tag text-[10px] text-slate-500 truncate">Water Supply & Sewerage Enterprise</div>
         </div>
-        <button type="button" class="sidebar-collapse-toggle shrink-0 w-9 h-9 rounded-[10px] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 flex items-center justify-center cursor-pointer transition" onclick="toggleSidebar(event)" title="Collapse / Expand Sidebar">
-            {!! icon('panel-left', 16) !!}
-        </button>
+        <x-icon-button
+            variant="emerald"
+            icon="panel-left"
+            class="sidebar-collapse-toggle"
+            onclick="toggleSidebar(event)"
+            :title="t('Collapse / Expand Sidebar')"
+        />
     </div>
 
     <!-- 2. Category navigation -->
@@ -197,13 +201,15 @@
             <div class="sidebar-category-body pt-1">
                 <ul class="sidebar-nav space-y-1">
                     @foreach ($group['items'] as $item)
-                        <li>
-                            <a href="{{ route($item['route']) }}"
-                               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-semibold transition {{ $currentPage === $item['page'] ? $group['accent']['active'] : 'text-slate-600 '.$group['accent']['hover'] }}">
-                                <span class="icon shrink-0 flex items-center justify-center {{ $currentPage === $item['page'] ? '' : $group['accent']['icon'] }}">{!! icon($item['icon'], 18) !!}</span>
-                                <span class="nav-label truncate">{{ $item['label'] }}</span>
-                            </a>
-                        </li>
+                        <x-nav-link
+                            :href="route($item['route'])"
+                            :icon="$item['icon']"
+                            :active="$currentPage === $item['page']"
+                            :accent="$group['accent']"
+                            class="{{ $currentPage === $item['page'] ? '' : 'text-slate-600' }}"
+                        >
+                            {{ $item['label'] }}
+                        </x-nav-link>
                     @endforeach
                 </ul>
             </div>
@@ -242,9 +248,13 @@
                 <div class="user-name text-[13px] font-bold text-slate-900 truncate">{{ $fullName }}</div>
                 <div class="user-role mt-0.5 truncate"><span class="badge {{ get_role_badge($user?->job_role ?? '') }}">{{ get_role_display($user?->job_role ?? '') }}</span></div>
             </div>
-            <a href="{{ route('logout') }}" class="logout-link shrink-0 w-9 h-9 rounded-lg inline-flex items-center justify-center text-slate-500 border border-slate-200 bg-slate-50 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                {!! icon('logout', 16) !!}
-            </a>
+            <x-icon-button
+                variant="danger"
+                icon="logout"
+                class="logout-link"
+                :title="t('Logout')"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+            />
         </div>
         <div class="footer-meta mt-3 pt-2.5 border-t border-dashed border-slate-200 text-[10px] text-slate-500 flex flex-col gap-0.5">
             <span class="font-semibold text-slate-600">{{ $appVersion }}</span>
@@ -278,18 +288,28 @@
 
         <!-- Quick search -->
         <div class="relative w-44 lg:w-64 shrink-0">
-            <input type="text" class="w-full pl-8 pr-10 py-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500" placeholder="Search (Ctrl + K)" onclick="openModal('quickCmdModal')" readonly>
-            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400">{!! icon('search', 13) !!}</span>
+            <x-input
+                type="text"
+                icon="search"
+                placeholder="Search (Ctrl + K)"
+                onclick="openModal('quickCmdModal')"
+                readonly
+                class="py-2.5 cursor-pointer pr-12"
+            />
             <kbd class="absolute right-2 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-400">Ctrl K</kbd>
         </div>
 
         @if (! empty($pageAction))
-        <a href="{{ $pageAction['href'] ?? '#' }}"
-           class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-[0_4px_14px_rgba(5,150,105,0.35)] active:scale-[0.98] shrink-0"
-           onclick="{{ $pageAction['onclick'] ?? '' }}">
-            {!! icon($pageAction['icon'] ?? 'plus', 15) !!}
+        <x-button
+            variant="primary"
+            size="md"
+            :href="$pageAction['href'] ?? '#'"
+            :icon="$pageAction['icon'] ?? 'plus'"
+            :onclick="$pageAction['onclick'] ?? ''"
+            class="shrink-0 shadow-[0_4px_14px_rgba(5,150,105,0.35)] active:scale-[0.98]"
+        >
             <span class="hidden sm:inline">{{ $pageAction['label'] ?? 'Action' }}</span>
-        </a>
+        </x-button>
         @endif
 
         <!-- Language switcher (segmented) -->

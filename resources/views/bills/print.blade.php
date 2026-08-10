@@ -44,8 +44,8 @@
 <body class="antialiased font-sans text-slate-700 bg-surface-base min-h-screen p-6">
 
 <div class="toolbar no-print fixed top-4 right-4 z-10 bg-white px-3 py-2.5 border border-slate-200 rounded-lg shadow-md flex items-center gap-2">
-    <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">{!! icon('print', 14) !!} Print</button>
-    <a href="{{ route('bills.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">{!! icon('arrow-left', 14) !!} Back to Bills</a>
+    <x-button variant="primary" icon="print" onclick="window.print()">Print</x-button>
+    <x-button variant="secondary" icon="arrow-left" :href="route('bills.index')">Back to Bills</x-button>
 </div>
 
 <div class="bill mx-auto my-4 w-[240px] bg-white p-3 border border-slate-300 rounded font-mono text-[10px] leading-tight text-slate-800 shadow-[0_8px_24px_rgba(39,24,126,0.12)]" id="bill">
