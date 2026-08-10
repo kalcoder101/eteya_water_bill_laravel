@@ -34,7 +34,7 @@
 <!-- Toast container -->
 <div id="toastContainer" class="toast-container"></div>
 
-<div class="app-shell">
+<div class="app-shell flex min-h-screen w-full bg-[#F8FAF8]">
 
 @php
     $user = auth()->user();
@@ -47,7 +47,7 @@
     $brandShort = get_setting('default_branch', 'WaterSteward');
     $currentPage = request()->segment(1) ?? 'dashboard';
 
-    // Category accent → Tailwind class map (module accents must stay consistent)
+    // Category accent → Tailwind class map
     $accents = [
         'emerald' => [
             'icon'   => 'text-emerald-600',
@@ -140,7 +140,7 @@
 <!-- ============================================================
      OFFICIAL FLUX COLLAPSIBLE SIDEBAR
      ============================================================ -->
-<flux:sidebar sticky collapsible class="bg-white border-r border-slate-200">
+<flux:sidebar sticky collapsible class="bg-zinc-50 border-r border-zinc-200">
     <flux:sidebar.header>
         <flux:sidebar.brand
             href="{{ route('dashboard') }}"
@@ -152,10 +152,9 @@
 
     <flux:sidebar.nav>
         @foreach ($navGroups as $idx => $group)
-            <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid relative group/cat">
+            <flux:sidebar.group expandable :icon="$group['icon']" :heading="$group['title']" class="grid">
                 @foreach ($group['items'] as $item)
                     <flux:sidebar.item
-                        :icon="$item['icon']"
                         :href="route($item['route'])"
                         wire:navigate
                         :current="$currentPage === $item['page']"
@@ -163,27 +162,6 @@
                         {{ $item['label'] }}
                     </flux:sidebar.item>
                 @endforeach
-
-                <!-- Category flyout card (hover in collapsed mode) -->
-                <div class="category-flyout-panel">
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] p-3">
-                        <div class="flex items-center gap-2 pb-2.5 mb-2 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                            <span class="{{ $group['accent']['icon'] }}">{!! icon($group['icon'], 14) !!}</span>
-                            <span>{{ $group['title'] }}</span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            @foreach ($group['items'] as $item)
-                                <a href="{{ route($item['route']) }}" wire:navigate class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition {{ $currentPage === $item['page'] ? $group['accent']['soft'] : $group['accent']['hover'] }}">
-                                    <span class="mt-0.5 shrink-0 {{ $group['accent']['icon'] }} opacity-90">{!! icon($item['icon'], 16) !!}</span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[13px] font-bold text-slate-800 leading-snug">{{ $item['label'] }}</span>
-                                        <span class="block text-[11px] text-slate-500 leading-snug mt-0.5">{{ $item['desc'] }}</span>
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
             </flux:sidebar.group>
         @endforeach
     </flux:sidebar.nav>
@@ -234,7 +212,7 @@
 </flux:header>
 
 <!-- ============================================================
-     MAIN AREA — OFFICIAL FLUX MAIN CONTAINER
+     OFFICIAL FLUX MAIN CONTAINER
      ============================================================ -->
 <flux:main class="flex flex-col min-w-0 flex-1">
 
