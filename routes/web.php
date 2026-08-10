@@ -73,17 +73,9 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('page.access:import-customers')
         ->name('import.customers');
 
-    Route::get('account-register', [AccountRegisterController::class, 'index'])
+    Route::livewire('account-register', 'pages::account-register')
         ->middleware('page.access:account-register')
         ->name('account-register.index');
-
-    Route::post('account-register/save', [AccountRegisterController::class, 'save'])
-        ->middleware('page.access:account-register.save')
-        ->name('account-register.save');
-
-    Route::post('account-register/delete', [AccountRegisterController::class, 'delete'])
-        ->middleware('page.access:account-register.delete')
-        ->name('account-register.delete');
 });
 
 // Alias for user photo on the web routes group (used by the topbar avatar)
