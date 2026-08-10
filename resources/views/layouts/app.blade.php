@@ -10,6 +10,16 @@
 
 @fluxAppearance
 
+@php
+    $tweakfluxThemePath = resource_path('css/tweakflux-theme.css');
+    $tweakfluxThemeCss = file_exists($tweakfluxThemePath) ? file_get_contents($tweakfluxThemePath) : '';
+@endphp
+@if ($tweakfluxThemeCss)
+<style id="tweakfluxThemeStyle">
+{!! $tweakfluxThemeCss !!}
+</style>
+@endif
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -96,6 +106,7 @@
             'accent'  => 'gold',
             'items' => [
                 ['page' => 'account-register', 'label' => t('Account Register'), 'desc' => 'Register staff accounts & manage job roles', 'icon' => 'user-plus', 'route' => 'account-register.index'],
+                ['page' => 'theme-customizer', 'label' => t('Theme Customizer'), 'desc' => 'Live TweakFlux color & UI theme settings', 'icon' => 'swatch', 'route' => 'theme-customizer.index'],
             ]
         ]
     ];

@@ -116,6 +116,7 @@ if (! function_exists('page_role_permissions')) {
             'account-register'        => ['System Admin'],
             'account-register.save'   => ['System Admin'],
             'account-register.delete' => ['System Admin'],
+            'theme-customizer'        => ['System Admin', 'Manager', 'Customer Service', 'Bill Reader'],
         ];
     }
 }
@@ -231,6 +232,7 @@ if (! function_exists('icon')) {
             'water'         => '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
             'globe'         => '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
             'shield'        => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+            'swatch'        => '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
             'zap'           => '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
             'file-text'     => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
             'filter'        => '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',

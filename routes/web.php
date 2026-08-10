@@ -68,6 +68,10 @@ Route::middleware('auth')->group(function (): void {
     Route::livewire('account-register', 'pages::account-register')
         ->middleware('page.access:account-register')
         ->name('account-register.index');
+
+    Route::livewire('theme-customizer', 'pages::theme-customizer')
+        ->middleware('page.access:theme-customizer')
+        ->name('theme-customizer.index');
 });
 
 // Alias for user photo on the web routes group (used by the topbar avatar)

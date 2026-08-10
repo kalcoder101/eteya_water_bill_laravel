@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9977b5af0bed88f7846ff9d11f2d9b94",
+    "content-hash": "299672f00c06a3e7d0919eaff2aa2f0e",
     "packages": [
         {
             "name": "0xkal/tech-mezgeb-qalat",
@@ -6150,6 +6150,60 @@
                 "source": "https://github.com/FakerPHP/Faker/tree/v1.24.1"
             },
             "time": "2024-11-21T13:46:39+00:00"
+        },
+        {
+            "name": "joshcirre/tweakflux",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joshcirre/tweakflux.git",
+                "reference": "e5aad2a9bfede3ebdbb827456220f52c80d1ffc7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joshcirre/tweakflux/zipball/e5aad2a9bfede3ebdbb827456220f52c80d1ffc7",
+                "reference": "e5aad2a9bfede3ebdbb827456220f52c80d1ffc7",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/prompts": "^0.3",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "pestphp/pest": "^3.0 || ^4.0"
+            },
+            "bin": [
+                "bin/tweakflux"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TweakFlux\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Cirre",
+                    "homepage": "https://github.com/joshcirre"
+                }
+            ],
+            "description": "Deep theming for Flux UI. Override Tailwind v4 CSS custom properties to transform every Flux component.",
+            "keywords": [
+                "cli",
+                "flux",
+                "livewire",
+                "tailwind",
+                "theming"
+            ],
+            "support": {
+                "issues": "https://github.com/joshcirre/tweakflux/issues",
+                "source": "https://github.com/joshcirre/tweakflux/tree/v1.6.0"
+            },
+            "time": "2026-02-13T23:00:16+00:00"
         },
         {
             "name": "laravel/pint",
