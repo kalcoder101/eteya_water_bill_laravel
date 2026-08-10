@@ -195,7 +195,7 @@
     <div class="sidebar-footer shrink-0 px-4 py-3.5 border-t border-slate-200 bg-white">
         <div class="sidebar-user flex items-center gap-2.5 min-w-0">
             <flux:profile :avatar="$photoUrl" :name="$fullName" :extra="get_role_display($user?->job_role ?? '')" class="flex-1" />
-            <flux:button variant="subtle" size="sm" icon="arrow-right-on-rectangle" class="logout-link" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" />
+            <flux:button variant="subtle" size="sm" icon="arrow-right-start-on-rectangle" class="logout-link" title="{{ t('Logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" />
         </div>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
@@ -262,7 +262,7 @@
                 <flux:menu.separator />
 
                 <form method="POST" action="{{ route('logout') }}" id="flux-logout-form" style="display:none">@csrf</form>
-                <flux:menu.item icon="arrow-right-on-rectangle" variant="danger" x-data x-on:click="document.getElementById('flux-logout-form').submit()">
+                <flux:menu.item icon="arrow-right-start-on-rectangle" variant="danger" x-data x-on:click="document.getElementById('flux-logout-form').submit()">
                     {{ t('Logout') }}
                 </flux:menu.item>
             </flux:menu>
