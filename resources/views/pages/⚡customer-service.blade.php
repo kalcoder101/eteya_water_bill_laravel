@@ -2,6 +2,7 @@
 
 use App\Livewire\Forms\CustomerRegistrationForm;
 use App\Models\ActiveCustomer;
+use App\Models\MeterLocation;
 use App\Services\AuditService;
 use Flux\Flux;
 use Illuminate\Support\Facades\Cache;
@@ -17,7 +18,7 @@ new class extends Component
 
     public CustomerRegistrationForm $regForm;
 
-    // Search & Filter Properties (absorbed CustomerSearch SFC)
+    // Search & Filter Properties
     #[Url(except: '')]
     public string $search = '';
 
@@ -47,6 +48,16 @@ new class extends Component
     public string $updateFieldKey = '';
     public string $updateFieldLabel = '';
     public string $updateFieldValue = '';
+
+    // Owner Transfer modal fields
+    public string $transferFirstName = '';
+    public string $transferMiddleName = '';
+    public string $transferLastName = '';
+
+    // New Meter Installation modal fields
+    public string $newMeterSerial = '';
+    public string $newMeterSize = '1/2"';
+    public int $newMeterNum = 1;
 
     // Wizard Step
     public int $regStep = 1;
@@ -159,6 +170,23 @@ new class extends Component
         }
     }
 
+    public function syncCustomer(): void
+    {
+        if (! $this->editMeterSerial) return;
+
+        $c = ActiveCustomer::where('meter_serial', $this->editMeterSerial)->first();
+        if ($c) {
+            $c->update(['sync_status' => 'Synced']);
+            app(AuditService::class)->logAudit(
+                "Synced customer record {$c->meter_serial}",
+                auth()->user()?->fullName() ?? 'System'
+            );
+
+            Flux::toast("Customer {$c->meter_serial} synced successfully.", variant: 'success');
+            $this->editingCustomer = $c->fresh();
+        }
+    }
+
     public function openFieldUpdateModal(string $fieldKey, string $fieldLabel): void
     {
         if (! $this->editingCustomer) return;
@@ -186,6 +214,72 @@ new class extends Component
         }
 
         $this->modal('update-field-modal')->close();
+    }
+
+    public function openOwnerTransferModal(): void
+    {
+        if (! $this->editingCustomer) return;
+
+        $this->transferFirstName = $this->editingCustomer->first_name ?? '';
+        $this->transferMiddleName = $this->editingCustomer->middle_name ?? '';
+        $this->transferLastName = $this->editingCustomer->last_name ?? '';
+        $this->modal('owner-transfer-modal')->show();
+    }
+
+    public function saveOwnerTransfer(): void
+    {
+        if (! $this->editMeterSerial) return;
+
+        $c = ActiveCustomer::where('meter_serial', $this->editMeterSerial)->first();
+        if ($c) {
+            $c->update([
+                'first_name'  => $this->transferFirstName,
+                'middle_name' => $this->transferMiddleName ?: null,
+                'last_name'   => $this->transferLastName ?: null,
+            ]);
+            app(AuditService::class)->logAudit(
+                "Transferred meter owner for {$c->meter_serial} to {$this->transferFirstName} {$this->transferMiddleName}",
+                auth()->user()?->fullName() ?? 'System'
+            );
+
+            Flux::toast('Meter owner transferred successfully.', variant: 'success');
+            $this->editingCustomer = $c->fresh();
+        }
+
+        $this->modal('owner-transfer-modal')->close();
+    }
+
+    public function openInstallNewMeterModal(): void
+    {
+        if (! $this->editingCustomer) return;
+
+        $this->newMeterSerial = $this->editingCustomer->bill_num ?? '';
+        $this->newMeterSize = $this->editingCustomer->meter_size ?? '1/2"';
+        $this->newMeterNum = (int) ($this->editingCustomer->meter_num ?? 1);
+        $this->modal('install-meter-modal')->show();
+    }
+
+    public function saveNewMeterInstall(): void
+    {
+        if (! $this->editMeterSerial) return;
+
+        $c = ActiveCustomer::where('meter_serial', $this->editMeterSerial)->first();
+        if ($c) {
+            $c->update([
+                'bill_num'   => $this->newMeterSerial,
+                'meter_size' => $this->newMeterSize,
+                'meter_num'  => $this->newMeterNum,
+            ]);
+            app(AuditService::class)->logAudit(
+                "Installed new meter for {$c->meter_serial}: SN {$this->newMeterSerial}, size {$this->newMeterSize}",
+                auth()->user()?->fullName() ?? 'System'
+            );
+
+            Flux::toast('New meter installed successfully.', variant: 'success');
+            $this->editingCustomer = $c->fresh();
+        }
+
+        $this->modal('install-meter-modal')->close();
     }
 
     public function render(): mixed
@@ -288,7 +382,7 @@ new class extends Component
         <x-kpi :label="t('Total Registered')" :value="number_format($counts['total'])" :subvalue="t('Water Meter Accounts')" icon="users" color="emerald" />
         <x-kpi :label="t('Active Accounts')" :value="number_format($counts['active'])" :subvalue="($counts['total'] > 0 ? number_format(($counts['active']/$counts['total'])*100, 1) : 0).'% connected'" icon="check" color="emerald" :active="true" />
         <x-kpi label="Disconnected (DC)" :value="number_format($counts['dc'])" :subvalue="t('Cut off accounts')" icon="x" color="rose" />
-        <x-kpi :label="t('Updated / Pending')" :value="number_format($counts['updated'])" :subvalue="t('Requires verification')" icon="refresh" color="amber" />
+        <x-kpi :label="t('Updated / Pending')" :value="number_format($counts['updated'])" :subvalue="t('Requires verification')" icon="arrow-path" color="amber" />
     </div>
 
     <!-- Livewire Reactive Table & Search Registry Section -->
@@ -528,30 +622,94 @@ new class extends Component
         </div>
     </flux:modal>
 
-    <!-- Customer Edit & Operations Modal -->
-    <flux:modal name="edit-modal" class="md:w-[680px]">
+    <!-- Comprehensive Customer Operations & 22-Field Edit Modal -->
+    <flux:modal name="edit-modal" class="md:w-[780px]">
         @if ($editingCustomer)
-            <div class="space-y-4">
+            <div class="space-y-5">
                 <div>
-                    <flux:heading size="lg">Customer Record — {{ $editingCustomer->meter_serial }}</flux:heading>
+                    <flux:heading size="lg">Customer Account Record — {{ $editingCustomer->meter_serial }}</flux:heading>
                     <flux:subheading>{{ trim(($editingCustomer->first_name ?? '').' '.($editingCustomer->middle_name ?? '').' '.($editingCustomer->last_name ?? '')) }} &bull; Kebele: {{ $editingCustomer->kebele }} &bull; Status: {{ $editingCustomer->customer_status }}</flux:subheading>
                 </div>
 
-                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Quick Status Actions</div>
-                <div class="flex flex-wrap gap-2">
-                    <flux:button size="sm" variant="primary" icon="check" wire:click="updateCustomerStatus('Active')">Re-Activate</flux:button>
-                    <flux:button size="sm" variant="danger" icon="x-mark" wire:click="updateCustomerStatus('DC')">Disconnect (DC)</flux:button>
-                    <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="updateCustomerStatus('Updated')">Mark Updated</flux:button>
+                <!-- Customer Account Details Card -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div>
+                        <span class="text-slate-500 block">Phone:</span>
+                        <strong class="text-slate-900">{{ $editingCustomer->phone_number ?? '—' }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Customer Type:</span>
+                        <strong class="text-slate-900">{{ $editingCustomer->customer_type }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Meter Size:</span>
+                        <strong class="text-slate-900">{{ $editingCustomer->meter_size }} ({{ $editingCustomer->meter_num }})</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Bill Serial Num:</span>
+                        <strong class="text-emerald-700 font-mono">{{ $editingCustomer->bill_num ?? '—' }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Start Reading:</span>
+                        <strong class="text-slate-900 font-mono">{{ number_format($editingCustomer->start_value, 2) }} m³</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Payment Way:</span>
+                        <strong class="text-slate-900">{{ $editingCustomer->payment_way }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Branch:</span>
+                        <strong class="text-slate-900">{{ $editingCustomer->customer_branch }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Reader Block:</span>
+                        <strong class="text-slate-900">{{ $editingCustomer->reader_block ?? '—' }}</strong>
+                    </div>
                 </div>
 
-                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider pt-2">Field Updates</div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('first_name', 'First Name')">First Name</flux:button>
-                    <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('phone_number', 'Phone Number')">Phone Number</flux:button>
-                    <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('kebele', 'Kebele')">Kebele</flux:button>
-                    <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('customer_type', 'Customer Type')">Customer Type</flux:button>
-                    <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('meter_size', 'Meter Size')">Meter Size</flux:button>
-                    <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('reader_block', 'Reader Block')">Reader Block</flux:button>
+                <!-- Quick Status Actions -->
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status & Sync Controls</div>
+                    <div class="flex flex-wrap gap-2">
+                        <flux:button size="sm" variant="primary" icon="check" wire:click="updateCustomerStatus('Active')">Re-Activate</flux:button>
+                        <flux:button size="sm" variant="danger" icon="x-mark" wire:click="updateCustomerStatus('DC')">Disconnect (DC)</flux:button>
+                        <flux:button size="sm" variant="subtle" icon="arrow-path" wire:click="updateCustomerStatus('Updated')">Mark Updated</flux:button>
+                        <flux:button size="sm" variant="subtle" icon="trash" wire:click="updateCustomerStatus('Deleted')" wire:confirm="Mark this customer as Deleted?">Mark Deleted</flux:button>
+                        <flux:button size="sm" variant="subtle" icon="arrow-path-round-down" wire:click="syncCustomer">Sync Customer</flux:button>
+                    </div>
+                </div>
+
+                <!-- 22 Field Updates Grid -->
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Individual Field Updates</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('first_name', 'First Name')">First Name</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('middle_name', 'Middle Name')">Middle Name</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('last_name', 'Last Name')">Last Name</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('phone_number', 'Phone Number')">Phone Number</flux:button>
+
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('kebele', 'Kebele')">Kebele</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('customer_type', 'Customer Type')">Customer Type</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('meter_size', 'Meter Size')">Meter Size</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('meter_num', 'Meter Number')">Meter Number</flux:button>
+
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('payment_way', 'Payment Way')">Payment Way</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('customer_branch', 'Branch')">Branch</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('bill_num', 'Bill Serial Num')">Bill Number</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('reader_block', 'Reader Block')">Reader Block</flux:button>
+
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('start_value', 'Start Reading')">Start Reading</flux:button>
+                        <flux:button size="sm" variant="subtle" wire:click="openFieldUpdateModal('sold_date', 'Sold Date')">Sold Date</flux:button>
+                    </div>
+                </div>
+
+                <!-- Special Workflow Operations -->
+                <div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Special Operations</div>
+                    <div class="flex flex-wrap gap-2">
+                        <flux:button size="sm" variant="subtle" icon="user" wire:click="openOwnerTransferModal">Meter Owner Transfer</flux:button>
+                        <flux:button size="sm" variant="subtle" icon="wrench" wire:click="openInstallNewMeterModal">Install New Meter</flux:button>
+                    </div>
                 </div>
 
                 <div class="flex justify-end pt-3">
@@ -563,7 +721,7 @@ new class extends Component
         @endif
     </flux:modal>
 
-    <!-- Field Update Modal -->
+    <!-- Single Field Update Modal -->
     <flux:modal name="update-field-modal" class="md:w-96">
         <div class="space-y-4">
             <div>
@@ -572,7 +730,26 @@ new class extends Component
             </div>
 
             <div>
-                <flux:input wire:model="updateFieldValue" label="{{ $updateFieldLabel }}" required />
+                @if (in_array($updateFieldKey, ['customer_type', 'payment_way', 'customer_branch', 'meter_size'], true))
+                    <label class="block text-xs font-bold text-slate-500 mb-1">{{ $updateFieldLabel }}</label>
+                    <select wire:model="updateFieldValue" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
+                        @if ($updateFieldKey === 'customer_type')
+                            @foreach ($customerTypes as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
+                        @elseif ($updateFieldKey === 'payment_way')
+                            @foreach ($paymentWays as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
+                        @elseif ($updateFieldKey === 'customer_branch')
+                            @foreach ($branches as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
+                        @elseif ($updateFieldKey === 'meter_size')
+                            @foreach ($meterSizes as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
+                        @endif
+                    </select>
+                @elseif (in_array($updateFieldKey, ['start_value', 'meter_num'], true))
+                    <flux:input type="number" step="0.01" wire:model="updateFieldValue" label="{{ $updateFieldLabel }}" required />
+                @elseif ($updateFieldKey === 'sold_date')
+                    <flux:input type="date" wire:model="updateFieldValue" label="{{ $updateFieldLabel }}" required />
+                @else
+                    <flux:input wire:model="updateFieldValue" label="{{ $updateFieldLabel }}" required />
+                @endif
             </div>
 
             <div class="flex gap-2 justify-end">
@@ -581,6 +758,76 @@ new class extends Component
                 </flux:modal.close>
                 <flux:button variant="primary" wire:click="saveFieldUpdate" icon="check">
                     Save Update
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    <!-- Meter Owner Transfer Modal -->
+    <flux:modal name="owner-transfer-modal" class="md:w-[480px]">
+        <div class="space-y-4">
+            <div>
+                <flux:heading size="lg">Meter Owner Transfer</flux:heading>
+                <flux:subheading>Transfer ownership of meter {{ $editMeterSerial }} to a new owner</flux:subheading>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">New First Name *</label>
+                    <flux:input wire:model="transferFirstName" placeholder="First Name" required />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">New Middle Name</label>
+                    <flux:input wire:model="transferMiddleName" placeholder="Middle Name" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">New Last Name</label>
+                    <flux:input wire:model="transferLastName" placeholder="Last Name" />
+                </div>
+            </div>
+
+            <div class="flex gap-2 justify-end pt-2">
+                <flux:modal.close>
+                    <flux:button variant="subtle">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="saveOwnerTransfer" icon="check">
+                    Transfer Ownership
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    <!-- Install New Meter Modal -->
+    <flux:modal name="install-meter-modal" class="md:w-[480px]">
+        <div class="space-y-4">
+            <div>
+                <flux:heading size="lg">Install New Meter</flux:heading>
+                <flux:subheading>Replace meter hardware for customer account {{ $editMeterSerial }}</flux:subheading>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">New Meter Serial Number *</label>
+                    <flux:input wire:model="newMeterSerial" placeholder="SN-0001" required />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">New Meter Size</label>
+                    <select wire:model="newMeterSize" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm">
+                        @foreach ($meterSizes as $v) <option value="{{ $v }}">{{ $v }}</option> @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Meter Number (Integer)</label>
+                    <flux:input type="number" wire:model="newMeterNum" required />
+                </div>
+            </div>
+
+            <div class="flex gap-2 justify-end pt-2">
+                <flux:modal.close>
+                    <flux:button variant="subtle">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="saveNewMeterInstall" icon="check">
+                    Complete Installation
                 </flux:button>
             </div>
         </div>
