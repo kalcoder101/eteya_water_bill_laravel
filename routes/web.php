@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('page.access:dashboard')
         ->name('dashboard');
 
-    Route::get('customer-service', [CustomerServiceController::class, 'index'])
+    Route::livewire('customer-service', 'pages::customer-service')
         ->middleware('page.access:customer-service')
         ->name('customer-service.index');
 
@@ -41,21 +41,13 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('page.access:reading-correction')
         ->name('reading-correction.index');
 
-    Route::get('bills', [BillController::class, 'index'])
+    Route::livewire('bills', 'pages::bills')
         ->middleware('page.access:bills')
         ->name('bills.index');
 
     Route::get('bills/print/{id}', [BillController::class, 'print'])
         ->middleware('page.access:bills.print')
         ->name('bills.print');
-
-    Route::post('bills/calculate', [BillController::class, 'calculate'])
-        ->middleware('page.access:bills.calculate')
-        ->name('bills.calculate');
-
-    Route::post('bills/mark-paid/{id}', [BillController::class, 'markPaid'])
-        ->middleware('page.access:bills.mark-paid')
-        ->name('bills.mark-paid');
 
     Route::get('export/customers', [ImportExportController::class, 'exportCustomers'])
         ->middleware('page.access:export-customers')
